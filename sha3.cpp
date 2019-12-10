@@ -1,5 +1,5 @@
 // //////////////////////////////////////////////////////////
-// sha3.h
+// 
 // Copyright (c) 2014,2015 Stephan Brumme. All rights reserved.
 // see http://create.stephan-brumme.com/disclaimer.html
 //
@@ -71,7 +71,8 @@ private:
 // Copyright (c) 2014,2015 Stephan Brumme. All rights reserved.
 // see http://create.stephan-brumme.com/disclaimer.html
 //
-#include "sha3.h"
+//#include "
+"
 // big endian architectures need #define __BYTE_ORDER __BIG_ENDIAN
 #ifndef _MSC_VER
 #include <endian.h>
