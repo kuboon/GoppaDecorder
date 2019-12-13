@@ -37,6 +37,15 @@ typedef struct {
 OP ss={0};
 
 
+
+unsigned long xor128(void)
+{
+    static unsigned long x=123456789,y=362436069,z=521288629,w=88675123;
+    unsigned long t;
+    t=(x^(x<<11));x=y;y=z;z=w; return( w=(w^(w>>19))^(t^(t>>8)) );
+}
+
+
 unsigned char oinv(unsigned char a){
   int i;
 
@@ -799,7 +808,7 @@ int main(int argc,char **argv){
     for(i=1;i<K+1;i++)
       ff[i]=0;
   for(i=1;i<K+1;i++)
-    ff[i]=rand()%2;
+    ff[i]=xor128()%2;
     w=setpol(ff,K+1);
     r=decode(w,f);
     for(i=0;i<T;i++){
