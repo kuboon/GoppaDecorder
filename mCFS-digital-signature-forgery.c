@@ -833,7 +833,7 @@ int main(int argc,char **argv){
     for(i=1;i<K+1;i++)
       ff[i]=0;
   for(i=1;i<K+1;i++)
-    ff[i]=xor128()%2;
+    ff[i]=xor128()%DEG;
     ww=setpol(ff,K+1);
     r=decode(ww,f);
     for(i=0;i<T;i++){
