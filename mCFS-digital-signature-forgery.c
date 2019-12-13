@@ -847,7 +847,7 @@ int main(int argc,char **argv){
 	//printf(r.t[i].a,"%u\n");
       }
     }
-    if(cnt==T){
+    if(cnt>0){
       for(i=0;i<T;i++)
       printf("e=%d %d\n",r.t[i].a,r.t[i].n);
       printpol(o2v(ww));
