@@ -8,14 +8,15 @@
 
 
 #define DEG 256
-#define K 10
+#define K 16
 #define T K/2
 
 
 unsigned char c[]={0};
 unsigned char mat[K][M]={0};
 //unsigned char g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1};
-    unsigned char g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
+unsigned char g[K+1]={1,1,0,1,1,0,0,1,1,0,1,0,1,1,1,0,1};
+//unsigned char g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 unsigned char syn[K]={0};
 
 //={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}; //={1,5,0,1,7,3,15}; //={1,2,9,4,0,6,4}; // //
@@ -40,9 +41,11 @@ OP ss={0};
 
 unsigned long xor128(void)
 {
-    static unsigned long x=123456789,y=362436069,z=521288629,w=88675123;
+  unsigned int a=0;
+  static unsigned long x=123456789,y=362436069,z=521288629,w=88675123;
     unsigned long t;
-    t=(x^(x<<11));x=y;y=z;z=w; return( w=(w^(w>>19))^(t^(t>>8)) );
+    a=rand();
+    t=(a^(a<<11));a=y;y=z;z=w; return( w=(w^(w>>19))^(t^(t>>8)) );
 }
 
 
@@ -67,6 +70,7 @@ unsigned char equ(unsigned char a,unsigned char b){
   }
 
 }
+
 
 
 int deg(vec a){
@@ -114,6 +118,27 @@ OP v2o(vec a){
   }
 
   return f;
+}
+
+vec i2v(unsigned int n){
+  vec v;
+  int i;
+  
+  for(i=0;i<sizeof(n);i++)
+  v.x[i]=n%2;
+
+  return v;
+}
+
+unsigned int v2i(vec v){
+  unsigned int d=0,i;
+
+  for(i=0;i<32;i++){
+    d=(d<<1);
+    d^=v.x[i];
+  }
+
+  return d;
 }
 
 
@@ -727,7 +752,7 @@ int main(int argc,char **argv){
   unsigned char zz[T]={0};//{86,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
   //  unsigned char zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
   int y,flg=0,count=0;
-  OP f,h,r,w;
+  OP f,h,r,w,ww;
   vec v,aaa;
   unsigned char d=0;
   unsigned char ff[K+1]={0};
@@ -808,22 +833,24 @@ int main(int argc,char **argv){
     for(i=1;i<K+1;i++)
       ff[i]=0;
   for(i=1;i<K+1;i++)
-    ff[i]=rand()%2;
-    w=setpol(ff,K+1);
-    r=decode(w,f);
+    ff[i]=xor128()%2;
+    ww=setpol(ff,K+1);
+    r=decode(ww,f);
     for(i=0;i<T;i++){
     mm[i]=r.t[i].a;
     //    printf("e=%d %d\n",r.t[i].a,r.t[i].n);
     }
     cnt=0;
     for(i=0;i<T;i++){
-      if(r.t[i].a>0)
+      if(r.t[i].a>0){
 	cnt++;
+	//printf(r.t[i].a,"%u\n");
+      }
     }
     if(cnt==T){
       for(i=0;i<T;i++)
       printf("e=%d %d\n",r.t[i].a,r.t[i].n);
-      printpol(o2v(w));
+      printpol(o2v(ww));
       exit(0);
     }
   }
