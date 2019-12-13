@@ -833,7 +833,7 @@ int main(int argc,char **argv){
     for(i=1;i<K+1;i++)
       ff[i]=0;
   for(i=1;i<K+1;i++)
-    ff[i]=xor128()%DEG;
+    ff[i]=xor128()%2;
     ww=setpol(ff,K+1);
     r=decode(ww,f);
     for(i=0;i<T;i++){
@@ -851,6 +851,7 @@ int main(int argc,char **argv){
       for(i=0;i<T;i++)
       printf("e=%d %d\n",r.t[i].a,r.t[i].n);
       printpol(o2v(ww));
+      printf("陽性確認。よかった。");
       exit(0);
     }
   }
