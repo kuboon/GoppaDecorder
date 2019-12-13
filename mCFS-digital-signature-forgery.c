@@ -632,7 +632,7 @@ return g;
 
 
 void det(unsigned char g[K+1]){
-  OP f,h,w;
+  OP f,h={0},w;
   unsigned char cc[K+1]={0},d[2]={0},HH[K][M]={0};
   int i,j,a,b;
   oterm t={0};
@@ -808,7 +808,7 @@ int main(int argc,char **argv){
     for(i=1;i<K+1;i++)
       ff[i]=0;
   for(i=1;i<K+1;i++)
-    ff[i]=xor128()%2;
+    ff[i]=rand()%2;
     w=setpol(ff,K+1);
     r=decode(w,f);
     for(i=0;i<T;i++){
