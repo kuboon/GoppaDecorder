@@ -851,7 +851,7 @@ int main(int argc,char **argv){
       for(i=0;i<T;i++)
       printf("e=%d %d\n",r.t[i].a,r.t[i].n);
       printpol(o2v(ww));
-      printf("陽性確認。よかった。");
+      printf("陽性確認。よかった。\n");
       exit(0);
     }
   }
