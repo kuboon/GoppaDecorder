@@ -38,6 +38,18 @@ typedef struct {
 
 OP ss={0};
 
+
+
+unsigned long xor128(void)
+{
+  unsigned int a=0;
+  static unsigned long x=123456789,y=362436069,z=521288629,w=88675123;
+    unsigned long t;
+    a=rand();
+    t=(a^(a<<11));a=y;y=z;z=w; return( w=(w^(w>>19))^(t^(t>>8)) );
+}
+
+
 void makeS(){
 int i,j,k;
 
