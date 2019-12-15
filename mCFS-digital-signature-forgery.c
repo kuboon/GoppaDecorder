@@ -124,9 +124,11 @@ vec i2v(unsigned int n){
   vec v;
   int i;
   
-  for(i=0;i<sizeof(n);i++)
+  for(i=0;i<32;i++){
   v.x[i]=n%2;
-
+  n=(n>>1);
+  }
+	
   return v;
 }
 
