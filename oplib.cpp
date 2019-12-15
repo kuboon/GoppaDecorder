@@ -9,17 +9,17 @@
 
 
 #define DEG 256
-#define K 32
+#define K 10
 #define T K/2
 #define E 8
 
 unsigned char c[]={0};
 unsigned char mat[K][M]={0};
-unsigned char g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
-  //  unsigned char g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
+//unsigned char g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+unsigned char g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
 unsigned char syn[K]={0};
 unsigned char BH[K*E][M]={0};
-
+unsigned char S[K*E][K*E]={0};
 //={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}; //={1,5,0,1,7,3,15}; //={1,2,9,4,0,6,4}; // //
 
 
@@ -37,6 +37,18 @@ typedef struct {
 } vec;
 
 OP ss={0};
+
+void makeS(){
+int i,j,k;
+
+for(i=0;i<K*E;i++){
+    for(j=0;j<K*E;j++){
+	S[i][j]=xor128()%2;
+     }
+}
+
+}
+
 
 
 unsigned char oinv(unsigned char a){
