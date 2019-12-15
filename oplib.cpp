@@ -1,23 +1,24 @@
   
-//date      :  20160310
+//date      :  20160310,20191215
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.1)
 
 #include "chash.cpp"
-//#include "ecole.c"
+#include "inv_mat.c"
 
 
 #define DEG 256
 #define K 32
 #define T K/2
-
+#define E 8
 
 unsigned char c[]={0};
 unsigned char mat[K][M]={0};
 unsigned char g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
   //  unsigned char g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
 unsigned char syn[K]={0};
+unsigned char BH[K*E][M]={0};
 
 //={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}; //={1,5,0,1,7,3,15}; //={1,2,9,4,0,6,4}; // //
 
@@ -702,6 +703,29 @@ void det(unsigned char g[K+1]){
   
   //      exit(1);
 }
+
+
+void bdet(unsigned char g[K+1]){
+  int i,j,k,l;
+
+
+  det(g);
+  for(i=0;i<M;i++){
+    for(j=0;j<K;j++){
+      l=mat[j][i];
+      for(k=0;k<E;k++){
+	BH[j*E+k][i]=l%2;
+	l=(l>>1);
+      }
+    }
+  }
+  for(i=0;i<M;i++){
+    for(j=0;j<E*K;j++)
+      printf("%d,",BH[j][i]);
+    printf("\n");
+  }  
+}
+
 
 
 int main(int argc,char **argv){
