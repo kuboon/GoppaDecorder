@@ -62,6 +62,27 @@ for(i=0;i<K*E;i++){
 }
 
 
+void rp(unsigned char* a) {
+        int i, j, x;
+        for (i = 0; i < N; i++) {
+            a[i] = i;
+        }
+        for (i = 0; i < N - 2; i++) {
+            // rand from i+1 to N-1
+            j = (rand() % (N - 1 - i)) + i + 1;
+
+            // swap a[i] and a[j]
+            x = a[j];
+            a[j] = a[i];
+            a[i] = x;
+        }
+        if (a[N - 1] == N - 1) {
+            a[N - 1] = a[N - 2];
+            a[N - 2] = N - 1;
+        }
+
+}
+
 
 unsigned char oinv(unsigned char a){
   int i;
