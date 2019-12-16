@@ -155,6 +155,30 @@ OP v2o(vec a){
 }
 
 
+vec i2v(unsigned int n){
+  vec v;
+  int i;
+  
+  for(i=0;i<32;i++){
+  v.x[i]=n%2;
+  n=(n>>1);
+  }
+	
+  return v;
+}
+
+unsigned int v2i(vec v){
+  unsigned int d=0,i;
+
+  for(i=0;i<32;i++){
+    d=(d<<1);
+    d^=v.x[i];
+  }
+
+  return d;
+}
+
+
 OP init_op(OP f){
   int i;
 
