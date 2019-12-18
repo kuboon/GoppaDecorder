@@ -37,6 +37,7 @@ unsigned short BH[K*E][M]={0};
 //={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}; //={1,5,0,1,7,3,15}; //={1,2,9,4,0,6,4}; // //
 unsigned short P[M][M]={0},inv_P[M][M]={0},S[E*K][E*K]={0},inv_S[E*K][E*K]={0};
 unsigned int nn=0;
+unsigned short A[2040][2040]={0};
 
 
 typedef struct {
@@ -77,6 +78,12 @@ void random_permutation(unsigned short* a){
 
 }
 
+void P2Mat(unsigned short P[2040]){
+int i,j;
+	
+  for(i=0;i<2040;i++)
+      A[i][P[i]]=1;
+}
 
 unsigned short b2B(unsigned short b[E]){
   int i,j,k;
@@ -873,9 +880,31 @@ int main(int argc,char **argv){
   OP f,h,r,w;
   vec v;
   unsigned short d=0;
+unsigned short P[2040]={0};
+unsigned short invP[2040]={0};
+unsigned char PP[2040][2040]={0};
+unsigned char inv_PP[2040][2040]={0};	
 
-
-  srand(clock());
+	
+	random_permutation(P);
+	for(i=0;i<2040;i++)
+	inv_P[P[i]]=i;
+	P2Mat(P);
+	for(i=0;i<2040;i++){
+	for(j=0;j<2040;j++)
+	PP[i][j]=A[i][j];
+	}
+	for(i=0;i<2040;i++){
+	for(i=0;i<2040;i++)
+	A[i][j]=0;
+	}
+	P2Mat(inv_P);
+	for(i=0;i<2040;i++){
+	for(j=0;j<2040;j++)
+	inv_PP[i][j]=A[i][j];
+	}
+	
+	srand(clock());
   //  unsigned short syn[K]={4,12,7,8,11,13};
   //  unsigned short g[K+1]={1,0,0,0,1,0,1};
 
