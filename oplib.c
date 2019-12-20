@@ -1,23 +1,30 @@
-//date      :  20160310,20191218
+//date      :  20160310,20191218,20191220
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
-//status    : now in debugging (ver 0.2)
-// 型をunsigned char から　unsigned short に変えると訂正できなくなる謎。
+//status    : now in debugging (ver 0.3)
+// 型をunsigned char から　unsigned short に変えた。
 
+   
+//date      :  20160310
+//auther    : the queer who thinking about cryptographic future
+//code name : OVP - One Variable Polynomial library with OpenMP friendly
+//status    : now in debugging (ver 0.1)
 
 #include "chash.cpp"
 //#include "ecole.c"
 
 
-#define DEG 256
-#define K 128
+#define DEG 1024
+#define K 32
 #define T K/2
 
 
 unsigned short c[]={0};
 unsigned short mat[K][M]={0};
-unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1};
+//unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1};
   //  unsigned short g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
+unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+//unsigned short g[K+1]={1,0,0,0,1,0,1};
 unsigned short syn[K]={0};
 
 //={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}; //={1,5,0,1,7,3,15}; //={1,2,9,4,0,6,4}; // //
@@ -353,7 +360,7 @@ unsigned short trace(OP f,unsigned short x){
 OP inv(OP a,OP I){
   OP d,x={0},s={0},q={0},r={0},t={0};
 
-  memcpy(d.t,I.t,deg(o2v(I))+1);
+  memcpy(d.t,I.t,sizeof(d.t));
   //  d = I;
   //  x = {0};
   s.t[0].a = 1;
@@ -362,15 +369,15 @@ OP inv(OP a,OP I){
     r=omod(d , a);
     printpol(o2v(ss));
     //    exit(1);
-    memcpy(q.t,ss.t,deg(o2v(ss))+1);
+    memcpy(q.t,ss.t,sizeof(q.t));
     // r = d % a;
-    memcpy(d.t , a.t,deg(o2v(a))+1);
-    memcpy(a.t , r.t,deg(o2v(r))+1);
+    memcpy(d.t , a.t,sizeof(d.t));
+    memcpy(a.t , r.t,sizeof(a.t));
     //a = r;
     t = oadd(x,omul(q , s));
-    memcpy(x.t,s.t,deg(o2v(s))+1);
+    memcpy(x.t,s.t,sizeof(x.t));
     //    x = s;
-    memcpy(s.t,t.t,deg(o2v(t))+1);
+    memcpy(s.t,t.t,sizeof(s.t));
     //    s = t;
   }
   //  gcd = d;  // $\gcd(a, n)$
@@ -613,9 +620,15 @@ return e;
 OP setpol(unsigned short f[],int n){
 OP g;
 vec a;
+ int i;
 
-  memset(c,0,DEG);
-  memcpy(c,f,n);
+ 
+ //  memset(c,0,DEG);
+ for(i=0;i<DEG;i++)
+   c[i]=0;
+  //memcpy(c,f,n);
+  for(i=0;i<n;i++)
+    c[i]=f[i];
   a=Setvec(n);
   g=v2o(a);
 
@@ -625,7 +638,7 @@ return g;
 
 
 void det(unsigned short g[K+1]){
-  OP f,h,w;
+  OP f,h={0},w;
   unsigned short cc[K+1]={0},d[2]={0},HH[K][M]={0};
   int i,j,a,b;
   oterm t={0};
@@ -637,7 +650,9 @@ void det(unsigned short g[K+1]){
 
     
   for(i=0;i<M;i++){
-    memcpy(cc,g,K+1);
+    //memcpy(cc,g,K+1);
+    for(j=0;j<K+1;j++)
+      cc[j]=g[j];
     w=setpol(g,K+1);
 
     a=trace(w,i);
@@ -765,7 +780,7 @@ int main(int argc,char **argv){
       printf("%d,",mat[i][j]);
     printf("\n");
   }
-  //exit(1);
+  // exit(1);
 
   printf("zz=");
   for(i=0;i<K;i++){
@@ -801,3 +816,4 @@ int main(int argc,char **argv){
 
   return 0;
 }
+
