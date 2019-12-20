@@ -2,7 +2,7 @@
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.3)
-// 型をunsigned char から　unsigned short に変えた。
+// 型をunsigned char から　unsigned short に変えた。微分でコアダンプするエラー。
 
    
 //date      :  20160310
