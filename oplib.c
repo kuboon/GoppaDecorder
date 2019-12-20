@@ -1,29 +1,24 @@
 //date      :  20160310,20191218,20191220
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
-//status    : now in debugging (ver 0.3)
-// 型をunsigned char から　unsigned short に変えた。微分でコアダンプするエラー。
+//status    : now in debugging (ver 0.5)
+// 型をunsigned char から　unsigned short に変えた。GF4096まで対応。
 
-   
-//date      :  20160310
-//auther    : the queer who thinking about cryptographic future
-//code name : OVP - One Variable Polynomial library with OpenMP friendly
-//status    : now in debugging (ver 0.1)
 
 #include "chash.cpp"
 //#include "ecole.c"
 
 
-#define DEG 1024
-#define K 32
+#define DEG 4096
+#define K 128
 #define T K/2
 
 
 unsigned short c[]={0};
 unsigned short mat[K][M]={0};
-//unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1};
+unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1};
   //  unsigned short g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
-unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+//unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 //unsigned short g[K+1]={1,0,0,0,1,0,1};
 unsigned short syn[K]={0};
 
@@ -327,7 +322,9 @@ OP opow(OP f,int n){
   int i;
   OP g={0};
 
-  memcpy(g.t,f.t,sizeof(f.t));
+  g=f;
+  //memcpy(g.t,f.t,sizeof(f.t));
+  
   for(i=1;i<n;i++)
     g=omul(g,f);
 
@@ -359,8 +356,11 @@ unsigned short trace(OP f,unsigned short x){
 // invert of polynomial
 OP inv(OP a,OP I){
   OP d,x={0},s={0},q={0},r={0},t={0};
+  int i;
 
-  memcpy(d.t,I.t,sizeof(d.t));
+  d=I;
+  //memcpy(d.t,I.t,sizeof(d.t));
+ 
   //  d = I;
   //  x = {0};
   s.t[0].a = 1;
@@ -369,15 +369,21 @@ OP inv(OP a,OP I){
     r=omod(d , a);
     printpol(o2v(ss));
     //    exit(1);
-    memcpy(q.t,ss.t,sizeof(q.t));
+    q=t;
+    //memcpy(q.t,ss.t,sizeof(q.t));
+
     // r = d % a;
-    memcpy(d.t , a.t,sizeof(d.t));
-    memcpy(a.t , r.t,sizeof(a.t));
-    //a = r;
+    d=a;
+    //memcpy(d.t , a.t,sizeof(d.t));
+    a=r;
+    //memcpy(a.t , r.t,sizeof(a.t));
+     //a = r;
     t = oadd(x,omul(q , s));
-    memcpy(x.t,s.t,sizeof(x.t));
+    x=s;
+    //memcpy(x.t,s.t,sizeof(x.t));
     //    x = s;
-    memcpy(s.t,t.t,sizeof(s.t));
+    s=t;
+    //memcpy(s.t,t.t,sizeof(s.t));
     //    s = t;
   }
   //  gcd = d;  // $\gcd(a, n)$
@@ -405,7 +411,7 @@ OP vx(OP f,OP g){
   OP h={0};
   OP v[K]={0},vv={0};
   oterm a,b;
-  int i;
+  int i,j;
 
   v[0].t[0].a=0;
   v[0].t[1].n=0;
@@ -433,9 +439,11 @@ OP vx(OP f,OP g){
   printpol(o2v(v[i]));
   //  exit(1);
   memset(f.t,0,sizeof(f.t));
-  memcpy(f.t,g.t,sizeof(g.t));
+  f=g;
+  //memcpy(f.t,g.t,sizeof(g.t));
   memset(g.t,0,sizeof(g.t));
-  memcpy(g.t,h.t,sizeof(h.t));
+  g=h;
+  //memcpy(g.t,h.t,sizeof(h.t));
   //  exit(1);
   if(deg(o2v(v[i]))==T){
         printf("-------");
@@ -444,7 +452,8 @@ OP vx(OP f,OP g){
     break;
   }
   }
-  memcpy(vv.t,v[i].t,sizeof(v[i].t));
+  vv=v[i];
+  //memcpy(vv.t,v[i].t,sizeof(v[i].t));
   //      exit(1);
   printf("%d\n",deg(o2v(vv)));
   //    exit(1);
@@ -511,12 +520,17 @@ OP ogcd(OP f,OP g){
 
 
 OP bibun(vec a){
- OP w[DEG]={0},l={0},t={0};
+  OP w[T]={0};
+  OP l={0},t={0};
  int i,j,k,n;
  vec tmp={0};
  
  
  n=deg(a);
+ printf("n=%d\n",n);
+ // exit(1);
+ 
+ 
  for(i=0;i<T;i++){
    w[i].t[0].a=a.x[i];
    w[i].t[0].n=0;
@@ -544,7 +558,9 @@ OP bibun(vec a){
  // printf("%d\n",oinv(2));
  //   exit(1);
  
- return l;
+
+ 
+  return l;
 }
 
 
@@ -648,7 +664,7 @@ void det(unsigned short g[K+1]){
       printf("%d ",cc[i]);
     printf("\n");
 
-    
+    //#pragma omp parallel for 
   for(i=0;i<M;i++){
     //memcpy(cc,g,K+1);
     for(j=0;j<K+1;j++)
