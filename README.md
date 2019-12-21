@@ -24,8 +24,6 @@ GF(4096)上定義されたバイナリGoppa符号を生成できるようにな�
 
 公開鍵のパラメーターは、[n,k,t]=[4096,2040,170]である。
 
-既知のバグ：型をunsigned charからunsigned shortに変えると、正しく復号できなくなる。(oplib.c)
+20191221
 
-型をunsigned charのままで正常に複合できるファイル。(oplib2.c)
-
-型をunsigned shortにして、バイナリ生成行列を出力させる鍵生成まで完成。(oplib.cpp)
+GF4096において、型をunsigned shortにして、バイナリ生成行列を出力させる鍵生成まで完成。(oplib.cpp)
