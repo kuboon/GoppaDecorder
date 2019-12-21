@@ -1,4 +1,4 @@
-//date      :  20160310,20191218,20191220
+//date      :  20160310,20191218,20191220,20191221
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.5)
