@@ -2,27 +2,45 @@
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.5)
-// 型をunsigned char から　unsigned short に変えた。GF4096まで対応。
+// 鍵生成できるようになった。
 
+   
+//date      :  20160310
+//auther    : the queer who thinking about cryptographic future
+//code name : OVP - One Variable Polynomial library with OpenMP friendly
+//status    : now in debugging (ver 0.1)
 
 #include "chash.cpp"
-//#include "ecole.c"
+#include "lu.c"
 
 
 #define DEG 4096
-#define K 128
+#define K 170
 #define T K/2
+#define E 12
+#define D 4096
 
-
-unsigned short c[]={0};
+unsigned char tmp[E*K][M]={0};
+unsigned char pub[E*K][M]={0};
+unsigned char BH[E*K][M]={0};
+unsigned short c[K+1]={0};
 unsigned short mat[K][M]={0};
-unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1};
+unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+		       0,0,0,0,0,0,0,0,0,0,
+		       		       0,0,0,0,0,0,0,0,0,0,
+		       		       0,0,0,0,0,0,0,0,0,0,
+		       		       0,0,0,0,0,0,0,0,0,0,
+		       0,1};
+
   //  unsigned short g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
 //unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 //unsigned short g[K+1]={1,0,0,0,1,0,1};
 unsigned short syn[K]={0};
-
+unsigned char A[M][M]={0};
 //={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}; //={1,5,0,1,7,3,15}; //={1,2,9,4,0,6,4}; // //
+unsigned short P[D]={0};
+unsigned short inv_P[D]={0};
+
 
 
 typedef struct {
@@ -39,6 +57,47 @@ typedef struct {
 } vec;
 
 OP ss={0};
+
+
+
+void random_permutation(unsigned short* a){
+	int i,j,x;
+	for(i = 0; i < D; i++){
+		a[i] = i;
+	}
+	for(i = 0; i < D - 2; i++){
+		j = (rand() % (D-1-i)) + i + 1;
+
+		x = a[j];
+		a[j] = a[i];
+		a[i] = x;
+	}
+	if(a[D-1] == D-1){
+		a[D-1] = a[D-2];
+		a[D-2] = D - 1;
+	}
+
+
+}
+
+
+void P2Mat(unsigned short P[M]){
+int i,j;
+	
+  for(i=0;i<M;i++)
+      A[i][P[i]]=1;
+}
+
+
+unsigned short b2B(unsigned short b[E]){
+  int i,j,k;
+  unsigned short a=0;
+
+  for(i=0;i<E;i++)
+    a^=(b[i]<<i);
+
+  return a;
+}
 
 
 unsigned short oinv(unsigned short a){
@@ -109,6 +168,31 @@ OP v2o(vec a){
   }
 
   return f;
+}
+
+
+vec i2v(unsigned int n){
+  vec v;
+  int i;
+  
+  for(i=0;i<32;i++){
+  v.x[i]=n%2;
+  n=(n>>1);
+  }
+	
+  return v;
+}
+
+
+unsigned int v2i(vec v){
+  unsigned int d=0,i;
+
+  for(i=0;i<32;i++){
+    d=(d<<1);
+    d^=v.x[i];
+  }
+
+  return d;
 }
 
 
@@ -640,7 +724,7 @@ vec a;
 
  
  //  memset(c,0,DEG);
- for(i=0;i<DEG;i++)
+ for(i=0;i<K+1;i++)
    c[i]=0;
   //memcpy(c,f,n);
   for(i=0;i<n;i++)
@@ -664,7 +748,7 @@ void det(unsigned short g[K+1]){
       printf("%d ",cc[i]);
     printf("\n");
 
-    //#pragma omp parallel for 
+   #pragma omp parallel for
   for(i=0;i<M;i++){
     //memcpy(cc,g,K+1);
     for(j=0;j<K+1;j++)
@@ -715,24 +799,142 @@ void det(unsigned short g[K+1]){
   w=oterml(ss,t);
   //  printpol(o2v(w));
   e=o2v(w);
+    #pragma omp parallel for 
   for(j=0;j<K;j++){
     printf("%d,",e.x[K-1-j]);
     HH[j][i]=e.x[K-1-j];
   }
   printf("\n");
-    
+  
   //    if(i==1)
   //  exit(1);
   }
-  for(i=0;i<K;i++){
+    for(i=0;i<K;i++){
+    
     for(j=0;j<M;j++){
-      mat[i][j]=HH[i][j];
-      //      printf("%d,",mat[i][j]);
-    }
+    mat[i][j]=HH[i][j];
+    //      printf("%d,",mat[i][j]);
+  }
     printf("\n");
   }
+    
+    //      exit(1);
+}
   
-  //      exit(1);
+
+void bdet(unsigned short g[K+1]){
+  int i,j,k,l;
+  unsigned char dd[E*K]={0};
+  FILE *ff;
+  
+
+  ff=fopen("H.key","wb");
+  
+  det(g);
+  for(i=0;i<M;i++){
+    for(j=0;j<K;j++){
+      l=mat[j][i];
+      for(k=0;k<E;k++){
+	BH[j*E+k][i]=l%2;
+	l=(l>>1);
+      }
+    }
+  }
+  for(i=0;i<M;i++){
+    for(j=0;j<E*K;j++){
+      printf("%d,",BH[j][i]);
+      dd[j]=BH[j][i];
+    }
+    fwrite(dd,1,E*K,ff);
+    printf("\n");
+  }
+  fclose(ff);
+}
+ 
+
+void pubkeygen(){
+  int i,j,k,l;
+  FILE *fp;
+  unsigned char dd[E*K]={0};
+
+  
+  fp=fopen("pub.key","wb");
+  for(i=0;i<E*K;i++){
+    for(j=0;j<M;j++){
+      for(k=0;k<E*K;k++){
+	tmp[i][j]^=cl[i][k]&BH[k][j];
+      }
+    }
+  }
+  P2Mat(P);
+
+  for(i=0;i<E*K;i++){
+      for(j=0;j<M;j++){
+      for(k=0;k<M;k++)
+      pub[i][j]^=tmp[i][k]&A[k][j];
+    }
+  }
+  for(i=0;i<M;i++){
+    for(j=0;j<E*K;j++){
+     dd[j]=pub[j][i];
+    }
+    fwrite(dd,1,E*K,fp);
+  }
+  fclose(fp);  
+}
+
+
+void Pgen(){
+  unsigned int i,j;
+  FILE *fp;
+  
+
+  fp=fopen("P.key","wb");
+  random_permutation(P);
+  for(i=0;i<D;i++)
+    inv_P[P[i]]=i;
+  fwrite(P,2,M,fp);
+  fclose(fp);
+  
+  for(i=0;i<D;i++)
+    printf("%d,",inv_P[i]);
+  printf("\n");
+  
+
+  fp=fopen("inv_P.key","wb");
+  fwrite(inv_P,2,M,fp);
+  fclose(fp);
+
+}
+
+
+void keygen(){
+  
+  int i;
+  FILE *fp;
+  
+
+
+  makeS();
+  bdet(g);
+  Pgen();
+  pubkeygen();  
+
+
+  
+}
+
+
+void encrypt(){
+
+
+}
+
+
+void decrypt(){
+
+
+
 }
 
 
@@ -764,6 +966,11 @@ int main(int argc,char **argv){
   //  zz[0]=1;
   //zz[1]=2;
   //zz[2]=4;
+
+  keygen();
+  // 
+  //exit(1);
+  
   w=setpol(g,K+1);
   printpol(o2v(w));
   //    exit(1);
@@ -788,9 +995,9 @@ int main(int argc,char **argv){
   */
 
   for(i=0;i<T;i++)
-    zz[i]=i+1;
+    zz[rand()%M]=1;
   
-   det(g);
+  // det(g);
   for(i=0;i<K;i++){
     for(j=0;j<M;j++)
       printf("%d,",mat[i][j]);
@@ -802,7 +1009,7 @@ int main(int argc,char **argv){
   for(i=0;i<K;i++){
     syn[i]=0;
 
-    for(j=0;j<T;j++){
+    for(j=0;j<M;j++){
       printf("%u,",zz[j]);
       syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
     }
