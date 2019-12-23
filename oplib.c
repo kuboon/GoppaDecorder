@@ -1,8 +1,8 @@
-//date      :  20160310,20191218,20191220,20191221
+//date      :  20160310,20191218,20191220,20191221,20191223
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
-//status    : now in debugging (ver 0.5)
-// 鍵生成できるようになった。
+//status    : now in debugging (ver 0.6)
+// gcdの停止条件を修正した。
 
    
 //date      :  20160310
@@ -25,6 +25,8 @@ unsigned char pub[E*K][M]={0};
 unsigned char BH[E*K][M]={0};
 unsigned short c[K+1]={0};
 unsigned short mat[K][M]={0};
+unsigned short m2[K][M]={0};
+
 unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
 		       0,0,0,0,0,0,0,0,0,0,
 		       		       0,0,0,0,0,0,0,0,0,0,
@@ -547,24 +549,13 @@ OP vx(OP f,OP g){
 
 
 vec genrandompol(int n){
-  arrayul u;
   vec x={0};
   int i,j=0,k;
 
-  //  x=init_vec(x);
-  i=n/N+1;
-  while(j<i){
-  seed();
-  u=crand((unsigned short*)password);
-  for(k=0;k<n+1;k++){
-    x.x[j*N+k]=u.d[k];
-    printf("%d,",u.d[k]);
-  }
-  j++;
-  }
-  printf("\n%d\n",deg(x));
-  exit(1);  
-
+  x=init_vec(x);
+  for(i=0;i<K+1;i++)
+    x.x[i]=xor128()%2;
+  
   return x;
 }
 
@@ -594,11 +585,12 @@ OP ogcd(OP f,OP g){
   b=LT(g);
   printf("%dx%d\n",b.a,b.n);
   i++;
-  if(deg(o2v(f))==0 || deg(o2v(g))==0)
+  if(deg(o2v(g))==T-1)
     break;
-   }
-  //  exit(1);
+  }
+  // exit(1);
 
+    
   return h;
 }
 
@@ -640,7 +632,7 @@ OP bibun(vec a){
  printf("l=");
  printpol(o2v(l));
  // printf("%d\n",oinv(2));
- //   exit(1);
+ // exit(1);
  
 
  
@@ -652,7 +644,10 @@ vec chen(OP f){
   vec e={0};
   int i,count=0,n,x=0;
   unsigned short y[256]={0},z;
+  oterm d={0};
+  OP g={0};
 
+  
 //  e=o2v(f);
 n=deg(o2v(f));
   for(x=0;x<M;x++){
@@ -664,6 +659,9 @@ n=deg(o2v(f));
       e.x[count++]=(unsigned short)x;
     //    printf("%d\n",x);
   }
+  printpol(e);
+  // exit(1);
+ 
 
 return e;
 }
@@ -671,37 +669,43 @@ return e;
 
 OP decode(OP f,OP s){
 int i,j,k;
- OP r={0},h={0},w,e={0};
-oterm t1,t2;
+ OP r={0},h={0},w={0},e={0},l={0};
+ oterm t1,t2,d1;
  vec x={0};
 
  printf("in decode\n");
  r=vx(f,s);
  printpol(o2v(r));
- //   exit(1);
-
+ d1=LT(r);
+ d1.n=0;
+ printf("d.a=%d\n",d1.a);
+ //  exit(1);
  x=chen(r);
  for(i=0;i<T;i++)
    printf("x=%d ",x.x[i]);
  printf("\n");
- //    exit(1);
+ printpol(x);
+ //exit(1);
+
  w=bibun(x);
+ //  w=oterml(w,d1);
  printpol(o2v(w));
 printf("@@@@@@@@@\n");
-
+//exit(1);
 
  h=ogcd(f,s);
+ printpol(o2v(h));
  // exit(1);
 t1=LT(r);
 t2.a=t1.a;
 t2.n=0;
-w=oterml(w,t2);
-printpol(o2v(w));
+l=oterml(w,t2);
+printpol(o2v(l));
 printpol(o2v(h));
  printf("%d\n",deg(x)+1);
- //  exit(1);
+ //   exit(1);
 for(i=0;i<deg(x)+1;i++){
-  e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(w,x.x[i])))];
+  e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(l,x.x[i])))];
 e.t[i].n=x.x[i];
 }
 
@@ -709,7 +713,7 @@ e.t[i].n=x.x[i];
    printf("%d ",trace(h,x.x[i]));
  printf("\n");
  for(i=0;i<T;i++)
-   printf("%d ",oinv(trace(w,x.x[i])));
+   printf("%d ",trace(l,x.x[i]));
  printf("\n");
 
  
@@ -812,7 +816,7 @@ void det(unsigned short g[K+1]){
     for(i=0;i<K;i++){
     
     for(j=0;j<M;j++){
-    mat[i][j]=HH[i][j];
+    m2[i][j]=mat[i][j]=HH[i][j];
     //      printf("%d,",mat[i][j]);
   }
     printf("\n");
@@ -822,7 +826,7 @@ void det(unsigned short g[K+1]){
 }
   
 
-void bdet(unsigned short g[K+1]){
+void bdet(){
   int i,j,k,l;
   unsigned char dd[E*K]={0};
   FILE *ff;
@@ -830,7 +834,7 @@ void bdet(unsigned short g[K+1]){
 
   ff=fopen("H.key","wb");
   
-  det(g);
+
   for(i=0;i<M;i++){
     for(j=0;j<K;j++){
       l=mat[j][i];
@@ -914,9 +918,9 @@ void keygen(){
   FILE *fp;
   
 
-
+  det(g);
   makeS();
-  bdet(g);
+  bdet();
   Pgen();
   pubkeygen();  
 
@@ -948,29 +952,53 @@ int main(int argc,char **argv){
 
   unsigned short g2[7]={1,0,9,0,0,6,4};
   //  unsigned short s[K]={0}; //{4,12,7,8,11,13};
-
+  unsigned short jj[T]={0};
   unsigned short ee[10]={1,2,3,4,5,6,7,8,9,10};
   unsigned short zz[M]={0};//{86,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
   //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
-  int y;
+  int y,flg;
   OP f,h,r,w;
   vec v;
   unsigned short d=0;
+  time_t t;
+  
 
   //  unsigned short syn[K]={4,12,7,8,11,13};
   //  unsigned short g[K+1]={1,0,0,0,1,0,1};
 
   //  makegf(M);
   //  makefg(M);
-
-  //  zz[0]=1;
-  //zz[1]=2;
-  //zz[2]=4;
-
-  keygen();
-  // 
-  //exit(1);
+  srand(clock()+time(&t));
+  /*
+  jj[0]=rand()%M;
+  jj[1]=rand()%M;
+  jj[2]=rand()%M;
+  zz[6]=1; //1;
+  zz[11]=10; //1;
+  zz[13]=13; //1;
+  */
+  //keygen();
   
+  //exit(1);
+  //  unsigned short syn[K]={4,12,7,8,11,13};
+  //  unsigned short g[K+1]={1,0,0,0,1,0,1};
+
+  //  makegf(M);
+  //  makefg(M);
+  /*
+  do{
+  flg=0;
+  v=genrandompol(K+1);
+  for(i=0;i<K+1;i++)
+    g[i]=(unsigned short)v.x[i];
+    for(i=0;i<K+1;i++){
+      w=setpol(g,K+1);
+      a=trace(w,i);
+    if(a==0)
+      flg=1;
+      }
+  } while(deg(v)<K || flg==1);
+  */
   w=setpol(g,K+1);
   printpol(o2v(w));
   //    exit(1);
@@ -993,11 +1021,14 @@ int main(int argc,char **argv){
   printf("\n");
   //exit(1);
   */
-
-  for(i=0;i<T;i++)
-    zz[rand()%M]=1;
   
-  // det(g);
+  for(i=0;i<T;i++)
+    jj[i]=xor128()%M;
+  for(i=0;i<T;i++)
+    zz[jj[i]]=1;
+  
+  
+   det(g);
   for(i=0;i<K;i++){
     for(j=0;j<M;j++)
       printf("%d,",mat[i][j]);
@@ -1020,6 +1051,9 @@ int main(int argc,char **argv){
   
   f=setpol(syn,K);
   printpol(o2v(f));
+  for(l=0;l<T;l++)
+    printf("%d,",jj[l]);
+  printf("\n");
   //  exit(1);
   r=decode(w,f);
   
@@ -1027,6 +1061,11 @@ int main(int argc,char **argv){
     mm[i]=r.t[i].a;
     printf("e=%d %d\n",r.t[i].a,r.t[i].n);
   }
+  /*
+  for(i=0;i<T;i++)
+    printf("%d,",jj[i]);
+  printf("\n");
+  */
   /*
   fwrite(mm,1,T,fq);
   }
@@ -1039,4 +1078,3 @@ int main(int argc,char **argv){
 
   return 0;
 }
-
