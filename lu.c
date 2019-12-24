@@ -2,16 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 
+//#define D 4096
+#define F 2040
 
-#define N 2040
-
-unsigned char a[N][N]={0};
-unsigned char cc[N][N]={0};
-unsigned char bb[N][N]={0};
-
+unsigned char a[F][F]={0};
+unsigned char cc[F][F]={0};
+unsigned char bb[F][F]={0};
+unsigned char cl[F][F]={0};
+  
   //{{0,1,0,1},{1,0,0,1},{0,0,1,0},{0,0,1,1}};
 //{{0,1,1,1},{1,0,1,1},{0,0,1,1},{1,0,0,1}}; //{{1,2,0,-1},{-1,1,2,0},{2,0,1,1},{1,-2,-1,1}}; //入力用の配列
-unsigned char inv_a[N][N]; //ここに逆行列が入る
+unsigned char inv_a[F][F]; //ここに逆行列が入る
 unsigned char buf; //一時的なデータを蓄える
 int i,j,k; //カウンタ
 int n=2040;  //配列の次数
@@ -31,48 +32,48 @@ void g2(){
 
 
   
-  for(i=0;i<N;i++){
+  for(i=0;i<F;i++){
     a[i][i]=1;
     bb[i][i]=1;
   }
-  for(i=0;i<N;i++){
-    for(j=i+1;j<N;j++){
+  for(i=0;i<F;i++){
+    for(j=i+1;j<F;j++){
       a[i][j]=xor128()%2;
       
     }  
   }
   /*
-  for(i=0;i<N;i++){
-    for(j=0;j<N;j++)
+  for(i=0;i<F;i++){
+    for(j=0;j<F;j++)
       printf("%d,",a[i][j]);
     printf("\n");
   }
   printf("\n");
   */
-  for(i=0;i<N;i++){
-    for(j=i+1;j<N;j++){
+  for(i=0;i<F;i++){
+    for(j=i+1;j<F;j++){
       bb[j][i]=xor128()%2;
     }
   }
   /*  
-  for(i=0;i<N;i++){
-    for(j=0;j<N;j++)
+  for(i=0;i<F;i++){
+    for(j=0;j<F;j++)
       printf("%d,",bb[i][j]);
     printf("\n");
   }
   printf("\n");
   //    exit(1);
   */
-  for(i=0;i<N;i++){
-    for(j=0;j<N;j++){
-      for(k=0;k<N;k++){
+  for(i=0;i<F;i++){
+    for(j=0;j<F;j++){
+      for(k=0;k<F;k++){
 	cc[i][j]^=bb[i][k]&a[k][j];
       }
     }
   }
   /*
-  for(i=0;i<N;i++){
-    for(j=0;j<N;j++)
+  for(i=0;i<F;i++){
+    for(j=0;j<F;j++)
       printf("%d,",cc[i][j]);
     printf("\n");
   }
@@ -81,15 +82,18 @@ void g2(){
 }
 
 
-void main(){
+void makeS(){
   int i,j,k,l,ii;
-  unsigned char b[N][N]={0};
-  unsigned char c[N][N]={0};
+  unsigned char b[F][F]={0};
+  unsigned char dd[2040]={0};
   unsigned int flg=0,count=0;
   time_t t;
+  FILE *fq;
+
+
 
   
-  while(flg<N || count!=N*N-N){
+  while(flg<F || count!=F*F-F){
     
     srand(clock()+time(&t));
 
@@ -98,8 +102,8 @@ void main(){
     //  exit(1);
 
     /*
-  for(i=0;i<N;i++){
-    for(j=0;j<N;j++)
+  for(i=0;i<F;i++){
+    for(j=0;j<F;j++)
       a[i][j]=xor128()%2;
   }
     */
@@ -107,7 +111,9 @@ void main(){
   for(i=0;i<n;i++){
     for(j=0;j<n;j++){
       //  printf("%d,",a[i][j]);
-      c[i][j]=cc[i][j];
+      cl[i][j]=cc[i][j];
+      dd[j]=cc[i][j];
+
     }
     //  printf("\n");
   }
@@ -170,7 +176,7 @@ for(i=0;i<n;i++){
  }
  // printf("@i=%d\n",i);
  }
-  
+
 //  exit(1);
  for(i=1;i<n;i++){
    for(k=0;k<i;k++){
@@ -182,6 +188,7 @@ for(i=0;i<n;i++){
 	 //}
      }
      }
+
      /*  
    printf("i=%d\n",i);
    for(l=0;l<n;l++){
@@ -197,6 +204,7 @@ for(i=0;i<n;i++){
      */
    }
  }
+
  
  /*
  for(i=0;i<n;i++){
@@ -205,7 +213,8 @@ for(i=0;i<n;i++){
    printf("\n");
  }
  //   exit(1);
- 
+ */
+
 //逆行列を出力
 for(i=0;i<n;i++){
  for(j=0;j<n;j++){
@@ -213,16 +222,17 @@ for(i=0;i<n;i++){
  }
  printf("\n");
  }
- */
+ 
 // exit(1);
 //検算
  for(i=0;i<n;i++){
    for(j=0;j<n;j++){
      for(k=0;k<n;k++){
-       b[i][j]^=(c[i][k]&inv_a[k][j]);
+       b[i][j]^=(cl[i][k]&inv_a[k][j]);
      }
    }
  }
+
  /*
  for(i=0;i<n;i++){
    for(j=0;j<n;j++)
@@ -231,7 +241,7 @@ for(i=0;i<n;i++){
   
  }
  */
- for(i=0;i<N;i++){
+ for(i=0;i<F;i++){
    //   printf("%d",b[i][i]);
    //printf("==\n");
   if(b[i][i]==1){
@@ -247,26 +257,54 @@ for(i=0;i<n;i++){
        count++;
    }   
  }
+  
  //
- if(flg==N && count==N*N-N){
-  for(i=0;i<n;i++){
-    for(j=0;j<n;j++)
-      printf("%d",c[i][j]);
+ if(flg==F && count==F*F-F){
+  for(i=0;i<2040;i++){
+    for(j=0;j<2040;j++){
+      printf("%d",cl[i][j]);
+      dd[j]=cl[i][j];
+    }
+  
     printf("\n");
   }
+  
+
+  //exit(1);
   for(i=0;i<n;i++){
-    for(j=0;j<N;j++)
+    for(j=0;j<F;j++){
       printf("%d,",inv_a[i][j]);
+      dd[j]=inv_a[i][j];
+    }
     printf("\n");
   }
+ 
   for(i=0;i<n;i++){
-    for(j=0;j<N;j++)
+    for(j=0;j<F;j++)
       printf("%d, ",b[i][j]);
     printf("\n");
   }
-    exit(1);   
+  //  exit(1);   
  }
   
- }
+  }
+  fq=fopen("S.key","wb");
+  for(i=0;i<n;i++){
+    for(j=0;j<n;j++)
+      dd[j]=cl[i][j];
+    fwrite(dd,1,n,fq);
+    
+  }
+  fclose(fq);
 
+  fq=fopen("inv_S.key","wb");
+  for(i=0;i<n;i++){
+    for(j=0;j<n;j++)
+      dd[j]=inv_a[i][j];
+    fwrite(dd,1,n,fq);  
+  }
+  fclose(fq);
+
+  
 }
+
