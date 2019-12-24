@@ -1117,10 +1117,23 @@ int main(int argc,char **argv){
   //exit(1);
   */
   
+  j=0;
+  while(j<T){
+    flg=0;
+    if(jj[j]==0){
+      l=xor128()%M;
+      for(k=0;k<T;k++){
+	if(l==jj[k])
+	  flg=1;
+      }
+      if(flg==0){
+	jj[j]=l;
+	j++;
+      }
+    }
+  }
   for(i=0;i<T;i++)
-    jj[i]=xor128()%M;
-  for(i=0;i<T;i++)
-    zz[jj[i]]=1;
+    zz[jj[i]]=jj[i];
   
   
    det(g);
