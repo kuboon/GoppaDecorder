@@ -1,3 +1,6 @@
+//学校で習った知識を使ったら問題解決できました。大学行っといてよかったｗ
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
