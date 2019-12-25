@@ -1,4 +1,7 @@
 /* generate GF(2^n) using irreducible polynomial */
+//ゼフ対数表を作るためのプログラム。正規基底を生成します。
+
+
 #include <stdio.h>
 
 #define O 256
