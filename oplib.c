@@ -835,18 +835,16 @@ vec a;
 return g;
 }
 
-
 void det(unsigned short g[K+1]){
   OP f,h={0},w;
-  unsigned short cc[K+1]={0},d[2]={0},HH[K][M]={0},dd[K]={0};
+  unsigned short cc[K+1]={0},d[2]={0},HH[K][M]={0};
   int i,j,a,b;
   oterm t={0};
   vec e;
-
-
-  //for(i=0;i<K+1;i++)
-      //  printf("%d ",cc[i]);
-  //  printf("\n");
+  
+    for(i=0;i<K+1;i++)
+      printf("%d ",cc[i]);
+    printf("\n");
 
    #pragma omp parallel for
   for(i=0;i<M;i++){
@@ -858,24 +856,24 @@ void det(unsigned short g[K+1]){
     a=trace(w,i);
 
     
-    //printf("a=");
-    //printf("%d ",gf[oinv(a)]);
+    printf("a=");
+    printf("%d ",gf[oinv(a)]);
    
-    //printf("\n");
+  printf("\n");
 
   
-    //for(j=0;j<K+1;j++)
-    // printf("%d ",cc[j]);
-    //printf("\n");
+  for(j=0;j<K+1;j++)
+    printf("%d ",cc[j]);
+  printf("\n");
     
   cc[K]^=a;
   f=setpol(cc,K+1);
-    //printpol(o2v(f));
+    printpol(o2v(f));
   //  exit(1);
      
-  //for(j=0;j<K+1;j++)
-  //printf("%d ",cc[j]);
-  //printf("\n");
+  for(j=0;j<K+1;j++)
+    printf("%d ",cc[j]);
+  printf("\n");
     
   //    exit(1);
   //d[0]=i;
@@ -888,7 +886,7 @@ void det(unsigned short g[K+1]){
     memset(ss.t,0,DEG);
   omod(f,h);
 
-  //  //printpol(o2v(ss));
+  //  printpol(o2v(ss));
   //  exit(1);
 
   b=oinv(a);
@@ -897,11 +895,11 @@ void det(unsigned short g[K+1]){
   //  printf("t=%d\n",t.a);
   //  exit(1);
   w=oterml(ss,t);
-  //  //printpol(o2v(w));
+  //  printpol(o2v(w));
   e=o2v(w);
     #pragma omp parallel for 
   for(j=0;j<K;j++){
-    // printf("%d,",e.x[K-1-j]);
+    printf("%d,",e.x[K-1-j]);
     HH[j][i]=e.x[K-1-j];
   }
   printf("\n");
@@ -917,9 +915,11 @@ void det(unsigned short g[K+1]){
   }
     printf("\n");
   }
+    
     //      exit(1);
 }
-  
+
+
 
 void bdet(){
   int i,j,k,l;
