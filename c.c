@@ -576,22 +576,17 @@ OP vx(OP f,OP g){
   //memcpy(g.t,h.t,sizeof(h.t));
   //  exit(1);
   
-  if(deg(o2v(v[i]))==T){
+  if(deg(o2v(v[i]))<=T){
     vv=v[i];  
     //       break;
-  }
+  }else {break;}
   //  i++;
-       }
-
-  printpol(o2v(v[i-1]));
-  vv=v[i-1];
-  //  exit(1);
-  //memcpy(vv.t,v[i].t,sizeof(v[i].t));
-  //      exit(1);
-  printf("%d\n",deg(o2v(vv)));
-  //    exit(1);
-  
-  return vv;
+    }
+    
+    printf("%d\n",deg(o2v(vv)));
+    //    exit(1);
+    
+    return vv;
 }
 
 
@@ -744,11 +739,12 @@ int i,j,k;
    printf("baka12\n");
     exit(1);
  }
+ printf("r=%d\n",deg(o2v(r)));
  x=chen(r);
  for(i=0;i<T;i++)
    printf("x=%d ",x.x[i]);
  printf("\n");
- exit(1);
+ // exit(1);
  if(deg(x)==0){
    printf("baka5\n");
    exit(1);
@@ -1223,4 +1219,5 @@ int main(int argc,char **argv){
 
   return 0;
 }
+
 
