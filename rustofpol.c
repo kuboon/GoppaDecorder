@@ -5,7 +5,7 @@
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.6)
 // gcdの停止条件を修正した。vxの停止条件を修正した。
-
+//いじっているうちに何だか解らなくなったコード20191227
    
 //date      :  20160310
 //auther    : the queer who thinking about cryptographic future
