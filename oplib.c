@@ -3,6 +3,11 @@
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.8)
 // gcdの停止条件を修正した。vxの停止条件を修正した。
+//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
+//auther    : the queer who thinking about cryptographic future
+//code name : OVP - One Variable Polynomial library with OpenMP friendly
+//status    : now in debugging (ver 0.8)
+// gcdの停止条件を修正した。vxの停止条件を修正した。
 //重複解の存在を無視して、エラー値を全て1としたときに、エラー位置をランダムな入力値として処理する仕様で実装。
 //エラーが出てこないように修正した。
    
@@ -933,14 +938,14 @@ l=oterml(w,t2);
      exit(1);
    }
  }
- if(deg(o2v(l))<T-1){
+ if(deg(o2v(l))<T-1 || deg(o2v(h))<T-2){
      printf("deg(l)<T-1 %d",deg(o2v(l)));
      exit(1);
    }
-	  if(deg(o2v(h))<T-2 || deg(o2v(l))<T-1){
-		  printf("low rider\n");
-	    exit(1);
-	     }
+ if(deg(o2v(h))!=deg(o2v(bibun(o2v(l))))){
+   printf("low rider\n");
+   exit(1);
+ }
  // exit(1);
  printf("%d\n",deg(x)+1);
  //    exit(1);
@@ -1336,7 +1341,7 @@ int main(int argc,char **argv){
   zz[11]=10; //1;
   zz[13]=13; //1;
   */
-  /*
+  /*  
   zz[1]=1;
   zz[47]=47;
   zz[119]=119;
@@ -1422,7 +1427,7 @@ int main(int argc,char **argv){
   zz[4041]=4041;
   zz[4057]=4057;
   zz[4075]=4075;
-  */
+  */  
 
   //keygen();
   //    key2();
@@ -1478,7 +1483,7 @@ int main(int argc,char **argv){
   printf("\n");
   //exit(1);
   */
-
+  
   j=0;
   while(j<T){
     flg=0;
@@ -1496,8 +1501,8 @@ int main(int argc,char **argv){
     
   }
   for(i=0;i<T;i++)
-    zz[jj[i]]=1;
-
+    zz[jj[i]]=jj[i];
+  
   
   // det(g);
      
