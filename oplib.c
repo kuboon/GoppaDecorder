@@ -933,39 +933,14 @@ l=oterml(w,t2);
      exit(1);
    }
  }
- if(deg(o2v(l))<84){
+ if(deg(o2v(l))<T-1){
      printf("deg(l)<T-1 %d",deg(o2v(l)));
      exit(1);
    }
- //  if(deg(o2v(l))==deg(o2v(h))){
-   printf("\nin baite\n");
-     a=LT(l);
-     b=LT(h);
-     printf("%d %d//////////////////\n",a.a,b.a);
-     //    exit(1);
-          if(a.a!=b.a){
-	    printf("!!!!!!!!!!!!%d %d\n",a.a,b.a);
-       d=equ(a.a,b.a);
-       //d=gf[mlt(fg[a.a],d)];
-       a.n=0;
-       a.a=d;
-       printf("%d %d\n",gf[mlt(fg[b.a],fg[d])],a.a);
-       //exit(1);
-       l=oterml(l,a);
-       a=LT(l);
-       b=LT(h);
-       // if(a.a!=b.a){
-       printf("ab===========%d %d\n",a.a,b.a);
-       printf("baka");
-       //       exit(1);
-	  
-       printpol(o2v(l));
-       printpol(o2v(h));
-       //       exit(1);
-	  }
-	  if(deg(o2v(h))!=deg(o2v(l)))
+	  if(deg(o2v(h))<T-2 || deg(o2v(l))<T-1){
+		  printf("low rider\n");
 	    exit(1);
-	  //    }
+	     }
  // exit(1);
  printf("%d\n",deg(x)+1);
  //    exit(1);
