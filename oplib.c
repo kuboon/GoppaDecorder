@@ -1,10 +1,10 @@
-//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225
+//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.8)
 // gcdの停止条件を修正した。vxの停止条件を修正した。
 //重複解の存在を無視して、エラー値を全て1としたときに、エラー位置をランダムな入力値として処理する仕様で実装。
-
+//エラーが出てこないように修正した。
    
 //date      :  20160310
 //auther    : the queer who thinking about cryptographic future
@@ -122,11 +122,10 @@ unsigned short equ(unsigned short a,unsigned short b){
   int i;
 
   for(i=0;i<M;i++){
-    if(gf[mlt(fg[a],fg[i])]==b){
-      return i;
-    }
+    if(gf[mlt(fg[a],fg[i])]==b)
+      break;
   }
-
+  return i;
 }
 
 
@@ -861,9 +860,11 @@ return e;
 OP decode(OP f,OP s){
 int i,j,k;
  OP r={0},h={0},w={0},e={0},l={0};
- oterm t1,t2,d1;
+ oterm t1,t2,d1,a,b;
  vec x={0};
-
+ unsigned short d=0;
+ 
+ 
  printf("in decode\n");
  r=vx(f,s);
  printpol(o2v(r));
@@ -912,23 +913,79 @@ l=oterml(w,t2);
    exit(1);
  }
 */
-printpol(o2v(l));
-printpol(o2v(h));
+ printf("\n");
+ for(i=0;i<T;i++){
+   printf("%d ",trace(l,x.x[i]));
+   if(trace(l,x.x[i])==0){
+     printpol(o2v(l));
+     printpol(o2v(h));
+     printf("l=%d is 0",i);
+     exit(1);
+   }
+ }
+ printf("\n\n");
+ for(i=0;i<T;i++){
+   printf("%d ",trace(h,x.x[i]));
+   if(trace(h,x.x[i])==0){
+     printpol(o2v(l));
+     printpol(o2v(h));
+     printf("h=%d is 0",i);
+     exit(1);
+   }
+ }
+ if(deg(o2v(l))<84){
+     printf("deg(l)<T-1 %d",deg(o2v(l)));
+     exit(1);
+   }
+ //  if(deg(o2v(l))==deg(o2v(h))){
+   printf("\nin baite\n");
+     a=LT(l);
+     b=LT(h);
+     printf("%d %d//////////////////\n",a.a,b.a);
+     //    exit(1);
+          if(a.a!=b.a){
+	    printf("!!!!!!!!!!!!%d %d\n",a.a,b.a);
+       d=equ(a.a,b.a);
+       //d=gf[mlt(fg[a.a],d)];
+       a.n=0;
+       a.a=d;
+       printf("%d %d\n",gf[mlt(fg[b.a],fg[d])],a.a);
+       //exit(1);
+       l=oterml(l,a);
+       a=LT(l);
+       b=LT(h);
+       // if(a.a!=b.a){
+       printf("ab===========%d %d\n",a.a,b.a);
+       printf("baka");
+       //       exit(1);
+	  
+       printpol(o2v(l));
+       printpol(o2v(h));
+       //       exit(1);
+	  }
+	  if(deg(o2v(h))!=deg(o2v(l)))
+	    exit(1);
+	  //    }
+ // exit(1);
  printf("%d\n",deg(x)+1);
  //    exit(1);
 for(i=0;i<deg(x)+1;i++){
   //  if(x.x[i]>0){
   e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(l,x.x[i])))];
 e.t[i].n=x.x[i];
+// printf("e=%d %d\n",e.t[i].a,e.t[i].n);
 // }
  }
- for(i=0;i<T;i++){
-   printf("%d ",trace(h,x.x[i]));
- }
+/*
+ for(i=0;i<T;i++)
+   printf("%d ",gf[trace(h,x.x[i])]);
  printf("\n");
- for(i=0;i<T;i++){
-   printf("%d ",trace(l,x.x[i]));
- }
+ for(i=0;i<T;i++)
+   printf("%d ",gf[oinv(trace(l,x.x[i]))]);
+ printf("\n");
+*/
+//exit(1);
+
  /*
    if(x.x[i]==0){
      printf("baka!");
@@ -1304,7 +1361,7 @@ int main(int argc,char **argv){
   zz[11]=10; //1;
   zz[13]=13; //1;
   */
-  
+  /*
   zz[1]=1;
   zz[47]=47;
   zz[119]=119;
@@ -1390,7 +1447,7 @@ int main(int argc,char **argv){
   zz[4041]=4041;
   zz[4057]=4057;
   zz[4075]=4075;
-  
+  */
 
   //keygen();
   //    key2();
@@ -1446,7 +1503,7 @@ int main(int argc,char **argv){
   printf("\n");
   //exit(1);
   */
-  /*
+
   j=0;
   while(j<T){
     flg=0;
@@ -1464,8 +1521,8 @@ int main(int argc,char **argv){
     
   }
   for(i=0;i<T;i++)
-    zz[jj[i]]=jj[i];
-  */  
+    zz[jj[i]]=1;
+
   
   // det(g);
      
@@ -1541,5 +1598,6 @@ int main(int argc,char **argv){
 
   return 0;
 }
+
 
 
