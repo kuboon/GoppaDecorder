@@ -924,7 +924,7 @@ l=oterml(w,t2);
    if(trace(l,x.x[i])==0){
      printpol(o2v(l));
      printpol(o2v(h));
-     printf("l=%d is 0",i);
+     printf("l=%d is 0 deg(x)=%d\n",i,deg(x));
      exit(1);
    }
  }
@@ -935,7 +935,7 @@ l=oterml(w,t2);
      printpol(o2v(l));
      printpol(o2v(h));
      if(deg(x)<T-1){
-	 printf("h=%d %d is 0 too few error %d\n",i,x.x[i],deg(x));
+	 printf("h=%d %d is 0 too few error deg(x)=%d\n",i,x.x[i],deg(x));
 	 exit(1);
      }
    }
@@ -968,7 +968,7 @@ for(i=0;i<deg(x)+1;i++){
   //  if(x.x[i]>0){
   e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(l,x.x[i])))];
 e.t[i].n=x.x[i];
- printf("e=%d %d %d\n",e.t[i].a,e.t[i].n,deg(x));
+// printf("e=%d %d %d\n",e.t[i].a,e.t[i].n,deg(x));
 // }
  }
 /*
@@ -979,7 +979,7 @@ e.t[i].n=x.x[i];
    printf("%d ",gf[oinv(trace(l,x.x[i]))]);
  printf("\n");
 */
-exit(1);
+//exit(1);
 
  /*
    if(x.x[i]==0){
@@ -1356,7 +1356,7 @@ int main(int argc,char **argv){
   zz[11]=10; //1;
   zz[13]=13; //1;
   */
-  /*    
+  /* 
   zz[1]=1;
   zz[47]=47;
   zz[119]=119;
@@ -1516,8 +1516,8 @@ int main(int argc,char **argv){
     
   }
   for(i=0;i<T;i++)
-    zz[jj[i]]=1;
-    
+    zz[jj[i]]=jj[i];
+  
   
   //det(g);
      
@@ -1573,7 +1573,7 @@ int main(int argc,char **argv){
       o1++;
   }
   printf("err=%d\n",o1);
-  printf("error value is all 1. and I did NOT implementation at Duplicate solution!\n");
+
   //  printpol(o2v(hh));
   //printf("xd=%d\n",trace(hh,1));
   /*
