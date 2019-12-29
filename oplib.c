@@ -816,7 +816,7 @@ OP bibun(vec a){
     }
     */
  }
- printf("l=");
+ // printf("l=");
  //printpol(o2v(l));
  /*
  if(deg(o2v(l))==0){
@@ -934,26 +934,41 @@ l=oterml(w,t2);
    if(trace(h,x.x[i])==0){
      printpol(o2v(l));
      printpol(o2v(h));
-     printf("h=%d is 0",i);
-     exit(1);
+     if(deg(x)<T-1){
+	 printf("h=%d %d is 0 too few error %d\n",i,x.x[i],deg(x));
+	 exit(1);
+     }
    }
  }
- if(deg(o2v(l))<T-1 || deg(o2v(h))<T-2){
-     printf("deg(l)<T-1 %d",deg(o2v(l)));
+ if(deg(x)<T-1){
+     printf("deg(x)<T-1 %d\n",deg(x));
      exit(1);
    }
- if(deg(o2v(h))!=deg(o2v(bibun(o2v(l))))){
-   printf("low rider\n");
-   exit(1);
+ if(deg(o2v(l))<T-1){
+   printf("deg(l)<T-1 %d",deg(o2v(l)));
+          exit(1);
+ }else if( deg(o2v(h))<T-2){
+      printf("deg(h)<T-2 %d",deg(o2v(h)));
+      //  exit(1);
+ }
+ j=deg(o2v(bibun(o2v(l))));
+ if(deg(o2v(h))!=j){
+   if(deg(o2v(h))<j){
+     printf("h<deg(l')\n");
+   }else{
+     printf("low rider\n");
+   }
+
  }
  // exit(1);
  printf("%d\n",deg(x)+1);
+ 
  //    exit(1);
 for(i=0;i<deg(x)+1;i++){
   //  if(x.x[i]>0){
   e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(l,x.x[i])))];
 e.t[i].n=x.x[i];
-// printf("e=%d %d\n",e.t[i].a,e.t[i].n);
+ printf("e=%d %d %d\n",e.t[i].a,e.t[i].n,deg(x));
 // }
  }
 /*
@@ -964,7 +979,7 @@ e.t[i].n=x.x[i];
    printf("%d ",gf[oinv(trace(l,x.x[i]))]);
  printf("\n");
 */
-//exit(1);
+exit(1);
 
  /*
    if(x.x[i]==0){
@@ -1341,7 +1356,7 @@ int main(int argc,char **argv){
   zz[11]=10; //1;
   zz[13]=13; //1;
   */
-  /*  
+  /*    
   zz[1]=1;
   zz[47]=47;
   zz[119]=119;
@@ -1501,10 +1516,10 @@ int main(int argc,char **argv){
     
   }
   for(i=0;i<T;i++)
-    zz[jj[i]]=jj[i];
+    zz[jj[i]]=1;
+    
   
-  
-  // det(g);
+  //det(g);
      
   fq=fopen("H.key","rb");
 
