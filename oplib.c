@@ -883,7 +883,8 @@ int i,j,k;
  printf("\n");
  // exit(1);
  if(deg(x)<T-1){
-   printf("baka5\n");
+   printpol(x);
+   printf("baka5 deg(x)<T-1\n");
    exit(1);
  }
    
@@ -1595,6 +1596,5 @@ int main(int argc,char **argv){
 
   return 0;
 }
-
 
 
