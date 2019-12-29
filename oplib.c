@@ -882,7 +882,7 @@ int i,j,k;
    printf("x=%d ",x.x[i]);
  printf("\n");
  // exit(1);
- if(deg(x)==0){
+ if(deg(x)<T-1){
    printf("baka5\n");
    exit(1);
  }
@@ -919,6 +919,7 @@ l=oterml(w,t2);
  }
 */
  printf("\n");
+ /*
  for(i=0;i<T;i++){
    printf("%d ",trace(l,x.x[i]));
    if(trace(l,x.x[i])==0){
@@ -960,6 +961,7 @@ l=oterml(w,t2);
    }
 
  }
+ */
  // exit(1);
  printf("%d\n",deg(x)+1);
  
