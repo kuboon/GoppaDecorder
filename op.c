@@ -1325,7 +1325,7 @@ int main(int argc,char **argv){
   zz[11]=10; //1;
   zz[13]=13; //1;
   */
-  /*  
+  
   zz[1]=1;
   zz[47]=47;
   zz[119]=119;
@@ -1430,14 +1430,15 @@ int main(int argc,char **argv){
     v=o2v(aa[0]);
     f=bibun(v);
   printpol(o2v(f));
-  */
-  /*
-  exit(1);
+  
+  
+  //  exit(1);
   v=chen(aa[0]);
   for(i=0;i<T;i++)
-    printf("%d\n",v.x[i]);
-  */
-  //  exit(1);
+    printf("x=%d ",v.x[i]);
+  printf("\n");
+  
+  exit(1);
   
   //keygen();
   //    key2();
@@ -1568,6 +1569,7 @@ int main(int argc,char **argv){
       o1++;
   }
   printf("err=%d\n",o1);
+  printf("error value is all 1. and I did NOT implementation at Duplicate solution!\n");
   //  printpol(o2v(hh));
   //printf("xd=%d\n",trace(hh,1));
   /*
