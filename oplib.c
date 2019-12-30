@@ -1,3 +1,8 @@
+//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
+//auther    : the queer who thinking about cryptographic future
+//code name : OVP - One Variable Polynomial library with OpenMP friendly
+//status    : now in debugging (ver 0.8)
+// gcdの停止条件を修正した。vxの停止条件を修正した。
 //date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229,20191230
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
@@ -954,16 +959,9 @@ for(i=0;i<deg(x)+1;i++){
   //  if(x.x[i]>0){
   e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(l,x.x[i])))];
 e.t[i].n=x.x[i];
- printf("e=%d %d %d\n",e.t[i].a,e.t[i].n,deg(x));
+
 // }
  }
-
- for(i=0;i<T;i++)
-   printf("%d ",gf[trace(h,x.x[i])]);
- printf("\n");
- for(i=0;i<T;i++)
-   printf("%d ",gf[oinv(trace(l,x.x[i]))]);
- printf("\n");
 
    for(i=0;i<T;i++)
     if(gf[trace(h,x.x[i])]==0)
@@ -974,7 +972,7 @@ e.t[i].n=x.x[i];
       printf("l=0");
   printf("\n");
 
- exit(1);
+  // exit(1);
 
  /*
    if(x.x[i]==0){
@@ -1436,7 +1434,7 @@ int main(int argc,char **argv){
   printf("\n");
   //exit(1);
   */
-   
+  
   j=0;
   while(j<T){
     flg=0;
@@ -1517,7 +1515,7 @@ int main(int argc,char **argv){
   
   for(i=0;i<T;i++){
     mm[i]=r.t[i].a;
-    printf("e=%d %d\n",r.t[i].a,r.t[i].n);
+     printf("e=%d %d\n",r.t[i].a,r.t[i].n);
     if(r.t[i].a==0 || r.t[i].n==0){
       printf("------------------\n");
       
