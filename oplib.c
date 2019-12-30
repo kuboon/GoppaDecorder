@@ -1436,7 +1436,7 @@ int main(int argc,char **argv){
   printf("\n");
   //exit(1);
   */
-  /*  
+   
   j=0;
   while(j<T){
     flg=0;
@@ -1454,7 +1454,7 @@ int main(int argc,char **argv){
   }
   for(i=0;i<T;i++)
     zz[jj[i]]=1;
-  */
+  
   
   // det(g);
 
