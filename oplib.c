@@ -1529,22 +1529,6 @@ int main(int argc,char **argv){
   }
   printf("err=%d\n",o1);
 
-  //  printpol(o2v(hh));
-  //printf("xd=%d\n",trace(hh,1));
-  /*
-  for(i=0;i<T;i++)
-    printf("%d,",jj[i]);
-  printf("\n");
-  */
-  /*
-  fwrite(mm,1,T,fq);
-  }
-  */
-//  fclose(fp);
-//  fclose(fq);
-  
-  // h2g(mat);
-  //  exit(1);
 
   return 0;
 }
