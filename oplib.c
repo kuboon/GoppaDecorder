@@ -1,4 +1,4 @@
-///date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
+//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.8)
@@ -136,7 +136,6 @@ int deg(vec a){
   int i,n=0;
 
   for(i=0;i<DEG;i++){
-//        printf("%d[%d],",a.x[i],i);
     if(a.x[i]>0)
       n=i;
   }
@@ -146,7 +145,7 @@ int deg(vec a){
   }else{
     return 0;
   }
-//exit(1);
+
 }
 
 
@@ -159,7 +158,6 @@ vec o2v(OP f){
     if(f.t[i].a>0)
       a.x[f.t[i].n]=f.t[i].a;
   }
-  //  exit(1);
 
   return a;
 }
@@ -236,14 +234,12 @@ vec v={0};
  for(i=0;i<n;i++)
    printf("%d,",c[i]);
  printf("\n");
- //  exit(1);
 
  for(i=0;i<n;i++){
   v.x[n-1-i]=c[i];
   printf("%d,",c[n-1-i]);
  }
  printf("\n");
- //   exit(1);
  
   return v;
 }
@@ -284,15 +280,10 @@ OP oadd(OP f,OP g){
   if(deg(a)>=deg(b)){
     k=deg(a)+1;
   }else{
-   // printf("baka#\n");
-   // printpol(o2v(f));
-   // printpol(o2v(g));
+
     k=deg(b)+1;
-    //   exit(1);
 
 }
-  printf("k=%d\n",k);
-  //  exit(1);
   for(i=0;i<k;i++)
     c.x[i]=a.x[i]^b.x[i];
   h=v2o(c);
@@ -308,28 +299,12 @@ OP oterml(OP f,oterm t){
   unsigned short n;
 
   
-  printf("deg=%d\n",deg(o2v(f)));
   for(i=0;i<deg(o2v(f))+1;i++){
-    /*
-    if(f.t[i].n==0 && i>0){
-      printf("f[i]=%d,baka15\n",i);
-      exit(1);
-    }
-    */
+
     h.t[i].n=f.t[i].n+t.n;
     h.t[i].a=gf[mlt(fg[f.t[i].a],fg[t.a])];
 
-    /*
-    if(h.t[i].n==0 && i>1){
-      printf("c-baka\n");
-      printpol(o2v(h));
-      exit(1);
-    }
-    */
-    //printf("%dx%d i=%d,",h.t[i].a,h.t[i].n,i);
   }
-  //  printf("\n");
-  //  exit(1);
 
   return h;
 }
@@ -872,8 +847,9 @@ int i,j,k;
  }
  x=chen(r);
  for(i=0;i<T;i++)
-   printf("x=%d ",x.x[i]);
- printf("\n");
+  printf("x=%d ",x.x[i]);
+  printf("\n");
+  printf("あっ、でる！\n");  
 
  
   if(deg(o2v(r))<T){
@@ -1321,7 +1297,7 @@ int main(int argc,char **argv){
   //  unsigned short s[K]={0}; //{4,12,7,8,11,13};
   unsigned short jj[T]={0};
   unsigned short ee[10]={1,2,3,4,5,6,7,8,9,10};
-  unsigned short zz[M]={0};//{86,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
+  unsigned short zz[M]={0};
   //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
   int y,flg,o1=0;
   OP f={0},h={0},r={0},w={0},aa[T]={0},tt={0};
@@ -1338,12 +1314,10 @@ int main(int argc,char **argv){
   srand(clock()+time(&t));
 
   //keygen();
-  //  key2();
+   // key2();
   //exit(1);
   
-  //  unsigned short syn[K]={4,12,7,8,11,13};
-  //  unsigned short g[K+1]={1,0,0,0,1,0,1};
-
+  
 
   /*
   do{
@@ -1361,7 +1335,8 @@ int main(int argc,char **argv){
   */
 
   w=setpol(g,K+1);
-  
+  printf("すげ、オレもうイキそ・・・\n");
+
   uu=0;
   for(i=0;i<M;i++){
   a=trace(w,i);
@@ -1414,7 +1389,6 @@ int main(int argc,char **argv){
   // det(g);
 
 
-  
   fq=fopen("H.key","rb");
 
   fread(dd,2,K*M,fq);
@@ -1465,14 +1439,16 @@ int main(int argc,char **argv){
   
   f=setpol(syn,K);
 
-
   r=decode(w,f);
 
   
   
   for(i=0;i<T;i++){
     mm[i]=r.t[i].a;
-     printf("e=%d %d\n",r.t[i].a,r.t[i].n);
+    if(i==0){
+     printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"う");
+    }else{     printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"お");
+}
     if(r.t[i].a==0 || r.t[i].n==0){
       printf("------------------\n");
       
@@ -1480,6 +1456,7 @@ int main(int argc,char **argv){
       exit(1);
     }
   }
+  printf("         っ！！\n");
     for(i=0;i<M;i++){
     if(zz[i]>0)
       o1++;
