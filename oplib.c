@@ -1,12 +1,12 @@
-//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
+///date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
-//status    : now in debugging (ver 0.9)
+//status    : now in debugging (ver 0.8)
 // gcdの停止条件を修正した。vxの停止条件を修正した。
 //date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229,20191230
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
-//status    : now in debugging (ver 0.9)
+//status    : now in debugging (ver 0.8)
 // 0ベクトルが出ないように生成多項式のトレースチェックを入れた。
    
 //date      :  20160310
@@ -284,9 +284,9 @@ OP oadd(OP f,OP g){
   if(deg(a)>=deg(b)){
     k=deg(a)+1;
   }else{
-    printf("baka#\n");
-    printpol(o2v(f));
-    printpol(o2v(g));
+   // printf("baka#\n");
+   // printpol(o2v(f));
+   // printpol(o2v(g));
     k=deg(b)+1;
     //   exit(1);
 
@@ -326,13 +326,7 @@ OP oterml(OP f,oterm t){
       exit(1);
     }
     */
-    printf("%dx%d i=%d,",h.t[i].a,h.t[i].n,i);
-  }
-  if(deg(o2v(f))==84){
-    printf("baka16\n");
-    printpol(o2v(f));
-  printpol(o2v(h));
-  //exit(1);
+    //printf("%dx%d i=%d,",h.t[i].a,h.t[i].n,i);
   }
   //  printf("\n");
   //  exit(1);
@@ -400,7 +394,7 @@ OP omod(OP f,OP g){
  
   //printpol(o2v(f));
   printf("omod-g=");
-  printpol(o2v(g));
+//  printpol(o2v(g));
 
   if(deg(o2v(f))==0 || deg(o2v(g))==0){
     printf("baka^\n");
@@ -411,7 +405,7 @@ OP omod(OP f,OP g){
 
   //  a=LT(f);
   b=LT(g);
-  printpol(o2v(g));
+  //printpol(o2v(g));
   while(deg(o2v(f))>=deg(o2v(g))){
     printf("n=======%u\n",deg(o2v(f)));
     printf("in omod before LTdiv\n");
@@ -425,8 +419,8 @@ OP omod(OP f,OP g){
     i++;
     h=oterml(g,c);
     printf("in omod after oterml\n");
-    printpol(o2v(h));
-    printpol(o2v(f));
+    //printpol(o2v(h));
+    //printpol(o2v(f));
     /*
     if(deg(o2v(h))==1){
       printpol(o2v(h));
@@ -894,12 +888,12 @@ int i,j,k;
 
  w=bibun(x);
  //  w=oterml(w,d1);
- printpol(o2v(w));
+ //printpol(o2v(w));
 printf("@@@@@@@@@\n");
 //exit(1);
 
  h=ogcd(f,s);
- printpol(o2v(h));
+ //printpol(o2v(h));
  // exit(1);
 t1=LT(r);
 t2.a=t1.a;
@@ -1342,44 +1336,7 @@ int main(int argc,char **argv){
   //  makegf(M);
   //  makefg(M);
   srand(clock()+time(&t));
-  /*
-  jj[0]=rand()%M;
-  jj[1]=rand()%M;
-  jj[2]=rand()%M;
-  zz[6]=1; //1;
-  zz[11]=10; //1;
-  zz[13]=13; //1;
-  */
-  
-  
-  /*
-  i=0;j=0;
-  while(i<M){
-    if(zz[i]>0){
-    aa[j].t[0].a=zz[i];
-    aa[j].t[1].n=1;
-    aa[j].t[1].a=1;
-    j++;
-    }
-    i++;
-  }
-  for(i=0;i<T;i++)
-    printpol(o2v(aa[i]));
-  //  exit(1);
-  for(i=1;i<T;i++)
-    aa[0]=omul(aa[0],aa[i]);
 
-  //exit(1);
-  
-    v=chen(aa[0]);
-  for(i=0;i<T;i++)
-    printf("x=%d ",v.x[i]);
-  printf("\n");
-  aa[1]=bibun(o2v(aa[0]));
-  */
-  //exit(1);
-  
-  
   //keygen();
   //  key2();
   //exit(1);
@@ -1387,8 +1344,7 @@ int main(int argc,char **argv){
   //  unsigned short syn[K]={4,12,7,8,11,13};
   //  unsigned short g[K+1]={1,0,0,0,1,0,1};
 
-  //  makegf(M);
-  //  makefg(M);
+
   /*
   do{
   flg=0;
@@ -1403,6 +1359,7 @@ int main(int argc,char **argv){
       }
   } while(deg(v)<K || flg==1);
   */
+
   w=setpol(g,K+1);
   
   uu=0;
