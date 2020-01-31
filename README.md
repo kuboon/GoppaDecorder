@@ -76,3 +76,7 @@ PGPのような完璧なアプリを作るのはちょっと荷が重いし、C�
 https://csrc.nist.gov/projects/post-quantum-cryptography/round-2-submissions
 
 アメリカのNISTで進んでいる次世代公開鍵暗号の選定、第2ラウンドまでにMcEliece暗号が残っているようです。今の所符号に基づく暗号と講師に基づく暗号が拮抗しているようです。私もアセンブリマクロを使って最適化してみようかな。頑張れMcEliece！
+
+https://klevas.mif.vu.lt/~skersys/vsd/crypto_on_codes/goppamceliece.pdf
+
+入れ知恵になるかもしれないですがこれも参考にしてみたいと思います。どうも外部ライブラリを使った実装ばかりで私みたいに一枚岩の自己完結プログラムがないようで。
