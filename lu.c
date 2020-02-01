@@ -6,7 +6,7 @@
 #include <time.h>
 
 //#define D 4096
-#define F 2040
+#define F 176*12 //2040
 
 unsigned char a[F][F]={0};
 unsigned char cc[F][F]={0};
@@ -18,7 +18,7 @@ unsigned char cl[F][F]={0};
 unsigned char inv_a[F][F]; //ここに逆行列が入る
 unsigned char buf; //一時的なデータを蓄える
 int i,j,k; //カウンタ
-int n=2040;  //配列の次数
+int n=F;  //配列の次数
 
 unsigned long xor128(void)
 {
@@ -88,7 +88,7 @@ void g2(){
 void makeS(){
   int i,j,k,l,ii;
   unsigned char b[F][F]={0};
-  unsigned char dd[2040]={0};
+  unsigned char dd[F]={0};
   unsigned int flg=0,count=0;
   time_t t;
   FILE *fq;
