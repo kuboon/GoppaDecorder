@@ -238,25 +238,12 @@ vec Setvec(int n){
 int i,a,b;
 vec v={0};
 
-/*
- printf("@\n");
- for(i=0;i<n;i++)
-   printf("%d,",c[i]);
- printf("\n");
-<<<<<<< HEAD
-*/
-=======
 
->>>>>>> d628e9b0e4c72d72852c5fe08129d86c19aadcef
  for(i=0;i<n;i++){
   v.x[n-1-i]=c[i];
   //  printf("%d,",c[n-1-i]);
  }
-<<<<<<< HEAD
- // printf("\n");
-=======
- printf("\n");
->>>>>>> d628e9b0e4c72d72852c5fe08129d86c19aadcef
+
  
   return v;
 }
@@ -755,7 +742,7 @@ int i,j,k;
  }
  k=0;
  x=chen(r);
-<<<<<<< HEAD
+
  for(i=0;i<T;i++){
   printf("x[%d]=1\n",x.x[i]);
   if(x.x[i]==0)
@@ -769,13 +756,6 @@ int i,j,k;
  
   printf("あっ、でる！\n");  
   exit(1);
-=======
- for(i=0;i<T;i++)
-  printf("x=%d ",x.x[i]);
-  printf("\n");
-  printf("あっ、でる！\n");  
-
->>>>>>> d628e9b0e4c72d72852c5fe08129d86c19aadcef
  
   if(deg(o2v(r))<T){
     printpol(o2v(r));
@@ -1137,11 +1117,7 @@ int main(int argc,char **argv){
   //  ginit();
   
   //keygen();
-<<<<<<< HEAD
     key2();
-=======
-   // key2();
->>>>>>> d628e9b0e4c72d72852c5fe08129d86c19aadcef
   //exit(1);
   
   
