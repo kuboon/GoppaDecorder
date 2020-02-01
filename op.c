@@ -1,10 +1,13 @@
-//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225
+//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.8)
 // gcdの停止条件を修正した。vxの停止条件を修正した。
-//重複解の存在を無視して、エラー値を全て1としたときに、エラー位置をランダムな入力値として処理する仕様で実装。
-
+//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229,20191230
+//auther    : the queer who thinking about cryptographic future
+//code name : OVP - One Variable Polynomial library with OpenMP friendly
+//status    : now in debugging (ver 0.8)
+// 0ベクトルが出ないように生成多項式のトレースチェックを入れた。
    
 //date      :  20160310
 //auther    : the queer who thinking about cryptographic future
@@ -28,13 +31,15 @@ unsigned short c[K+1]={0};
 unsigned short mat[K][M]={0};
 unsigned short m2[K][M]={0};
 
-unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+static unsigned short g[K+1]={0};
+  /*
+  {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
 		       0,0,0,0,0,0,0,0,0,0,
 		       		       0,0,0,0,0,0,0,0,0,0,
 		       		       0,0,0,0,0,0,0,0,0,0,
 		       		       0,0,0,0,0,0,0,0,0,0,
 		       0,1};
-
+  */
   //  unsigned short g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
 //unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 
@@ -65,6 +70,15 @@ OP ss={0};
 OP hh={0};
 OP qq={0};
 OP p0={0};
+
+
+static void ginit(void){
+
+  g[170]=g[166]=g[162]=g[154]=g[144]=g[142]=g[140]=g[130]=g[128]=g[126]=g[118]=g[114]=g[108]=g[106]=g[104]=g[98]=g[96]=g[94]=g[88]=g[86]=g[82]=g[80]=g[78]=g[72]=g[70]=g[64]=g[62]=g[60]=g[58]=g[54]=g[48]=g[44]=g[42]=g[40]=g[38]=g[36]=g[34]=g[32]=g[24]=g[22]=g[20]=g[12]=g[8]=g[2]=g[0]=1;
+  
+}
+
+
 
 
 void random_permutation(unsigned short* a){
@@ -122,11 +136,10 @@ unsigned short equ(unsigned short a,unsigned short b){
   int i;
 
   for(i=0;i<M;i++){
-    if(gf[mlt(fg[a],fg[i])]==b){
-      return i;
-    }
+    if(gf[mlt(fg[a],fg[i])]==b)
+      break;
   }
-
+  return i;
 }
 
 
@@ -134,7 +147,6 @@ int deg(vec a){
   int i,n=0;
 
   for(i=0;i<DEG;i++){
-//        printf("%d[%d],",a.x[i],i);
     if(a.x[i]>0)
       n=i;
   }
@@ -144,7 +156,7 @@ int deg(vec a){
   }else{
     return 0;
   }
-//exit(1);
+
 }
 
 
@@ -157,7 +169,6 @@ vec o2v(OP f){
     if(f.t[i].a>0)
       a.x[f.t[i].n]=f.t[i].a;
   }
-  //  exit(1);
 
   return a;
 }
@@ -229,19 +240,17 @@ vec Setvec(int n){
 int i,a,b;
 vec v={0};
 
-
+/*
  printf("@\n");
  for(i=0;i<n;i++)
    printf("%d,",c[i]);
  printf("\n");
- //  exit(1);
-
+*/
  for(i=0;i<n;i++){
   v.x[n-1-i]=c[i];
-  printf("%d,",c[n-1-i]);
+  //  printf("%d,",c[n-1-i]);
  }
- printf("\n");
- //   exit(1);
+ // printf("\n");
  
   return v;
 }
@@ -266,7 +275,7 @@ void printpol(vec a){
       printf("+");
     }
   }
-  printf("\n");
+  //  printf("\n");
 
   return;
 }
@@ -282,15 +291,10 @@ OP oadd(OP f,OP g){
   if(deg(a)>=deg(b)){
     k=deg(a)+1;
   }else{
-    printf("baka#\n");
-    //  printpol(o2v(f));
-    //printpol(o2v(g));
+
     k=deg(b)+1;
-    //   exit(1);
 
 }
-  printf("k=%d\n",k);
-  //  exit(1);
   for(i=0;i<k;i++)
     c.x[i]=a.x[i]^b.x[i];
   h=v2o(c);
@@ -306,25 +310,12 @@ OP oterml(OP f,oterm t){
   unsigned short n;
 
   
-  printf("deg=%d\n",deg(o2v(f)));
   for(i=0;i<deg(o2v(f))+1;i++){
-    
 
-    
     h.t[i].n=f.t[i].n+t.n;
     h.t[i].a=gf[mlt(fg[f.t[i].a],fg[t.a])];
 
-    /*
-    if(h.t[i].n==0 && i>1){
-      printf("c-baka\n");
-      printpol(o2v(h));
-      exit(1);
-    }
-    */
-    //  printf("%dx%d i=%d,",h.t[i].a,h.t[i].n,i);
   }
-  //  printf("\n");
-  //  exit(1);
 
   return h;
 }
@@ -374,7 +365,7 @@ oterm LTdiv(OP f,oterm t){
   }else if(tt.n>t.n){
     s.n=tt.n-t.n;
     s.a=equ(t.a,tt.a);
-    printf("%u\n",s.a);
+    //printf("%u\n",s.a);
 }
 
   return s;    
@@ -387,59 +378,28 @@ OP omod(OP f,OP g){
   oterm a,b={0},c;
 
  
-  //printpol(o2v(f));
-  printf("omod-g=");
-  printpol(o2v(g));
 
   if(deg(o2v(f))==0 || deg(o2v(g))==0){
     printf("baka^\n");
     exit(1);
   }
-  printf("in omod\n");
+  //  printf("in omod\n");
   //exit(1);  
 
   //  a=LT(f);
   b=LT(g);
-  printpol(o2v(g));
+  //printpol(o2v(g));
   while(deg(o2v(f))>=deg(o2v(g))){
-    printf("n=======%u\n",deg(o2v(f)));
-    printf("in omod before LTdiv\n");
-    //printpol(o2v(f));
-    printf("LT(g)=%dx^%d\n",b.a,b.n);
 
     c=LTdiv(f,b);
-    if(b.n==2 || c.n==2){
-    printf("%dx^%d\n",b.a,b.n);
-        exit(1);
-    }
+    //    printf("%dx^%d\n",c.a,c.n);
+    //    exit(1);
     ss.t[i]=c;
     i++;
     h=oterml(g,c);
-    printf("in omod after oterml\n");
-    printpol(o2v(h));
-    printpol(o2v(f));
-    
-    if(deg(o2v(f))-deg(o2v(g))==2){
-      printpol(o2v(h));
-         exit(1);
-      //  return h;
-    }
-    
-    //printpol(o2v(ss));
-//exit(1);
-//    if(deg(o2v(f))>deg(o2v(h)))
-//    if(deg(o2v(f))>deg(o2v(h)))
       f=oadd(f,h);
-         //f=e;
-    //printpol(o2v(f));
-    //   exit(1);
-      if(deg(o2v(f))==T){
-	printf("f==");
-	printpol(o2v(f));
-	break;
-      }
 
-  }
+      }
   //exit(1);
 
   return f;
@@ -482,7 +442,7 @@ unsigned short trace(OP f,unsigned short x){
   for(i=0;i<deg(o2v(f))+1;i++){
     u^=gf[mlt(fg[f.t[i].a],mltn(f.t[i].n,fg[x]))];
   }
-  
+  /*
   //  if(u==0){
   if(f.t[0].a==0 && u==0){
     printf("x=%d\n",x);
@@ -491,7 +451,7 @@ unsigned short trace(OP f,unsigned short x){
     printpol(o2v(f));
     //  exit(1);
   }
-  
+  */
   
   return u;
 }
@@ -555,98 +515,6 @@ OP vx(OP f,OP g){
   OP h={0};
   OP v[K]={0},vv={0};
   oterm a,b;
-  int i,j,count;
-
-  v[0].t[0].a=0;
-  v[0].t[1].n=0;
-  v[1].t[0].a=1;
-  v[1].t[1].n=0;
-
-  a=LT(f);
-  b=LT(g);
-  printf("in vx\n");
-  //  exit(1);
-  i=2;count=0;
-       for(i=2;i<T+2;i++){
-  //  while(deg(o2v(v[i]))<T){
-    printf("in vx befoe omod\n");
-    //printpol(o2v(f));
-    //printpol(o2v(g));
-    //        exit(1);
-    memset(ss.t,0,DEG);
-    if(deg(o2v(f))>=deg(o2v(g))){
-  h=omod(f,g);
-    }
-    /*else {
-      h=omod(g,f);
-      printf("baka17\n");
-        exit(1);
-	}*/
-  /*
-  if(deg(o2v(h))==0){
-    printf("baka3!\n");
-    exit(1);
-  }
-  */
-  printf("ss=");
-  //printpol(o2v(ss));
-  printf("h=");
-  //printpol(o2v(h));
-  //  exit(1);
-  v[i]=oadd(v[i-2],omul(ss,v[i-1]));
-  if(deg(o2v(ss))>1){
-    printpol(o2v(ss));
-    printpol(o2v(v[i-1]));
-    printf("ss=2\n");
-    count++;
-    if(count==T){
-      printf("count=%d\n",count);
-      //exit(1);
-    }
-  }
-    
-  printf("-------");
-  //printpol(o2v(v[i]));
-
-  //  exit(1);
-  memset(f.t,0,sizeof(f.t));
-  f=g;
-  //memcpy(f.t,g.t,sizeof(g.t));
-  memset(g.t,0,sizeof(g.t));
-  g=h;
-  //memcpy(g.t,h.t,sizeof(h.t));
-  //  exit(1);
-  
-  if(deg(o2v(v[i]))<=T){
-    vv=v[i];
-    hh=h;
-    //    break;
-  } else {
-    printpol(o2v(v[i]));
-    printf("-------");
-    //    vv=v[i];
-	 break;
-    //exit(1);
-  }
-  //  i++;
-   }
-
-  //printpol(o2v(v[i]));
- 
-  //  exit(1);
-  //memcpy(vv.t,v[i].t,sizeof(v[i].t));
-  //      exit(1);
-  printf("%d\n",deg(o2v(vv)));
-  //    exit(1);
-  
-  return vv;
-}
-
-
-OP uv(OP f,OP g){
-  OP h={0};
-  OP v[K]={0},vv={0};
-  oterm a,b;
   int i,j;
 
   v[0].t[0].a=0;
@@ -656,28 +524,23 @@ OP uv(OP f,OP g){
 
   a=LT(f);
   b=LT(g);
-  printf("in vx\n");
+  //printf("in vx\n");
   //  exit(1);
   i=2;
        for(i=2;i<T+2;i++){
   //  while(deg(o2v(v[i]))<T){
-    printf("in vx befoe omod\n");
+	 //printf("in vx befoe omod\n");
     //printpol(o2v(f));
     //printpol(o2v(g));
     //        exit(1);
-    memset(qq.t,0,DEG);
-      while(deg(o2v(f))>=deg(o2v(g))){
-      printf("++++++++\n");
+    memset(ss.t,0,DEG);
+    if(deg(o2v(f))>=deg(o2v(g))){
   h=omod(f,g);
-  //exit(1);
-  printf("^^^^^^^^^^^^^^^^^\n");
-  // exit(1);
-  printpol(o2v(h));
-  //exit(1);
-  if(deg(o2v(h))<84)
-    break;
-      }
-       }
+    }/* else {
+      h=omod(g,f);
+      printf("baka17\n");
+      //  exit(1);
+      }*/
   /*
   if(deg(o2v(h))==0){
     printf("baka3!\n");
@@ -686,10 +549,10 @@ OP uv(OP f,OP g){
   */
   printf("ss=");
   //printpol(o2v(ss));
-  printf("h=");
+  //printf("h=");
   //printpol(o2v(h));
   //  exit(1);
-  v[i]=oadd(v[i-2],omul(qq,v[i-1]));
+  v[i]=oadd(v[i-2],omul(ss,v[i-1]));
   printf("-------");
   //printpol(o2v(v[i]));
 
@@ -704,28 +567,29 @@ OP uv(OP f,OP g){
   
   if(deg(o2v(v[i]))<=T){
     vv=v[i];
-    //    p0=h;
+    //    hh=h;
     //    break;
   } else {
     
     printf("-------");
-
+    break;
     //    vv=v[i];  
 	//  exit(1);
   }
   //  i++;
-
+   }
 
   //printpol(o2v(v[i]));
  
   //  exit(1);
   //memcpy(vv.t,v[i].t,sizeof(v[i].t));
   //      exit(1);
-  printf("%d\n",deg(o2v(vv)));
+  //printf("%d\n",deg(o2v(vv)));
   //    exit(1);
   
   return vv;
 }
+
 
 
 vec genrandompol(int n){
@@ -751,7 +615,7 @@ OP ogcd(OP f,OP g){
   //printpol(o2v(g));
   //  exit(1);
   
-  while(i<T && deg(o2v(f))>deg(o2v(g))){
+  while(i<T && deg(o2v(f))>=deg(o2v(g))){
     memset(ss.t,0,DEG);
     h=omod(f,g);
   //printpol(o2v(h));
@@ -821,7 +685,7 @@ OP bibun(vec a){
     }
     */
  }
- printf("l=");
+ // printf("l=");
  //printpol(o2v(l));
  /*
  if(deg(o2v(l))==0){
@@ -851,7 +715,7 @@ n=deg(o2v(f));
   for(x=0;x<M;x++){
     z=0;
     for(i=0;i<n+1;i++){
-      if(f.t[i].a>0)
+       if(f.t[i].a>0)
       z^=gf[mlt(mltn(f.t[i].n,fg[x]),fg[f.t[i].a])];
     }
     if(z==0){
@@ -861,7 +725,6 @@ n=deg(o2v(f));
     //    printf("%d\n",x);
   }
   //printpol(e);
-  printf("%d\n",count);
   // exit(1);
  
 
@@ -870,49 +733,54 @@ return e;
 
 OP decode(OP f,OP s){
 int i,j,k;
- OP r={0},h={0},w={0},e={0},l={0},gg={0};
- oterm t1,t2,d1;
+ OP r={0},h={0},w={0},e={0},l={0};
+ oterm t1,t2,d1,a,b;
  vec x={0};
-
- printf("in decode\n");
+ unsigned short d=0;
  
- gg.t[0].a=1;gg.t[0].n=0;
- gg.t[1].a=1;gg.t[1].n=1;
-
+ 
+ printf("in decode\n");
  r=vx(f,s);
- //r=omul(r,gg);
- printpol(o2v(r));
- printpol(o2v(hh));
- //exit(1);
- x=chen(r);
- //for(i=0;i<T;i++)
- // printf("x=%d\n",x.x[i]);
- //exit(1);
+ // exit(1);
+ 
  if(deg(o2v(r))==0){
    printf("baka12\n");
     exit(1);
  }
+ k=0;
  x=chen(r);
- for(i=0;i<T;i++)
-   printf("x=%d ",x.x[i]);
- printf("\n");
- // exit(1);
- if(deg(x)==0){
-   printf("baka5\n");
+ for(i=0;i<T;i++){
+  printf("x[%d]=1\n",x.x[i]);
+  if(x.x[i]==0)
+    k++;
+  if(k>1){
+    printf("baka0\n");
+    exit(1);
+  }
+ }
+ //  printf("\n");
+ 
+  printf("あっ、でる！\n");  
+  exit(1);
+ 
+  if(deg(o2v(r))<T){
+    printpol(o2v(r));
+   printf("baka5 deg(r)<T\n");
    exit(1);
  }
-   
+ 
+ 
  // printpol(x);
  //   exit(1);
 
  w=bibun(x);
  //  w=oterml(w,d1);
- printpol(o2v(w));
+ //printpol(o2v(w));
 printf("@@@@@@@@@\n");
 //exit(1);
 
  h=ogcd(f,s);
- printpol(o2v(h));
+ //printpol(o2v(h));
  // exit(1);
 t1=LT(r);
 t2.a=t1.a;
@@ -933,23 +801,60 @@ l=oterml(w,t2);
    exit(1);
  }
 */
-printpol(o2v(l));
-printpol(o2v(h));
+// printf("\n");
+ 
+ for(i=0;i<T;i++){
+   //printf("%d ",trace(l,x.x[i]));
+   if(trace(l,x.x[i])==0 || trace(h,x.x[i])==0){
+     printpol(o2v(l));
+     printpol(o2v(h));
+     if(trace(l,x.x[i])==0 && trace(h,x.x[i])>0){
+     printf("l=%d is 0 deg(x)=%d\n",i,deg(x));
+       }else if(trace(l,x.x[i])>0 && trace(h,x.x[i])==0){
+	 printf("h=0\n");
+     }else if(trace(l,x.x[i])==0 && trace(h,x.x[i])==0){
+       printf("l=0 & h=0\n");
+     }
+     if(x.x[i]==1)
+       printf("x=1\n");
+     exit(1);
+   }
+ }
+ // printf("\n\n");
+ for(i=0;i<T;i++){
+   //printf("%d ",trace(h,x.x[i]));
+   if(trace(h,x.x[i])==0){
+     printpol(o2v(l));
+     printpol(o2v(h));
+     if(deg(x)<T-1){
+	 printf("h=%d %d is 0 too few error deg(x)=%d\n",i,x.x[i],deg(x));
+	 exit(1);
+     }
+   }
+ }
+
  printf("%d\n",deg(x)+1);
+ 
  //    exit(1);
 for(i=0;i<deg(x)+1;i++){
   //  if(x.x[i]>0){
   e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(l,x.x[i])))];
 e.t[i].n=x.x[i];
+
 // }
  }
- for(i=0;i<T;i++){
-   printf("%d ",trace(h,x.x[i]));
- }
- printf("\n");
- for(i=0;i<T;i++){
-   printf("%d ",trace(l,x.x[i]));
- }
+
+   for(i=0;i<T;i++)
+    if(gf[trace(h,x.x[i])]==0)
+      printf("h=0");
+   //printf("\n");
+  for(i=0;i<T;i++)
+    if(gf[oinv(trace(l,x.x[i]))]==0)
+      printf("l=0\n");
+  //  printf("\n");
+
+  // exit(1);
+
  /*
    if(x.x[i]==0){
      printf("baka!");
@@ -957,101 +862,13 @@ e.t[i].n=x.x[i];
    }
  */
 
- printf("\n");
+  // printf("\n");
 
  
 return e;
 }
 
 
-OP decode2(OP f,OP s){
-  int i,j,k,u=0;
-  OP r={0},h={0},w={0},e={0},l={0},ll={0},gg={0};
-  oterm t1,t2,d1,b,c;
-  vec x={0},y={0};
-
- gg.t[0].a=1;gg.t[0].n=0;
- gg.t[1].a=1;gg.t[1].n=1;
- printf("in decode\n");
- r=vx(f,s);
- //r=omul(r,gg);
- //printpol(o2v(r));
- if(deg(o2v(r))==0){
-   printf("baka12\n");
-    exit(1);
- }
- x=chen(r);
- // r=omul(v2o(x),gg);
- //x=o2v(r);
- for(i=0;i<T;i++)
-   printf("x=1 %d\n",x.x[i]);
- printf("\n");
- // printpol(x);
- // exit(1);
- if(deg(x)==0){
-   printf("baka5\n");
-   exit(1);
- }
-   
- // printpol(x);
- //   exit(1);
-
- w=bibun(x);
- //  w=oterml(w,d1);
- printpol(o2v(w));
-printf("@@@@@@@@@\n");
-//exit(1);
-
- h=ogcd(f,s);
- printpol(o2v(h));
- // exit(1);
-t1=LT(r);
-t2.a=t1.a;
-t2.n=0;
-/*
- if(deg(o2v(w))==0){
-   printf("baka3");
-   exit(1);
- }
-*/
- if(deg(o2v(w))==0){
-   printpol(o2v(w));
- }
-l=oterml(w,t2);
-/*
- if(deg(o2v(l))==0){
-   printf("baka5\n");
-   exit(1);
- }
-*/
-printpol(o2v(l));
-printpol(o2v(h));
- printf("%d\n",deg(x)+1);
- //    exit(1);
-for(i=0;i<deg(x)+1;i++){
-  //  if(x.x[i]>0){
-  e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(l,x.x[i])))];
-e.t[i].n=x.x[i];
-// }
- }
- for(i=0;i<T;i++){
-   printf("%d ",trace(h,x.x[i]));
- }
- printf("\n");
- for(i=0;i<T;i++){
-   printf("%d ",trace(l,x.x[i]));
- }
- /*
-   if(x.x[i]==0){
-     printf("baka!");
-     exit(1);
-   }
- */
-
- printf("\n");
-
- return e;
-}
 
 
 OP setpol(unsigned short f[],int n){
@@ -1074,45 +891,29 @@ return g;
 }
 
 
-void det(unsigned short g[K+1]){
-  OP f,h={0},w;
+void det(){
+  OP f,h={0},w,u;
   unsigned short cc[K+1]={0},d[2]={0},HH[K][M]={0};
   int i,j,a,b;
   oterm t={0};
   vec e;
   
-    for(i=0;i<K+1;i++)
-      printf("%d ",cc[i]);
-    printf("\n");
-
-   #pragma omp parallel for
+  memcpy(cc,g,sizeof(g));
+  k=cc[K];
+#pragma omp parallel for       
   for(i=0;i<M;i++){
-    //memcpy(cc,g,K+1);
-    for(j=0;j<K+1;j++)
-      cc[j]=g[j];
+
     w=setpol(g,K+1);
 
     a=trace(w,i);
-
+    cc[K]=k;
     
-    printf("a=");
-    printf("%d ",gf[oinv(a)]);
-   
-  printf("\n");
 
   
-  for(j=0;j<K+1;j++)
-    printf("%d ",cc[j]);
-  printf("\n");
     
   cc[K]^=a;
   f=setpol(cc,K+1);
-    printpol(o2v(f));
-  //  exit(1);
      
-  for(j=0;j<K+1;j++)
-    printf("%d ",cc[j]);
-  printf("\n");
     
   //    exit(1);
   //d[0]=i;
@@ -1136,23 +937,24 @@ void det(unsigned short g[K+1]){
   w=oterml(ss,t);
   //  printpol(o2v(w));
   e=o2v(w);
-    #pragma omp parallel for 
+  //  #pragma omp parallel for 
   for(j=0;j<K;j++){
-    printf("%d,",e.x[K-1-j]);
+    //printf("%d,",e.x[K-1-j]);
     HH[j][i]=e.x[K-1-j];
   }
-  printf("\n");
+  //  printf("\n");
   
   //    if(i==1)
   //  exit(1);
   }
-    for(i=0;i<K;i++){
-    
+  
+  //#pragma omp parallel for    
+  for(i=0;i<K;i++){
     for(j=0;j<M;j++){
     m2[i][j]=mat[i][j]=HH[i][j];
-          printf("%d,",mat[i][j]);
+    //          printf("%d,",mat[i][j]);
   }
-    printf("\n");
+    //   printf("\n");
   }
     
     //      exit(1);
@@ -1251,7 +1053,7 @@ void keygen(){
   FILE *fp;
   
 
-  det(g);
+  det();
   makeS();
   bdet();
   Pgen();
@@ -1266,7 +1068,7 @@ void key2(){
   unsigned short dd[K]={0};
 
   fp=fopen("H.key","wb");
-  det(g);  
+  det();  
       for(i=0;i<M;i++){
 	for(j=0;j<K;j++)
 	  dd[j]=mat[j][i];
@@ -1302,10 +1104,10 @@ int main(int argc,char **argv){
   //  unsigned short s[K]={0}; //{4,12,7,8,11,13};
   unsigned short jj[T]={0};
   unsigned short ee[10]={1,2,3,4,5,6,7,8,9,10};
-  unsigned short zz[M]={0};//{86,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
+  unsigned short zz[M]={0};
   //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
   int y,flg,o1=0;
-  OP f={0},h={0},r={0},w={0},aa[T]={0};
+  OP f={0},h={0},r={0},w={0},aa[T]={0},tt={0};
   vec v;
   unsigned short d=0;
   time_t t;
@@ -1317,138 +1119,14 @@ int main(int argc,char **argv){
   //  makegf(M);
   //  makefg(M);
   srand(clock()+time(&t));
-  /*
-  jj[0]=rand()%M;
-  jj[1]=rand()%M;
-  jj[2]=rand()%M;
-  zz[6]=1; //1;
-  zz[11]=10; //1;
-  zz[13]=13; //1;
-  */
-  
-  zz[1]=1;
-  zz[47]=47;
-  zz[119]=119;
-  zz[153]=153;
-  zz[177]=177;
-  zz[189]=189;
-  zz[204]=204;
-  zz[373]=373;
-  zz[377]=377;
-  zz[441]=441;
-  zz[466]=466;
-  zz[517]=517;
-  zz[546]=546;
-  zz[607]=607;
-  zz[626]=626;
-  zz[663]=663;
-  zz[668]=668;
-  zz[797]=797;
-  zz[809]=809;
-  zz[829]=829;
-  zz[894]=894;
-  zz[906]=906;
-  zz[942]=942;
-  zz[955]=955;
-  zz[994]=994;
-  zz[1059]=1059;
-  zz[1061]=1061;
-  zz[1232]=1232;
-  zz[1265]=1265;
-  zz[1269]=1269;
-  zz[1361]=1361;
-  zz[1382]=1382;
-  zz[1400]=1400;
-  zz[1420]=1428;
-  zz[1434]=1434;
-  zz[1447]=1447;
-  zz[1528]=1528;
-  zz[1533]=1533;
-  zz[1538]=1538;
-  zz[1653]=1653;
-  zz[1691]=1691;
-  zz[1707]=1707;
-  zz[1711]=1711;
-  zz[1713]=1713;
-  zz[1780]=1780;
-  zz[1808]=1808;
-  zz[1846]=1846;
-  zz[1878]=1878;
-  zz[2020]=2020;
-  zz[2176]=2176;
-  zz[2180]=2180;
-  zz[2181]=2181;
-  zz[2183]=2183;
-  zz[2218]=2218;
-  zz[2431]=2431;
-  zz[2436]=2436;
-  zz[2535]=2535;
-  zz[2574]=2574;
-  zz[2607]=2607;
-  zz[2868]=2868;
-  zz[2886]=2886;
-  zz[2981]=2981;
-  zz[2996]=2996;
-  zz[3018]=3018;
-  zz[3191]=3191;
-  zz[3236]=3236;
-  zz[3333]=3333;
-  zz[3381]=3381;
-  zz[3435]=3435;
-  zz[3486]=3486;
-  zz[3491]=3491;
-  zz[3513]=3513;
-  zz[3603]=3603;
-  zz[3633]=3633;
-  zz[3684]=3684;
-  zz[3732]=3732;
-  zz[3752]=3752;
-  zz[3942]=3942;
-  zz[3973]=3973;
-  zz[4005]=4005;
-  zz[4020]=4020;
-  zz[4021]=4021;
-  zz[4041]=4041;
-  zz[4057]=4057;
-  zz[4075]=4075;
-  
-  i=0;j=0;
-  while(i<M){
-    if(zz[i]>0){
-    aa[j].t[0].a=zz[i];
-    aa[j].t[1].n=1;
-    aa[j].t[1].a=1;
-    j++;
-    }
-    i++;
-  }
-  for(i=0;i<T;i++)
-    printpol(o2v(aa[i]));
-  for(i=1;i<T;i++)
-    aa[0]=omul(aa[0],aa[i]);
-  printpol(o2v(aa[0]));
-    v=o2v(aa[0]);
-    f=bibun(v);
-  printpol(o2v(f));
-  
-  
-  //  exit(1);
-  v=chen(aa[0]);
-  for(i=0;i<T;i++)
-    printf("x=%d ",v.x[i]);
-  printf("\n");
-  
-  exit(1);
+  ginit();
   
   //keygen();
-  //    key2();
+    key2();
   //exit(1);
   
-  //  unsigned short syn[K]={4,12,7,8,11,13};
-  //  unsigned short g[K+1]={1,0,0,0,1,0,1};
+  
 
-  //  makegf(M);
-  //  makefg(M);
   /*
   do{
   flg=0;
@@ -1463,11 +1141,13 @@ int main(int argc,char **argv){
       }
   } while(deg(v)<K || flg==1);
   */
+
   w=setpol(g,K+1);
-  
+  printf("すげ、オレもうイキそ・・・\n");
+
   uu=0;
   for(i=0;i<M;i++){
-  a=trace(w,x);
+  a=trace(w,i);
   if(a==0){
     printf("trace 0\n");
         exit(1);
@@ -1504,19 +1184,19 @@ int main(int argc,char **argv){
 	  if(l==jj[k])
 	    flg=1;
 	}
-	if(flg==0 && l>0){
+	if(flg==0){
 	  jj[j]=l;
 	  j++;
 	}
-      }
-    
+    }
   }
   for(i=0;i<T;i++)
     zz[jj[i]]=1;
   
   
   // det(g);
-     
+
+
   fq=fopen("H.key","rb");
 
   fread(dd,2,K*M,fq);
@@ -1530,8 +1210,22 @@ int main(int argc,char **argv){
       printf("%d,",mat[i][j]);
     printf("\n");
   }
-  //    exit(1);
+  
+  for(j=0;j<M;j++){
+    flg=0;
+    for(i=0;i<K;i++){
+      //printf("%d,",mat[i][j]);
+      if(mat[i][j]>0)
+	flg=1;
+      //      printf("\n");
+    }
+    if(flg==0)
+      printf("0 is %d\n",j);
+  }
+  
+  //  exit(1);   
 
+  
   printf("zz=");
    #pragma omp parallel for
   for(i=0;i<K;i++){
@@ -1545,18 +1239,24 @@ int main(int argc,char **argv){
   }
   printf("\n");
   //    exit(1);  
+  for(i=0;i<K;i++)
+    printf("mat[%d][1]=%d\n",i,mat[i][1]);
+  printf("\n");
+  //  exit(1);
+
   
   f=setpol(syn,K);
-  //printpol(o2v(f));
-  //  for(l=0;l<T;l++)
-  //printf("%d,",jj[l]);
-  //printf("\n");
-  //  exit(1);
+
   r=decode(w,f);
-  //  exit(1);
+
+  
+  
   for(i=0;i<T;i++){
     mm[i]=r.t[i].a;
-    printf("e=%d %d\n",r.t[i].a,r.t[i].n);
+    if(i==0){
+     printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"う");
+    }else{     printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"お");
+}
     if(r.t[i].a==0 || r.t[i].n==0){
       printf("------------------\n");
       
@@ -1564,30 +1264,13 @@ int main(int argc,char **argv){
       exit(1);
     }
   }
+  printf("         っ！！\n");
     for(i=0;i<M;i++){
     if(zz[i]>0)
       o1++;
   }
   printf("err=%d\n",o1);
-  printf("error value is all 1. and I did NOT implementation at Duplicate solution!\n");
-  //  printpol(o2v(hh));
-  //printf("xd=%d\n",trace(hh,1));
-  /*
-  for(i=0;i<T;i++)
-    printf("%d,",jj[i]);
-  printf("\n");
-  */
-  /*
-  fwrite(mm,1,T,fq);
-  }
-  */
-//  fclose(fp);
-//  fclose(fq);
-  
-  // h2g(mat);
-  //  exit(1);
+
 
   return 0;
 }
-
-

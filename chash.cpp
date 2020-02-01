@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "4096.txt"
+#include "4096.h"
 //#include "2048.h"
 
 #define N 4096
