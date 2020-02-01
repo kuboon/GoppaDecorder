@@ -18,11 +18,12 @@
 #include "lu.c"
 
 
-#define DEG 4096
-#define K 176
+
+#define K 192
+#define DEG K*2
 #define T K/2
-#define E 12
-#define D 4096
+#define E 13
+#define D 4608
 
 unsigned char tmp[E*K][M]={0};
 unsigned char pub[E*K][M]={0};
@@ -81,10 +82,18 @@ static void ginit(void){
 
   //  g[170]=g[166]=g[162]=g[154]=g[144]=g[142]=g[140]=g[130]=g[128]=g[126]=g[118]=g[114]=g[108]=g[106]=g[104]=g[98]=g[96]=g[94]=g[88]=g[86]=g[82]=g[80]=g[78]=g[72]=g[70]=g[64]=g[62]=g[60]=g[58]=g[54]=g[48]=g[44]=g[42]=g[40]=g[38]=g[36]=g[34]=g[32]=g[24]=g[22]=g[20]=g[12]=g[8]=g[2]=g[0]=1;
 
-  //    g[192]=g[188]=g[186]=g[182]=g[181]=g[180]=g[179]=g[177]=g[176]=g[175]=g[173]=g[170]=g[169]=g[166]=g[164]=g[162]=g[160]=g[159]=g[157]=g[153]=g[149]=g[148]=g[147]=g[146]=g[145]=g[143]=g[140]=g[135]=g[132]=g[131]=g[123]=g[122]=g[120]=g[119]=g[118]=g[117]=g[116]=g[115]=g[114]=g[113]=g[112]=g[111]=g[106]=g[101]=g[99]=g[98]=g[95]=g[94]=g[93]=g[91]=g[90]=g[87]=g[81]=g[80]=g[78]=g[77]=g[76]=g[73]=g[70]=g[61]=g[57]=g[56]=g[54]=g[52]=g[51]=g[50]=g[47]=g[46]=g[43]=g[39]=g[37]=g[33]=g[31]=g[29]=g[27]=g[26]=g[23]=g[17]=g[16]=g[12]=g[10]=g[9]=g[7]=g[5]=g[4]=g[2]=g[0]=1;
+  g[192]=g[188]=g[186]=g[182]=g[181]=g[180]=g[179]=g[177]=g[176]=g[175]=g[173]=g[170]=g[169]=g[166]=g[164]=g[162]=g[160]=g[159]=g[157]=g[153]=g[149]=g[148]=g[147]=g[146]=g[145]=g[143]=g[140]=g[135]=g[132]=g[131]=g[123]=g[122]=g[120]=g[119]=g[118]=g[117]=g[116]=g[115]=g[114]=g[113]=g[112]=g[111]=g[106]=g[101]=g[99]=g[98]=g[95]=g[94]=g[93]=g[91]=g[90]=g[87]=g[81]=g[80]=g[78]=g[77]=g[76]=g[73]=g[70]=g[61]=g[57]=g[56]=g[54]=g[52]=g[51]=g[50]=g[47]=g[46]=g[43]=g[39]=g[37]=g[33]=g[31]=g[29]=g[27]=g[26]=g[23]=g[17]=g[16]=g[12]=g[10]=g[9]=g[7]=g[5]=g[4]=g[2]=g[0]=1;
 
-      g[176]=g[174]=g[171]=g[169]=g[165]=g[161]=g[158]=g[156]=g[154]=g[153]=g[152]=g[149]=g[147]=g[146]=g[145]=g[144]=g[143]=g[142]=g[141]=g[140]=g[139]=g[136]=g[135]=g[134]=g[132]=g[131]=g[128]=g[127]=g[124]=g[122]=g[119]=g[112]=g[111]=g[109]=g[108]=g[100]=g[93]=g[92]=g[90]=g[89]=g[88]=g[87]=g[85]=g[80]=g[77]=g[76]=g[75]=g[73]=g[68]=g[66]=g[64]=g[62]=g[61]=g[60]=g[59]=g[58]=g[57]=g[56]=g[55]=g[54]=g[50]=g[48]=g[46]=g[43]=g[42]=g[39]=g[36]=g[34]=g[27]=g[26]=g[24]=g[19]=g[14]=g[10]=g[9]=g[8]=g[0]=1;
+  //      g[176]=g[174]=g[171]=g[169]=g[165]=g[161]=g[158]=g[156]=g[154]=g[153]=g[152]=g[149]=g[147]=g[146]=g[145]=g[144]=g[143]=g[142]=g[141]=g[140]=g[139]=g[136]=g[135]=g[134]=g[132]=g[131]=g[128]=g[127]=g[124]=g[122]=g[119]=g[112]=g[111]=g[109]=g[108]=g[100]=g[93]=g[92]=g[90]=g[89]=g[88]=g[87]=g[85]=g[80]=g[77]=g[76]=g[75]=g[73]=g[68]=g[66]=g[64]=g[62]=g[61]=g[60]=g[59]=g[58]=g[57]=g[56]=g[55]=g[54]=g[50]=g[48]=g[46]=g[43]=g[42]=g[39]=g[36]=g[34]=g[27]=g[26]=g[24]=g[19]=g[14]=g[10]=g[9]=g[8]=g[0]=1;
 
+  
+  //  g[254]=g[248]=g[244]=g[242]=g[238]=g[234]=g[228]=g[226]=g[222]=g[220]=g[218]=g[214]=g[212]=g[208]=g[204]=g[202]=g[196]=g[192]=g[190]=g[188]=g[180]=g[178]=g[174]=g[170]=g[168]=g[166]=g[162]=g[160]=g[158]=g[156]=g[154]=g[148]=g[136]=g[126]=g[120]=g[118]=g[116]=g[114]=g[108]=g[106]=g[104]=g[98]=g[94]=g[92]=g[90]=g[86]=g[76]=g[70]=g[68]=g[58]=g[56]=g[54]=g[52]=g[50]=g[42]=g[36]=g[34]=g[30]=g[24]=g[22]=g[20]=g[16]=g[14]=g[10]=g[0]=1;
+
+  //  g[256]=g[244]=g[242]=g[240]=g[232]=g[228]=g[224]=g[214]=g[212]=g[210]=g[208]=g[206]=g[204]=g[198]=g[192]=g[186]=g[182]=g[180]=g[174]=g[170]=g[164]=g[162]=g[158]=g[154]=g[150]=g[146]=g[142]=g[138]=g[136]=g[134]=g[130]=g[126]=g[120]=g[118]=g[114]=g[110]=g[104]=g[98]=g[94]=g[90]=g[74]=g[70]=g[68]=g[62]=g[60]=g[50]=g[42]=g[34]=g[30]=g[26]=g[14]=g[12]=g[10]=g[8]=g[6]=g[2]=g[0]=1;
+
+  //  g[240]=g[236]=g[218]=g[214]=g[210]=g[208]=g[204]=g[198]=g[192]=g[188]=g[184]=g[180]=g[172]=g[170]=g[166]=g[162]=g[160]=g[158]=g[156]=g[154]=g[140]=g[138]=g[136]=g[134]=g[130]=g[128]=g[126]=g[124]=g[116]=g[114]=g[106]=g[100]=g[98]=g[96]=g[94]=g[90]=g[78]=g[76]=g[66]=g[60]=g[58]=g[56]=g[54]=g[44]=g[40]=g[38]=g[34]=g[32]=g[26]=g[24]=g[22]=g[10]=g[8]=g[4]=g[0]=1;
+
+      
 }
 
 
@@ -571,18 +580,8 @@ OP ogcd(OP f,OP g){
   while(i<T && deg(o2v(f))>=deg(o2v(g))){
     memset(ss.t,0,DEG);
     h=omod(f,g);
-  //printpol(o2v(h));
-  //  exit(1);
   f=g;
   g=h;
-  //  memcpy(f.t,g.t,sizeof(g.t));
-  //memcpy(g.t,h.t,sizeof(h.t));
-  /*
-  a=LT(f);
-  printf("%dx%d\n",a.a,a.n);
-  b=LT(g);
-  printf("%dx%d\n",b.a,b.n);
-  */
   i++;
    if(deg(o2v(g))<=T-1)
      break;
@@ -630,26 +629,8 @@ OP bibun(vec a){
      exit(1);
    }
    l=oadd(l,t);
-    //printpol(o2v(l));
-    /*
-    if(deg(o2v(l))==0){
-      printf("baka7\n");
-      exit(1);
-    }
-    */
  }
- // printf("l=");
- //printpol(o2v(l));
- /*
- if(deg(o2v(l))==0){
-   printf("baka6\n");
-   exit(1);
- }
- */
- // printf("%d\n",oinv(2));
- // exit(1);
  
-
  
   return l;
 }
@@ -665,7 +646,7 @@ vec chen(OP f){
   
 //  e=o2v(f);
 n=deg(o2v(f));
-  for(x=0;x<M;x++){
+  for(x=0;x<D;x++){
     z=0;
     for(i=0;i<n+1;i++){
        if(f.t[i].a>0)
@@ -847,17 +828,22 @@ return g;
 
 void det(){
   OP f,h={0},w,u;
-  unsigned short cc[K+1]={0},d[2]={0},HH[K][M]={0};
+  unsigned short cc[K+1]={0},d[2]={0};
+  unsigned short **HH;
   int i,j,a,b;
   oterm t={0};
   vec e;
-  
+
+  HH=malloc(D*sizeof(unsigned short *));
+  for (i=0;i<K;i++) {
+	HH[i] = malloc(sizeof(unsigned short) * D);
+}
   memcpy(cc,g,sizeof(g));
   k=cc[K];
   w=setpol(g,K+1);
 
   //#pragma omp parallel for       
-  for(i=0;i<M;i++){
+  for(i=0;i<D;i++){
   
   a=trace(w,i);
   cc[K]=k;
@@ -890,7 +876,7 @@ void det(){
   //#pragma omp parallel for    
   for(i=0;i<K;i++){
     #pragma omp parallel for
-    for(j=0;j<M;j++){
+    for(j=0;j<D;j++){
     m2[i][j]=mat[i][j]=HH[i][j];
 
     }
@@ -898,33 +884,6 @@ void det(){
   
 }
 
-
-void det2(){
-  unsigned short a,b,HH[K][M]={0};
-  int i,j,k;
-  OP w;
-
-
-  w=setpol(g,K+1);
-  
-  //
-  for(i=0;i<M;i++){
-    a=trace(w,i);
-    b=oinv(a);
-    //#pragma omp parallel for 
-      for(j=0;j<K;j++){
-	HH[j][i]=gf[mlt(mltn(j,i),b)];
-      }
-  }
-  
-  for(i=0;i<K;i++){
-#pragma omp parallel for 
-    for(j=0;j<M;j++){
-      mat[i][j]=HH[i][j];
-    }
-  }
-  
-}
 
 
 void bdet(){
@@ -936,7 +895,7 @@ void bdet(){
   ff=fopen("Hb.key","wb");
   
 
-  for(i=0;i<M;i++){
+  for(i=0;i<D;i++){
     for(j=0;j<K;j++){
       l=mat[j][i];
       #pragma omp parallel for 
@@ -946,13 +905,14 @@ void bdet(){
       }
     }
   }
-  for(i=0;i<M;i++){
+  for(i=0;i<D;i++){
+#pragma omp parallel for 
     for(j=0;j<E*K;j++){
-      printf("%d,",BH[j][i]);
+      //  printf("%d,",BH[j][i]);
       dd[j]=BH[j][i];
     }
     fwrite(dd,1,E*K,ff);
-    printf("\n");
+    //printf("\n");
   }
   fclose(ff);
 }
@@ -966,7 +926,7 @@ void pubkeygen(){
   
   fp=fopen("pub.key","wb");
   for(i=0;i<E*K;i++){
-    for(j=0;j<M;j++){
+    for(j=0;j<D;j++){
       #pragma omp parallel for 
       for(k=0;k<E*K;k++){
 	tmp[i][j]^=cl[i][k]&BH[k][j];
@@ -976,13 +936,13 @@ void pubkeygen(){
   P2Mat(P);
 
   for(i=0;i<E*K;i++){
-      for(j=0;j<M;j++){
+      for(j=0;j<D;j++){
 #pragma omp parallel for 
-      for(k=0;k<M;k++)
+      for(k=0;k<D;k++)
       pub[i][j]^=tmp[i][k]&A[k][j];
     }
   }
-  for(i=0;i<M;i++){
+  for(i=0;i<D;i++){
 #pragma omp parallel for 
     for(j=0;j<E*K;j++){
      dd[j]=pub[j][i];
@@ -1002,7 +962,7 @@ void Pgen(){
   random_permutation(P);
   for(i=0;i<D;i++)
     inv_P[P[i]]=i;
-  fwrite(P,2,M,fp);
+  fwrite(P,2,D,fp);
   fclose(fp);
   
   for(i=0;i<D;i++)
@@ -1011,7 +971,7 @@ void Pgen(){
   
 
   fp=fopen("inv_P.key","wb");
-  fwrite(inv_P,2,M,fp);
+  fwrite(inv_P,2,D,fp);
   fclose(fp);
 
 }
@@ -1040,7 +1000,7 @@ void key2(){
   printf("鍵を生成中です。４分程かかります。\n");
   fp=fopen("H.key","wb");
   det();  
-      for(i=0;i<M;i++){
+      for(i=0;i<D;i++){
 	for(j=0;j<K;j++)
 	  dd[j]=mat[j][i];
 	fwrite(dd,2,K,fp);
@@ -1067,7 +1027,7 @@ int main(int argc,char **argv){
   int i,j,k,l,c;
   unsigned long a,x,count=1;
   //  unsigned short cc[K]={0};
-  unsigned short m[K],mm[T]={0},dd[K*M]={0};
+  unsigned short m[K],mm[T]={0},dd[K*D]={0};
   time_t timer;
   FILE *fp,*fq;
 
@@ -1075,7 +1035,7 @@ int main(int argc,char **argv){
   //  unsigned short s[K]={0}; //{4,12,7,8,11,13};
   unsigned short jj[T]={0};
   unsigned short ee[10]={1,2,3,4,5,6,7,8,9,10};
-  unsigned short zz[M]={0};
+  unsigned short zz[D]={0};
   //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
   int y,flg,o1=0;
   OP f={0},h={0},r={0},w={0},aa[T]={0},tt={0};
@@ -1093,7 +1053,7 @@ int main(int argc,char **argv){
   ginit();
   w=setpol(g,K+1);
 #pragma omp parallel for  
-  for(i=0;i<M;i++){
+  for(i=0;i<D;i++){
     a=trace(w,i);
     if(a==0){
       printf("trace 0\n");
@@ -1102,8 +1062,15 @@ int main(int argc,char **argv){
   }
   //keygen();
   key2();
+  /*
+  for(i=0;i<K;i++){
+    for(j=0;j<M;j++){
+      printf("%d,",mat[i][j]);
+    }
+    printf("\n");
+  }
   //exit(1);
-  
+  */
   
 
   /*
@@ -1125,7 +1092,7 @@ int main(int argc,char **argv){
   printf("すげ、オレもうイキそ・・・\n");
 
   uu=0;
-  for(i=0;i<M;i++){
+  for(i=0;i<D;i++){
   a=trace(w,i);
   if(a==0){
     printf("trace 0\n");
@@ -1158,7 +1125,7 @@ int main(int argc,char **argv){
   while(j<T){
     flg=0;
     if(jj[j]==0){
-      l=xor128()%M;
+      l=xor128()%D;
    	for(k=0;k<T;k++){
 	  if(l==jj[k])
 	    flg=1;
@@ -1178,20 +1145,15 @@ int main(int argc,char **argv){
 
   fq=fopen("H.key","rb");
 
-  fread(dd,2,K*M,fq);
+  fread(dd,2,K*D,fq);
   #pragma omp parallel for
-  for(i=0;i<M;i++){
+  for(i=0;i<D;i++){
   for(j=0;j<K;j++)
     mat[j][i]=dd[K*i+j];
     }
   
-  for(i=0;i<K;i++){
-    for(j=0;j<M;j++)
-      printf("%d,",mat[i][j]);
-    printf("\n");
-  }
   
-  for(j=0;j<M;j++){
+  for(j=0;j<D;j++){
     flg=0;
     for(i=0;i<K;i++){
       //printf("%d,",mat[i][j]);
@@ -1211,9 +1173,9 @@ int main(int argc,char **argv){
   for(i=0;i<K;i++){
     syn[i]=0;
     //#pragma omp parallel for
-    for(j=0;j<M;j++){
-      printf("%u,",zz[j]);
-      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
+    for(j=0;j<T;j++){
+      printf("%u,",zz[jj[j]]);
+      syn[i]^=gf[mlt(fg[zz[jj[j]]],fg[mat[i][jj[j]]])];
     }
     //    printf("%d,",syn[i]);
   }
@@ -1245,7 +1207,7 @@ int main(int argc,char **argv){
     }
   }
   printf("         っ！！\n");
-    for(i=0;i<M;i++){
+    for(i=0;i<D;i++){
     if(zz[i]>0)
       o1++;
   }
