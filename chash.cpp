@@ -4,11 +4,11 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "4096.h"
+#include "8192.h"
 //#include "2048.h"
 
-#define N 4096
-#define M 4096
+#define N 8192
+#define M 8192
 
 typedef union {
   unsigned long long int u[8];

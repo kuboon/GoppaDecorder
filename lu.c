@@ -6,7 +6,7 @@
 #include <time.h>
 
 //#define D 4096
-#define F 176*12 //2040
+#define F 192*13 //2040
 
 unsigned char a[F][F]={0};
 unsigned char cc[F][F]={0};
@@ -34,12 +34,13 @@ void g2(){
   int i,j,k;
 
 
-  
+#pragma omp parallel for    
   for(i=0;i<F;i++){
     a[i][i]=1;
     bb[i][i]=1;
   }
   for(i=0;i<F;i++){
+#pragma omp parallel for  
     for(j=i+1;j<F;j++){
       a[i][j]=xor128()%2;
       
@@ -54,6 +55,7 @@ void g2(){
   printf("\n");
   */
   for(i=0;i<F;i++){
+#pragma omp parallel for  
     for(j=i+1;j<F;j++){
       bb[j][i]=xor128()%2;
     }
@@ -69,6 +71,7 @@ void g2(){
   */
   for(i=0;i<F;i++){
     for(j=0;j<F;j++){
+#pragma omp parallel for  
       for(k=0;k<F;k++){
 	cc[i][j]^=bb[i][k]&a[k][j];
       }
@@ -87,14 +90,16 @@ void g2(){
 
 void makeS(){
   int i,j,k,l,ii;
-  unsigned char b[F][F]={0};
+  unsigned char **b;
   unsigned char dd[F]={0};
   unsigned int flg=0,count=0;
   time_t t;
   FILE *fq;
 
 
-
+  b=malloc(F*sizeof(unsigned char *));
+  for(i=0;i<F;i++)
+    b[i]=malloc(F*sizeof(unsigned char *));
   
   while(flg<F || count!=F*F-F){
     
@@ -112,6 +117,7 @@ void makeS(){
     */
   flg=0;
   for(i=0;i<n;i++){
+    #pragma omp parallel for  
     for(j=0;j<n;j++){
       //  printf("%d,",a[i][j]);
       cl[i][j]=cc[i][j];
@@ -146,6 +152,7 @@ for(i=0;i<n;i++){
   //  printf("j=%d\n",j);
   
   //  exit(1);
+#pragma omp parallel for  
  for(k=0;k<n;k++){
  cc[i][k]^=cc[j][k];
  inv_a[i][k]^=inv_a[j][k];
@@ -168,6 +175,7 @@ for(i=0;i<n;i++){
  if(cc[i][i]==1){
  for(l=i+1;l<n;l++){
    if(cc[l][i]==1){
+#pragma omp parallel for  
      for(k=0;k<n;k++){
      cc[l][k]^=cc[i][k];
      inv_a[l][k]^=inv_a[i][k];
@@ -263,8 +271,8 @@ for(i=0;i<n;i++){
   
  //
  if(flg==F && count==F*F-F){
-  for(i=0;i<2040;i++){
-    for(j=0;j<2040;j++){
+  for(i=0;i<F;i++){
+    for(j=0;j<F;j++){
       printf("%d",cl[i][j]);
       dd[j]=cl[i][j];
     }
