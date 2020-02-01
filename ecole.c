@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#define O 256
+#define O 8192
 
 /* generate Galois Field over GF(2^?) */
 static const char *normal[13]={
@@ -35,7 +35,12 @@ for(i=0;i<n;i++){
       fg[j]=i;
   }
 }
+ printf("unsigned short fg[%d]={",O);
+ for(i=0;i<O;i++)
+   printf("%d,",fg[i]);
+ printf("};");
 
+ 
 return;
 }
 
@@ -138,9 +143,10 @@ printf("%d\n",n);
 
 }
 
-/*
+
 int main(){
   int n;
-  makegf(512);
+  mkgf(O);
+  makefg(O);
 }
-*/
+
