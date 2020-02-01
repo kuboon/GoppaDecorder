@@ -19,7 +19,7 @@
 
 
 #define DEG 4096
-#define K 170
+#define K 176
 #define T K/2
 #define E 12
 #define D 4096
@@ -31,13 +31,15 @@ unsigned short c[K+1]={0};
 unsigned short mat[K][M]={0};
 unsigned short m2[K][M]={0};
 
-static unsigned short g[K+1]={1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+static unsigned short g[K+1]={0};
+  /*
+  {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
 		       0,0,0,0,0,0,0,0,0,0,
 		       		       0,0,0,0,0,0,0,0,0,0,
 		       		       0,0,0,0,0,0,0,0,0,0,
 		       		       0,0,0,0,0,0,0,0,0,0,
 		       0,1};
-  
+  */
   //  unsigned short g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
 //unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 
@@ -64,6 +66,11 @@ typedef struct {
   unsigned int x[DEG];
 } vec;
 
+typedef union {
+  unsigned long long int u[4];
+  unsigned short s[16];
+} SU;
+
 OP ss={0};
 OP hh={0};
 OP qq={0};
@@ -72,8 +79,12 @@ OP p0={0};
 
 static void ginit(void){
 
-  g[170]=g[166]=g[162]=g[154]=g[144]=g[142]=g[140]=g[130]=g[128]=g[126]=g[118]=g[114]=g[108]=g[106]=g[104]=g[98]=g[96]=g[94]=g[88]=g[86]=g[82]=g[80]=g[78]=g[72]=g[70]=g[64]=g[62]=g[60]=g[58]=g[54]=g[48]=g[44]=g[42]=g[40]=g[38]=g[36]=g[34]=g[32]=g[24]=g[22]=g[20]=g[12]=g[8]=g[2]=g[0]=1;
-  
+  //  g[170]=g[166]=g[162]=g[154]=g[144]=g[142]=g[140]=g[130]=g[128]=g[126]=g[118]=g[114]=g[108]=g[106]=g[104]=g[98]=g[96]=g[94]=g[88]=g[86]=g[82]=g[80]=g[78]=g[72]=g[70]=g[64]=g[62]=g[60]=g[58]=g[54]=g[48]=g[44]=g[42]=g[40]=g[38]=g[36]=g[34]=g[32]=g[24]=g[22]=g[20]=g[12]=g[8]=g[2]=g[0]=1;
+
+  //    g[192]=g[188]=g[186]=g[182]=g[181]=g[180]=g[179]=g[177]=g[176]=g[175]=g[173]=g[170]=g[169]=g[166]=g[164]=g[162]=g[160]=g[159]=g[157]=g[153]=g[149]=g[148]=g[147]=g[146]=g[145]=g[143]=g[140]=g[135]=g[132]=g[131]=g[123]=g[122]=g[120]=g[119]=g[118]=g[117]=g[116]=g[115]=g[114]=g[113]=g[112]=g[111]=g[106]=g[101]=g[99]=g[98]=g[95]=g[94]=g[93]=g[91]=g[90]=g[87]=g[81]=g[80]=g[78]=g[77]=g[76]=g[73]=g[70]=g[61]=g[57]=g[56]=g[54]=g[52]=g[51]=g[50]=g[47]=g[46]=g[43]=g[39]=g[37]=g[33]=g[31]=g[29]=g[27]=g[26]=g[23]=g[17]=g[16]=g[12]=g[10]=g[9]=g[7]=g[5]=g[4]=g[2]=g[0]=1;
+
+      g[176]=g[174]=g[171]=g[169]=g[165]=g[161]=g[158]=g[156]=g[154]=g[153]=g[152]=g[149]=g[147]=g[146]=g[145]=g[144]=g[143]=g[142]=g[141]=g[140]=g[139]=g[136]=g[135]=g[134]=g[132]=g[131]=g[128]=g[127]=g[124]=g[122]=g[119]=g[112]=g[111]=g[109]=g[108]=g[100]=g[93]=g[92]=g[90]=g[89]=g[88]=g[87]=g[85]=g[80]=g[77]=g[76]=g[75]=g[73]=g[68]=g[66]=g[64]=g[62]=g[61]=g[60]=g[59]=g[58]=g[57]=g[56]=g[55]=g[54]=g[50]=g[48]=g[46]=g[43]=g[42]=g[39]=g[36]=g[34]=g[27]=g[26]=g[24]=g[19]=g[14]=g[10]=g[9]=g[8]=g[0]=1;
+
 }
 
 
@@ -241,7 +252,6 @@ vec v={0};
 
  for(i=0;i<n;i++){
   v.x[n-1-i]=c[i];
-  //  printf("%d,",c[n-1-i]);
  }
 
  
@@ -427,24 +437,9 @@ unsigned short trace(OP f,unsigned short x){
   int i;
     unsigned short u=0;
 
-  /*
-  if(deg(o2v(f))==84)
-    printpol(o2v(f));
-  exit(1);
-  */
   for(i=0;i<deg(o2v(f))+1;i++){
     u^=gf[mlt(fg[f.t[i].a],mltn(f.t[i].n,fg[x]))];
   }
-  /*
-  //  if(u==0){
-  if(f.t[0].a==0 && u==0){
-    printf("x=%d\n",x);
-    printf("baka14\n");
-    printf("0x^0=%d\n",f.t[0].a);
-    printpol(o2v(f));
-    //  exit(1);
-  }
-  */
   
   return u;
 }
@@ -521,64 +516,29 @@ OP vx(OP f,OP g){
   //  exit(1);
   i=2;
        for(i=2;i<T+2;i++){
-  //  while(deg(o2v(v[i]))<T){
-	 //printf("in vx befoe omod\n");
-    //printpol(o2v(f));
-    //printpol(o2v(g));
-    //        exit(1);
     memset(ss.t,0,DEG);
     if(deg(o2v(f))>=deg(o2v(g))){
   h=omod(f,g);
-    }/* else {
-      h=omod(g,f);
-      printf("baka17\n");
-      //  exit(1);
-      }*/
-  /*
-  if(deg(o2v(h))==0){
-    printf("baka3!\n");
-    exit(1);
-  }
-  */
+    }
+    
   printf("ss=");
-  //printpol(o2v(ss));
-  //printf("h=");
-  //printpol(o2v(h));
-  //  exit(1);
   v[i]=oadd(v[i-2],omul(ss,v[i-1]));
   printf("-------");
-  //printpol(o2v(v[i]));
-
-  //  exit(1);
   memset(f.t,0,sizeof(f.t));
   f=g;
   //memcpy(f.t,g.t,sizeof(g.t));
   memset(g.t,0,sizeof(g.t));
   g=h;
-  //memcpy(g.t,h.t,sizeof(h.t));
-  //  exit(1);
   
   if(deg(o2v(v[i]))<=T){
     vv=v[i];
-    //    hh=h;
-    //    break;
   } else {
     
     printf("-------");
     break;
-    //    vv=v[i];  
-	//  exit(1);
   }
-  //  i++;
    }
 
-  //printpol(o2v(v[i]));
- 
-  //  exit(1);
-  //memcpy(vv.t,v[i].t,sizeof(v[i].t));
-  //      exit(1);
-  //printf("%d\n",deg(o2v(vv)));
-  //    exit(1);
   
   return vv;
 }
@@ -865,18 +825,18 @@ return e;
 
 
 
-OP setpol(unsigned short f[],int n){
+OP setpol(unsigned short *f,int n){
 OP g;
 vec a;
  int i;
 
  
- //  memset(c,0,DEG);
- for(i=0;i<K+1;i++)
-   c[i]=0;
-  //memcpy(c,f,n);
-  for(i=0;i<n;i++)
-    c[i]=f[i];
+ memset(c,0,sizeof(c));
+   // for(i=0;i<K+1;i++)
+   // c[i]=0;
+ memcpy(c,f,sizeof(c));
+ //  for(i=0;i<n;i++)
+ //  c[i]=f[i];
   a=Setvec(n);
   g=v2o(a);
 
@@ -894,66 +854,78 @@ void det(){
   
   memcpy(cc,g,sizeof(g));
   k=cc[K];
-#pragma omp parallel for       
+  w=setpol(g,K+1);
+
+  //#pragma omp parallel for       
   for(i=0;i<M;i++){
-
-    w=setpol(g,K+1);
-
-    a=trace(w,i);
-    cc[K]=k;
-    
-
   
-    
+  a=trace(w,i);
+  cc[K]=k;
+  
   cc[K]^=a;
   f=setpol(cc,K+1);
-     
-    
-  //    exit(1);
-  //d[0]=i;
-  //d[1]=1;
+  
   h.t[0].a=i;
   h.t[0].n=0;
   h.t[1].a=1;
   h.t[1].n=1;
 
-    memset(ss.t,0,DEG);
+  memset(ss.t,0,sizeof(ss.t));
   omod(f,h);
-
-  //  printpol(o2v(ss));
-  //  exit(1);
 
   b=oinv(a);
   t.a=gf[b];
   t.n=0;
-  //  printf("t=%d\n",t.a);
-  //  exit(1);
-  w=oterml(ss,t);
-  //  printpol(o2v(w));
-  e=o2v(w);
-  //  #pragma omp parallel for 
-  for(j=0;j<K;j++){
-    //printf("%d,",e.x[K-1-j]);
-    HH[j][i]=e.x[K-1-j];
-  }
-  //  printf("\n");
+
+  u=oterml(ss,t);
+  e=o2v(u);
   
-  //    if(i==1)
-  //  exit(1);
+  #pragma omp parallel for 
+  for(j=0;j<K;j++)
+    HH[j][i]=e.x[K-1-j];  
+
   }
+  
   
   //#pragma omp parallel for    
   for(i=0;i<K;i++){
+    #pragma omp parallel for
     for(j=0;j<M;j++){
     m2[i][j]=mat[i][j]=HH[i][j];
-    //          printf("%d,",mat[i][j]);
-  }
-    //   printf("\n");
-  }
-    
-    //      exit(1);
-}
+
+    }
+  }  
   
+}
+
+
+void det2(){
+  unsigned short a,b,HH[K][M]={0};
+  int i,j,k;
+  OP w;
+
+
+  w=setpol(g,K+1);
+  
+  //
+  for(i=0;i<M;i++){
+    a=trace(w,i);
+    b=oinv(a);
+    //#pragma omp parallel for 
+      for(j=0;j<K;j++){
+	HH[j][i]=gf[mlt(mltn(j,i),b)];
+      }
+  }
+  
+  for(i=0;i<K;i++){
+#pragma omp parallel for 
+    for(j=0;j<M;j++){
+      mat[i][j]=HH[i][j];
+    }
+  }
+  
+}
+
 
 void bdet(){
   int i,j,k,l;
@@ -967,6 +939,7 @@ void bdet(){
   for(i=0;i<M;i++){
     for(j=0;j<K;j++){
       l=mat[j][i];
+      #pragma omp parallel for 
       for(k=0;k<E;k++){
 	BH[j*E+k][i]=l%2;
 	l=(l>>1);
@@ -994,6 +967,7 @@ void pubkeygen(){
   fp=fopen("pub.key","wb");
   for(i=0;i<E*K;i++){
     for(j=0;j<M;j++){
+      #pragma omp parallel for 
       for(k=0;k<E*K;k++){
 	tmp[i][j]^=cl[i][k]&BH[k][j];
       }
@@ -1003,11 +977,13 @@ void pubkeygen(){
 
   for(i=0;i<E*K;i++){
       for(j=0;j<M;j++){
+#pragma omp parallel for 
       for(k=0;k<M;k++)
       pub[i][j]^=tmp[i][k]&A[k][j];
     }
   }
   for(i=0;i<M;i++){
+#pragma omp parallel for 
     for(j=0;j<E*K;j++){
      dd[j]=pub[j][i];
     }
@@ -1114,10 +1090,18 @@ int main(int argc,char **argv){
   //  makegf(M);
   //  makefg(M);
   srand(clock()+time(&t));
-  //  ginit();
-  
+  ginit();
+  w=setpol(g,K+1);
+#pragma omp parallel for  
+  for(i=0;i<M;i++){
+    a=trace(w,i);
+    if(a==0){
+      printf("trace 0\n");
+      exit(1);
+    }
+  }
   //keygen();
-    key2();
+  key2();
   //exit(1);
   
   
@@ -1195,6 +1179,7 @@ int main(int argc,char **argv){
   fq=fopen("H.key","rb");
 
   fread(dd,2,K*M,fq);
+  #pragma omp parallel for
   for(i=0;i<M;i++){
   for(j=0;j<K;j++)
     mat[j][i]=dd[K*i+j];
@@ -1222,10 +1207,10 @@ int main(int argc,char **argv){
 
   
   printf("zz=");
-   #pragma omp parallel for
+  //  
   for(i=0;i<K;i++){
     syn[i]=0;
-
+    //#pragma omp parallel for
     for(j=0;j<M;j++){
       printf("%u,",zz[j]);
       syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
