@@ -113,5 +113,4 @@ http://lupus.is.kochi-u.ac.jp/shiota/misc/field/FiniteField.html
 あとgithubにはなかったけれど、プロが書いたMcEliece暗号のデモがあって、エレガントに64ビットに最適化されていて鍵生成はものすごく早かった。
 本来ならこうあるべきだけど自分にはその実力がない。
 
-https://csrc.nist.gov/projects/post-quantum-cryptography/round-2-submissions
 
