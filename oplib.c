@@ -19,18 +19,18 @@
 
 
 
-#define K 192
+#define K 256
 #define DEG K*2
 #define T K/2
 #define E 13
-#define D 4608
+#define D 6688
 
-unsigned char tmp[E*K][M]={0};
-unsigned char pub[E*K][M]={0};
-unsigned char BH[E*K][M]={0};
+unsigned char tmp[E*K][D]={0};
+unsigned char pub[E*K][D]={0};
+unsigned char BH[E*K][D]={0};
 unsigned short c[K+1]={0};
-unsigned short mat[K][M]={0};
-unsigned short m2[K][M]={0};
+unsigned short mat[K][D]={0};
+unsigned short m2[K][D]={0};
 
 static unsigned short g[K+1]={0};
   /*
@@ -47,7 +47,7 @@ static unsigned short g[K+1]={0};
 //,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 //unsigned short g[K+1]={1,0,0,0,1,0,1};
 unsigned short syn[K]={0};
-unsigned char A[M][M]={0};
+unsigned char A[D][D]={0};
 //={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}; //={1,5,0,1,7,3,15}; //={1,2,9,4,0,6,4}; // //
 unsigned short P[D]={0};
 unsigned short inv_P[D]={0};
@@ -82,14 +82,14 @@ static void ginit(void){
 
   //  g[170]=g[166]=g[162]=g[154]=g[144]=g[142]=g[140]=g[130]=g[128]=g[126]=g[118]=g[114]=g[108]=g[106]=g[104]=g[98]=g[96]=g[94]=g[88]=g[86]=g[82]=g[80]=g[78]=g[72]=g[70]=g[64]=g[62]=g[60]=g[58]=g[54]=g[48]=g[44]=g[42]=g[40]=g[38]=g[36]=g[34]=g[32]=g[24]=g[22]=g[20]=g[12]=g[8]=g[2]=g[0]=1;
 
-  g[192]=g[188]=g[186]=g[182]=g[181]=g[180]=g[179]=g[177]=g[176]=g[175]=g[173]=g[170]=g[169]=g[166]=g[164]=g[162]=g[160]=g[159]=g[157]=g[153]=g[149]=g[148]=g[147]=g[146]=g[145]=g[143]=g[140]=g[135]=g[132]=g[131]=g[123]=g[122]=g[120]=g[119]=g[118]=g[117]=g[116]=g[115]=g[114]=g[113]=g[112]=g[111]=g[106]=g[101]=g[99]=g[98]=g[95]=g[94]=g[93]=g[91]=g[90]=g[87]=g[81]=g[80]=g[78]=g[77]=g[76]=g[73]=g[70]=g[61]=g[57]=g[56]=g[54]=g[52]=g[51]=g[50]=g[47]=g[46]=g[43]=g[39]=g[37]=g[33]=g[31]=g[29]=g[27]=g[26]=g[23]=g[17]=g[16]=g[12]=g[10]=g[9]=g[7]=g[5]=g[4]=g[2]=g[0]=1;
+  //  g[192]=g[188]=g[186]=g[182]=g[181]=g[180]=g[179]=g[177]=g[176]=g[175]=g[173]=g[170]=g[169]=g[166]=g[164]=g[162]=g[160]=g[159]=g[157]=g[153]=g[149]=g[148]=g[147]=g[146]=g[145]=g[143]=g[140]=g[135]=g[132]=g[131]=g[123]=g[122]=g[120]=g[119]=g[118]=g[117]=g[116]=g[115]=g[114]=g[113]=g[112]=g[111]=g[106]=g[101]=g[99]=g[98]=g[95]=g[94]=g[93]=g[91]=g[90]=g[87]=g[81]=g[80]=g[78]=g[77]=g[76]=g[73]=g[70]=g[61]=g[57]=g[56]=g[54]=g[52]=g[51]=g[50]=g[47]=g[46]=g[43]=g[39]=g[37]=g[33]=g[31]=g[29]=g[27]=g[26]=g[23]=g[17]=g[16]=g[12]=g[10]=g[9]=g[7]=g[5]=g[4]=g[2]=g[0]=1;
 
   //      g[176]=g[174]=g[171]=g[169]=g[165]=g[161]=g[158]=g[156]=g[154]=g[153]=g[152]=g[149]=g[147]=g[146]=g[145]=g[144]=g[143]=g[142]=g[141]=g[140]=g[139]=g[136]=g[135]=g[134]=g[132]=g[131]=g[128]=g[127]=g[124]=g[122]=g[119]=g[112]=g[111]=g[109]=g[108]=g[100]=g[93]=g[92]=g[90]=g[89]=g[88]=g[87]=g[85]=g[80]=g[77]=g[76]=g[75]=g[73]=g[68]=g[66]=g[64]=g[62]=g[61]=g[60]=g[59]=g[58]=g[57]=g[56]=g[55]=g[54]=g[50]=g[48]=g[46]=g[43]=g[42]=g[39]=g[36]=g[34]=g[27]=g[26]=g[24]=g[19]=g[14]=g[10]=g[9]=g[8]=g[0]=1;
 
   
   //  g[254]=g[248]=g[244]=g[242]=g[238]=g[234]=g[228]=g[226]=g[222]=g[220]=g[218]=g[214]=g[212]=g[208]=g[204]=g[202]=g[196]=g[192]=g[190]=g[188]=g[180]=g[178]=g[174]=g[170]=g[168]=g[166]=g[162]=g[160]=g[158]=g[156]=g[154]=g[148]=g[136]=g[126]=g[120]=g[118]=g[116]=g[114]=g[108]=g[106]=g[104]=g[98]=g[94]=g[92]=g[90]=g[86]=g[76]=g[70]=g[68]=g[58]=g[56]=g[54]=g[52]=g[50]=g[42]=g[36]=g[34]=g[30]=g[24]=g[22]=g[20]=g[16]=g[14]=g[10]=g[0]=1;
 
-  //  g[256]=g[244]=g[242]=g[240]=g[232]=g[228]=g[224]=g[214]=g[212]=g[210]=g[208]=g[206]=g[204]=g[198]=g[192]=g[186]=g[182]=g[180]=g[174]=g[170]=g[164]=g[162]=g[158]=g[154]=g[150]=g[146]=g[142]=g[138]=g[136]=g[134]=g[130]=g[126]=g[120]=g[118]=g[114]=g[110]=g[104]=g[98]=g[94]=g[90]=g[74]=g[70]=g[68]=g[62]=g[60]=g[50]=g[42]=g[34]=g[30]=g[26]=g[14]=g[12]=g[10]=g[8]=g[6]=g[2]=g[0]=1;
+  g[256]=g[244]=g[242]=g[240]=g[232]=g[228]=g[224]=g[214]=g[212]=g[210]=g[208]=g[206]=g[204]=g[198]=g[192]=g[186]=g[182]=g[180]=g[174]=g[170]=g[164]=g[162]=g[158]=g[154]=g[150]=g[146]=g[142]=g[138]=g[136]=g[134]=g[130]=g[126]=g[120]=g[118]=g[114]=g[110]=g[104]=g[98]=g[94]=g[90]=g[74]=g[70]=g[68]=g[62]=g[60]=g[50]=g[42]=g[34]=g[30]=g[26]=g[14]=g[12]=g[10]=g[8]=g[6]=g[2]=g[0]=1;
 
   //  g[240]=g[236]=g[218]=g[214]=g[210]=g[208]=g[204]=g[198]=g[192]=g[188]=g[184]=g[180]=g[172]=g[170]=g[166]=g[162]=g[160]=g[158]=g[156]=g[154]=g[140]=g[138]=g[136]=g[134]=g[130]=g[128]=g[126]=g[124]=g[116]=g[114]=g[106]=g[100]=g[98]=g[96]=g[94]=g[90]=g[78]=g[76]=g[66]=g[60]=g[58]=g[56]=g[54]=g[44]=g[40]=g[38]=g[34]=g[32]=g[26]=g[24]=g[22]=g[10]=g[8]=g[4]=g[0]=1;
 
@@ -120,10 +120,10 @@ void random_permutation(unsigned short* a){
 }
 
 
-void P2Mat(unsigned short P[M]){
+void P2Mat(unsigned short P[D]){
 int i,j;
 	
-  for(i=0;i<M;i++)
+  for(i=0;i<D;i++)
       A[i][P[i]]=1;
 }
 
@@ -875,7 +875,7 @@ void det(){
   
   //#pragma omp parallel for    
   for(i=0;i<K;i++){
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for(j=0;j<D;j++){
     m2[i][j]=mat[i][j]=HH[i][j];
 
@@ -898,7 +898,7 @@ void bdet(){
   for(i=0;i<D;i++){
     for(j=0;j<K;j++){
       l=mat[j][i];
-      #pragma omp parallel for 
+      //#pragma omp parallel for 
       for(k=0;k<E;k++){
 	BH[j*E+k][i]=l%2;
 	l=(l>>1);
@@ -906,7 +906,7 @@ void bdet(){
     }
   }
   for(i=0;i<D;i++){
-#pragma omp parallel for 
+    //#pragma omp parallel for 
     for(j=0;j<E*K;j++){
       //  printf("%d,",BH[j][i]);
       dd[j]=BH[j][i];
@@ -927,7 +927,7 @@ void pubkeygen(){
   fp=fopen("pub.key","wb");
   for(i=0;i<E*K;i++){
     for(j=0;j<D;j++){
-      #pragma omp parallel for 
+      //#pragma omp parallel for 
       for(k=0;k<E*K;k++){
 	tmp[i][j]^=cl[i][k]&BH[k][j];
       }
@@ -936,20 +936,21 @@ void pubkeygen(){
   P2Mat(P);
 
   for(i=0;i<E*K;i++){
-      for(j=0;j<D;j++){
-#pragma omp parallel for 
+    //  for(j=0;j<D;j++){
+    //#pragma omp parallel for 
       for(k=0;k<D;k++)
-      pub[i][j]^=tmp[i][k]&A[k][j];
-    }
+	pub[i][k]=tmp[i][P[k]];//&A[k][j];
+      //    }
   }
   for(i=0;i<D;i++){
-#pragma omp parallel for 
+    //#pragma omp parallel for 
     for(j=0;j<E*K;j++){
      dd[j]=pub[j][i];
     }
     fwrite(dd,1,E*K,fp);
   }
   fclose(fp);  
+
 }
 
 
@@ -977,22 +978,6 @@ void Pgen(){
 }
 
 
-void keygen(){
-  
-  int i;
-  FILE *fp;
-  
-
-  det();
-  makeS();
-  bdet();
-  Pgen();
-  pubkeygen();  
-
-
-  
-}
-
 void key2(){
   FILE *fp;
   unsigned short dd[K]={0};
@@ -1009,6 +994,28 @@ void key2(){
       fclose(fp);
 
 }
+
+
+void keygen(){
+  
+  int i;
+  FILE *fp;
+  
+
+  key2();
+  printf("end of ky2\n");
+  makeS();
+  printf("end of S\n");
+  bdet();
+  printf("end of bdet\n");
+  Pgen();
+  printf("end of Pgen\n");
+  pubkeygen();  
+
+
+  
+}
+
 
 void encrypt(){
 
@@ -1061,7 +1068,7 @@ int main(int argc,char **argv){
     }
   }
   //keygen();
-  key2();
+  //key2();
   /*
   for(i=0;i<K;i++){
     for(j=0;j<M;j++){
