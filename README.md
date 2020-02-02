@@ -98,3 +98,19 @@ https://csrc.nist.gov/projects/post-quantum-cryptography/round-2-submissions
 https://klevas.mif.vu.lt/~skersys/vsd/crypto_on_codes/goppamceliece.pdf
 
 入れ知恵になるかもしれないですがこれも参考にしてみたいと思います。どうも外部ライブラリを使った実装ばかりで私みたいに一枚岩の自己完結プログラムがないようで。
+
+20200202
+
+https://en.wikipedia.org/wiki/Binary_Goppa_code#Decoding
+
+これのおかげでやっとパターソンアルゴリズムを理解できた。シンドローム多項式の逆多項式はゴッパ多項式が既約のとき、ユークリッドアルゴリズムで
+計算できる。そしてバイナリGoppa符号の場合、符号長は変わらず次元だけが縦に引き伸ばされるので、シンドローム多項式は拡大体のときと同じ多項式である。
+このとき逆多項式とその平方が計算できるので、解くべき誤り位置関数の次数はシンドローム多項式の半分になる。だから拡大体のときより
+Goppa多項式の次数は半分で済む。ということはバイナリバージョンを作らなければならない。やる気が出たらやろう。
+
+http://lupus.is.kochi-u.ac.jp/shiota/misc/field/FiniteField.html
+
+あとgithubにはなかったけれど、プロが書いたMcEliece暗号のデモがあって、エレガントに64ビットに最適化されていて鍵生成はものすごく早かった。
+本来ならこうあるべきだけど自分にはその実力がない。
+
+
