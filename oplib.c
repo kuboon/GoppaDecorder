@@ -1440,7 +1440,7 @@ int main(int argc,char **argv){
   ff=inv(f,w);
   printpol(o2v(ff));
   printf("\nff================\n");
-  //  exit(1);
+  //   exit(1);
 
   
   r=decode(w,f);
