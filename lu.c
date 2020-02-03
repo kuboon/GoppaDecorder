@@ -6,7 +6,7 @@
 #include <time.h>
 
 //#define D 4096
-#define F 192*13 //2040
+#define F 256*13 //2040
 
 unsigned char a[F][F]={0};
 unsigned char cc[F][F]={0};
@@ -40,51 +40,29 @@ void g2(){
     bb[i][i]=1;
   }
   for(i=0;i<F;i++){
-#pragma omp parallel for  
+    //#pragma omp parallel for  
     for(j=i+1;j<F;j++){
       a[i][j]=xor128()%2;
       
     }  
   }
-  /*
+
   for(i=0;i<F;i++){
-    for(j=0;j<F;j++)
-      printf("%d,",a[i][j]);
-    printf("\n");
-  }
-  printf("\n");
-  */
-  for(i=0;i<F;i++){
-#pragma omp parallel for  
+    //#pragma omp parallel for  
     for(j=i+1;j<F;j++){
       bb[j][i]=xor128()%2;
     }
   }
-  /*  
-  for(i=0;i<F;i++){
-    for(j=0;j<F;j++)
-      printf("%d,",bb[i][j]);
-    printf("\n");
-  }
-  printf("\n");
-  //    exit(1);
-  */
+
   for(i=0;i<F;i++){
     for(j=0;j<F;j++){
-#pragma omp parallel for  
+      //#pragma omp parallel for  
       for(k=0;k<F;k++){
 	cc[i][j]^=bb[i][k]&a[k][j];
       }
     }
   }
-  /*
-  for(i=0;i<F;i++){
-    for(j=0;j<F;j++)
-      printf("%d,",cc[i][j]);
-    printf("\n");
-  }
-  printf("\n");
-  */
+
 }
 
 
@@ -106,19 +84,12 @@ void makeS(){
     srand(clock()+time(&t));
 
     g2();
-    //
-    //  exit(1);
+    printf("end of g2\n");
 
-    /*
+    flg=0;
   for(i=0;i<F;i++){
-    for(j=0;j<F;j++)
-      a[i][j]=xor128()%2;
-  }
-    */
-  flg=0;
-  for(i=0;i<n;i++){
-    #pragma omp parallel for  
-    for(j=0;j<n;j++){
+    //#pragma omp parallel for  
+    for(j=0;j<F;j++){
       //  printf("%d,",a[i][j]);
       cl[i][j]=cc[i][j];
       dd[j]=cc[i][j];
@@ -129,21 +100,13 @@ void makeS(){
 
   
 //単位行列を作る
-for(i=0;i<n;i++){
- for(j=0;j<n;j++){
+for(i=0;i<F;i++){
+ for(j=0;j<F;j++){
  inv_a[i][j]=(i==j)?1.0:0.0;
  }
 }
-/*
- printf("\n");
- for(i=0;i<n;i++){
-   for(j=0;j<n;j++)
-     printf("%d,",a[i][j]);
-   printf("\n");
- }
-*/
 //掃き出し法
-for(i=0;i<n;i++){
+for(i=0;i<F;i++){
   if(cc[i][i]==0){
   j=0;
   while(cc[j][i]==0){
@@ -153,30 +116,18 @@ for(i=0;i<n;i++){
   
   //  exit(1);
 #pragma omp parallel for  
- for(k=0;k<n;k++){
+ for(k=0;k<F;k++){
  cc[i][k]^=cc[j][k];
  inv_a[i][k]^=inv_a[j][k];
  }
- /* 
- for(j=0;j<n;j++){
-   for(k=0;k<n;k++)
-     printf("%d",cc[j][k]);
-   printf("\n");
-   }
- for(j=0;j<n;j++){
-   for(k=0;k<n;k++)
-     printf("%d,",inv_a[j][k]);
-   printf("\n");
-   }
- */
   }
   //  exit(1);
   
  if(cc[i][i]==1){
- for(l=i+1;l<n;l++){
+ for(l=i+1;l<F;l++){
    if(cc[l][i]==1){
-#pragma omp parallel for  
-     for(k=0;k<n;k++){
+     //#pragma omp parallel for  
+     for(k=0;k<F;k++){
      cc[l][k]^=cc[i][k];
      inv_a[l][k]^=inv_a[i][k];
      }
@@ -189,10 +140,10 @@ for(i=0;i<n;i++){
  }
 
 //  exit(1);
- for(i=1;i<n;i++){
+ for(i=1;i<F;i++){
    for(k=0;k<i;k++){
      if(cc[k][i]==1){
-       for(j=0;j<n;j++){
+       for(j=0;j<F;j++){
        // if(a[k][i]==1){
 	 cc[k][j]^=cc[i][j];
 	 inv_a[k][j]^=inv_a[i][j];
@@ -200,35 +151,14 @@ for(i=0;i<n;i++){
      }
      }
 
-     /*  
-   printf("i=%d\n",i);
-   for(l=0;l<n;l++){
-     for(ii=0;ii<n;ii++)
-       printf("%d",cc[l][ii]);
-     printf("\n");
-   }
-   for(l=0;l<n;l++){
-     for(ii=0;ii<n;ii++)
-       printf("%d, ",inv_a[l][ii]);
-     printf("\n");
-   }
-     */
    }
  }
 
  
- /*
- for(i=0;i<n;i++){
-   for(j=0;j<n;j++)
-     printf("%d,",cc[i][j]);
-   printf("\n");
- }
- //   exit(1);
- */
 
 //逆行列を出力
-for(i=0;i<n;i++){
- for(j=0;j<n;j++){
+for(i=0;i<F;i++){
+ for(j=0;j<F;j++){
   printf(" %d,",inv_a[i][j]);
  }
  printf("\n");
@@ -236,22 +166,14 @@ for(i=0;i<n;i++){
  
 // exit(1);
 //検算
- for(i=0;i<n;i++){
-   for(j=0;j<n;j++){
-     for(k=0;k<n;k++){
+ for(i=0;i<F;i++){
+   for(j=0;j<F;j++){
+     for(k=0;k<F;k++){
        b[i][j]^=(cl[i][k]&inv_a[k][j]);
      }
    }
  }
 
- /*
- for(i=0;i<n;i++){
-   for(j=0;j<n;j++)
-     printf("%d,",b[i][j]);
-   printf("\n");
-  
- }
- */
  for(i=0;i<F;i++){
    //   printf("%d",b[i][i]);
    //printf("==\n");
@@ -262,8 +184,8 @@ for(i=0;i<n;i++){
   } 
  }
  count=0;
- for(i=0;i<n;i++){
-   for(j=0;j<n;j++){
+ for(i=0;i<F;i++){
+   for(j=0;j<F;j++){
      if(b[i][j]==0 && i!=j)
        count++;
    }   
@@ -282,7 +204,7 @@ for(i=0;i<n;i++){
   
 
   //exit(1);
-  for(i=0;i<n;i++){
+  for(i=0;i<F;i++){
     for(j=0;j<F;j++){
       printf("%d,",inv_a[i][j]);
       dd[j]=inv_a[i][j];
@@ -290,7 +212,7 @@ for(i=0;i<n;i++){
     printf("\n");
   }
  
-  for(i=0;i<n;i++){
+  for(i=0;i<F;i++){
     for(j=0;j<F;j++)
       printf("%d, ",b[i][j]);
     printf("\n");
@@ -300,8 +222,8 @@ for(i=0;i<n;i++){
   
   }
   fq=fopen("S.key","wb");
-  for(i=0;i<n;i++){
-    for(j=0;j<n;j++)
+  for(i=0;i<F;i++){
+    for(j=0;j<F;j++)
       dd[j]=cl[i][j];
     fwrite(dd,1,n,fq);
     
@@ -309,8 +231,8 @@ for(i=0;i<n;i++){
   fclose(fq);
 
   fq=fopen("inv_S.key","wb");
-  for(i=0;i<n;i++){
-    for(j=0;j<n;j++)
+  for(i=0;i<F;i++){
+    for(j=0;j<F;j++)
       dd[j]=inv_a[i][j];
     fwrite(dd,1,n,fq);  
   }
