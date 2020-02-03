@@ -164,11 +164,9 @@ int deg(vec a){
       n=i;
   }
   
-  if(n>0){
+  if(n>0)
     return n;
-  }else{
-    return 0;
-  }
+
 
 }
 
@@ -364,6 +362,17 @@ oterm LT(OP f){
 }
 
 
+oterm LT2(OP f){
+  int i,k;
+  oterm t={0};
+
+      t.n=f.t[0].n;
+      t.a=f.t[0].a;
+
+  return t;
+}
+
+
 oterm LTdiv(OP f,oterm t){
   oterm tt,s;
 
@@ -456,9 +465,9 @@ OP omod(OP f,OP g){
   int i=0,j,n,k;
   OP h={0},e={0};
   oterm a,b={0},c={0};
-
- 
-
+  
+  
+  
   if(deg(o2v(f))==0){ 
     printf("baka^\n");
     exit(1);
@@ -467,16 +476,18 @@ OP omod(OP f,OP g){
     printf("baka--\n");
     exit(1);
   }
+  if(deg(o2v(f))<deg(o2v(g))){
+
+    return f;
+  }
+
   //  printf("in omod\n");
   //exit(1);
-    k=deg(o2v(g));
-    b=LT(g);
-
-    
-    if(deg(o2v(f))<deg(o2v(g))){
-      return f;
-    //  a=LT(f);
-    }else{
+  k=deg(o2v(g));
+  b=LT(g);
+  
+  
+  if(deg(o2v(f))>=deg(o2v(g))){
     // printf("b=========%dx^%d\n",b.a,b.n);
     //printpol(o2v(g));
     //printf("\nin omod g=============%d\n",deg(o2v(g)));
@@ -511,9 +522,78 @@ OP omod(OP f,OP g){
       if(c.n==0)
 	break;
     }
-    }
+  }
+
     
     return f;
+}
+
+
+OP omod2(OP f,OP g){
+  int i=0,j,n,k;
+  OP h={0},e={0};
+  oterm a,b={0},c={0};
+  
+  
+  
+  if(deg(o2v(f))==0){ 
+    printf("baka^\n");
+    exit(1);
+  }
+  if(deg(o2v(g))==0){
+    printf("baka--\n");
+    exit(1);
+  }
+  if(deg(o2v(f))<deg(o2v(g))){
+
+    return f;
+  }
+
+  //  printf("in omod\n");
+  //exit(1);
+  k=deg(o2v(g));
+  b=LT2(g);
+  
+  
+  if(deg(o2v(f))>=deg(o2v(g))){
+    printf("b=========%dx^%d\n",b.a,b.n);
+    printpol(o2v(g));
+    printf("\nin omod g=============%d\n",deg(o2v(g)));
+    while(deg(o2v(f))>=deg(o2v(g))){
+      printf("in!\n");
+      //    exit(1);
+      
+      c=LTdiv(f,b);
+      //   printf("c========%dx^%d\n",c.a,c.n);
+      //    exit(1);
+      //ss.t[i]=c;
+      //i++;
+      //printpol(o2v(g));
+      //printf("\ng=================\n");
+      
+      h=oterml(g,c);
+      //printpol(o2v(h));
+      //printf("\n");
+      //printf("h===================\n");
+      //printpol(o2v(f));
+      //printf("\nf===================\n");
+      //     exit(1);
+      
+      f=oadd(f,h);
+      //printpol(o2v(f));
+      //printf("\nff=====================\n");
+      if(deg(o2v(f))>500){
+	printf("baka500\n");
+	exit(1);
+      }
+      
+      if(c.n==0)
+	break;
+    }
+  }
+  
+  
+  return f;
 }
 
 
@@ -606,7 +686,7 @@ OP inv(OP a,OP n){
      */
   //  gcd = d;  // $\gcd(a, n)$
    printf("\n");
-   printpol(o2v(v));
+   printpol(o2v(n));
    printf("\n");
    printf("out2===============\n");
    
@@ -622,8 +702,9 @@ OP inv(OP a,OP n){
    printf("\n");
    printf("ss==============\n");
    //       exit(1);
-
-   return omod(w, v);
+   u=omod2(v, w);
+   
+   return u;
 
 }
 
@@ -651,8 +732,6 @@ OP vx(OP f,OP g){
   v[1].t[0].a=1;
   v[1].t[1].n=0;
 
-  a=LT(f);
-  b=LT(g);
   //printf("in vx\n");
   //  exit(1);
   i=2;
@@ -704,8 +783,7 @@ OP ogcd(OP f,OP g){
   oterm a,b;
   int i=0;
 
-  a=LT(f);
-  b=LT(g);
+
   //printpol(o2v(f));
   //printpol(o2v(g));
   //  exit(1);
@@ -1359,9 +1437,9 @@ int main(int argc,char **argv){
   printpol(o2v(w));
   printf("\n");
   // exit(1);
-  //ff=inv(f,w);
-  //printpol(o2v(ff));
-  //printf("\nff================\n");
+  ff=inv(f,w);
+  printpol(o2v(ff));
+  printf("\nff================\n");
   //  exit(1);
 
   
