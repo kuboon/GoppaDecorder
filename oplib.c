@@ -28,7 +28,7 @@
 unsigned char tmp[E*K][D]={0};
 unsigned char pub[E*K][D]={0};
 unsigned char BH[E*K][D]={0};
-unsigned short c[K+1]={0};
+unsigned short c[2*K+1]={0};
 unsigned short mat[K][D]={0};
 unsigned short m2[K][D]={0};
 
@@ -805,6 +805,10 @@ OP vx(OP f,OP g){
   
   if(deg(o2v(v[i]))<=T){
     vv=v[i];
+    printf("vv==\n");
+    printpol(o2v(vv));
+    printf("\n");
+    
   } else {
     
     printf("-------");
@@ -941,8 +945,7 @@ int i,j,k;
  printpol(o2v(s));
  printf("\nsyn===========\n");
  r=vx(f,s);
- // exit(1);
- 
+
  if(deg(o2v(r))==0){
    printf("baka12\n");
     exit(1);
@@ -985,6 +988,8 @@ int i,j,k;
     exit(1);
   }
  }
+  exit(1);
+ 
  //  printf("\n");
  
   printf("あっ、でる！\n");  
@@ -1129,11 +1134,11 @@ void det(unsigned short g[]){
   vec e;
 
   HH=malloc(D*sizeof(unsigned short *));
-  for(i=0;i<K;i++) {
+  for(i=0;i<2*K+1;i++) {
 	HH[i] = malloc(sizeof(unsigned short) * D);
 }
   //    memcpy(cc,g,sizeof(g));
-  for(i=0;i<K+1;i++){
+  for(i=0;i<2*K+1;i++){
       cc[i]=g[i];
     printf("%d,",g[i]);
   }
@@ -1359,30 +1364,36 @@ int main(int argc,char **argv){
   unsigned short gg[K+1]={0};
 
   //  unsigned short syn[K]={4,12,7,8,11,13};
-  unsigned short g[K+1]={1,0,0,0,1,0,1};
-
+  //unsigned short g[K+1]={1,0,0,0,1,0,1};
+  unsigned short g[K/2+1]={1,0,1,1};
   //  makegf(M);
   //  makefg(M);
   srand(clock()+time(&t));
   //  ginit();
-  w=setpol(g,K+1);
-  printpol(o2v(w));
+  //w=setpol(g,K+1);
+  //printpol(o2v(w));
   //  exit(1);
-  /*
+  
   //---------------
-  w=setpol(g,K+1);
-    w=omul(w,w);
-    v=o2v(w);
-    printpol(v);
-    printf("\n");
+   w=setpol(g,K/2+1);
+  printpol(o2v(w));
+  printf("\n");
+  //   exit(1);
+  w=omul(w,w);
+  printpol(o2v(w));
+  printf("\n");
+  v=o2v(w);
   for(i=0;i<K+1;i++){
-    g[i]=v.x[K-i];
-    //printf("%d,",g[i]);
+    printf("%d,",v.x[K-i]);
+    gg[K-i]=v.x[i];
   }
-  w=setpol(g,K+1);
-  //       exit(1);
+  printf("\n");
+  w=setpol(gg,K+1);
+  printpol(o2v(w));
+  printf("\n");
+  //   exit(1);
   //--------------
-  */
+  
   
 #pragma omp parallel for  
   for(i=0;i<D;i++){
@@ -1393,7 +1404,7 @@ int main(int argc,char **argv){
     }
   }
   //keygen(g);
-  key2(g);
+  key2(gg);
   //exit(1);
   /*
   for(i=0;i<K;i++){
@@ -1471,8 +1482,8 @@ int main(int argc,char **argv){
   }
   //  for(i=0;i<T;i++)
     zz[0]=1;
-    zz[1]=2;
-    zz[2]=4;
+    zz[1]=1;
+    zz[2]=1;
   //  zz[0]=1;
   //zz[1]=2;
   //zz[2]=4;
@@ -1533,15 +1544,15 @@ int main(int argc,char **argv){
   printpol(o2v(f));
   printf("\nsyn1=================\n");
   //   exit(1);
-  
+  /*  
   ff=inv(f,w);
   printpol(o2v(ff));
   printf("\nff3================\n");
   // exit(1);
  printpol(o2v(omod(omul(f,ff),w)));
   printf("\n");
-    exit(1);
-  
+  //   exit(1);
+  */
   
   r=decode(w,f);
 
