@@ -19,7 +19,7 @@
 
 
 
-#define K 1*2
+#define K 2*2
 #define DEG 1024
 #define T K/2
 #define E 4
@@ -962,7 +962,6 @@ int i,j,k;
  // exit(1);
  t2.a=t1.a;
  t2.n=0;
-
  printpol(o2v(r));
  printf("\n");
  w=oterml(v2o(x),t2);
@@ -1209,7 +1208,7 @@ void det2(unsigned short g[]){
 	HH[i] = malloc(sizeof(unsigned short) * D);
 }
   //    memcpy(cc,g,sizeof(g));
-  for(i=0;i<K+1;i++){
+  for(i=0;i<K/2+1;i++){
       cc[i]=g[i];
     printf("%d,",g[i]);
   }
@@ -1217,7 +1216,7 @@ void det2(unsigned short g[]){
   //exit(1);
     //    cc[i]=g[i];
   k=cc[K];
-  w=setpol(g,K+1);
+  w=setpol(g,K/2+1);
   printpol(o2v(w));
   printf("\nw=================\n");
   //  exit(1);
@@ -1271,7 +1270,7 @@ void det2(unsigned short g[]){
   
   
   //#pragma omp parallel for    
-  for(i=0;i<2*K;i++){
+  for(i=0;i<K;i++){
     //#pragma omp parallel for
     for(j=0;j<D;j++){
     m2[i][j]=mat[i][j]=HH[i][j];
@@ -1279,9 +1278,77 @@ void det2(unsigned short g[]){
     }
     printf("\n");
   }  
-  // exit(1);
+  //  exit(1);
 }
 
+
+
+void bdet(){
+  int i,j,k,l;
+  unsigned char dd[E*K]={0};
+  FILE *ff;
+  
+
+  ff=fopen("Hb.key","wb");
+  
+
+  for(i=0;i<D;i++){
+    for(j=0;j<K;j++){
+      l=mat[j][i];
+      //#pragma omp parallel for 
+      for(k=0;k<E;k++){
+	BH[j*E+k][i]=l%2;
+	l=(l>>1);
+      }
+    }
+  }
+  for(i=0;i<D;i++){
+    //#pragma omp parallel for 
+    for(j=0;j<E*K;j++){
+      //  printf("%d,",BH[j][i]);
+      dd[j]=BH[j][i];
+    }
+    fwrite(dd,1,E*K,ff);
+    //printf("\n");
+  }
+  fclose(ff);
+}
+ 
+
+void pubkeygen(){
+  int i,j,k,l;
+  FILE *fp;
+  unsigned char dd[E*K]={0};
+
+  
+  fp=fopen("pub.key","wb");
+  for(i=0;i<E*K;i++){
+    for(j=0;j<D;j++){
+      //#pragma omp parallel for 
+      for(k=0;k<E*K;k++){
+	tmp[i][j]^=cl[i][k]&BH[k][j];
+      }
+    }
+  }
+  P2Mat(P);
+
+  for(i=0;i<E*K;i++){
+    //  for(j=0;j<D;j++){
+    //#pragma omp parallel for 
+      for(k=0;k<D;k++)
+	pub[i][k]=tmp[i][P[k]];//&A[k][j];
+      //    }
+  }
+  for(i=0;i<D;i++){
+    //#pragma omp parallel for 
+    for(j=0;j<E*K;j++){
+     dd[j]=pub[j][i];
+    }
+    fwrite(dd,1,E*K,fp);
+  }
+  fclose(fp);  
+
+}
 
 
 void Pgen(){
@@ -1314,7 +1381,7 @@ void key2(unsigned short g[]){
 
   printf("鍵を生成中です。４分程かかります。\n");
   fp=fopen("H.key","wb");
-  det2(g);
+  det(g);
   //  exit(1);
       for(i=0;i<D;i++){
 	for(j=0;j<K;j++)
@@ -1387,7 +1454,8 @@ int main(int argc,char **argv){
   //  unsigned short syn[K]={4,12,7,8,11,13};
   //unsigned short g[K+1]={1,0,0,0,1,0,1};
   //unsigned short g[K+1]={1,0,1,1,0,1,1};
-  unsigned short g[K+1]={1,1,2};
+  // unsigned short g[K/2+1]={1,11,1};
+    unsigned short g[K+1]={1,0,0,9,1};
   //  unsigned short g[K/2+1]={1,0,1,1};
   //  makegf(M);
   //  makefg(M);
@@ -1506,7 +1574,7 @@ int main(int argc,char **argv){
     }
   }
   //  for(i=0;i<T;i++)
-  //    zz[3]=1;
+  zz[3]=1;
     zz[4]=1;
     //    zz[5]=1;
   //  zz[0]=1;
@@ -1515,7 +1583,7 @@ int main(int argc,char **argv){
   
     //det(g);
 
-
+    /*
   fq=fopen("H.key","rb");
 
   fread(dd,2,K*D,fq);
@@ -1524,7 +1592,7 @@ int main(int argc,char **argv){
   for(j=0;j<K;j++)
     mat[j][i]=dd[K*i+j];
     }
-  
+    */
   
   for(j=0;j<D;j++){
     flg=0;
