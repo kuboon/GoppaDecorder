@@ -19,7 +19,7 @@
 
 
 
-#define K 3*2
+#define K 1*2
 #define DEG 1024
 #define T K/2
 #define E 4
@@ -868,7 +868,7 @@ OP bibun(vec a){
  vec tmp={0};
  
  
- n=deg(a);
+ n=deg(a)+1;
  printf("n=%d\n",n);
  if(n==0){
    printf("baka8\n");
@@ -892,7 +892,7 @@ OP bibun(vec a){
        t=omul(t,w[j]);
    }
    //printpol(o2v(t));
-   if(deg(o2v(t))==0){
+   if(deg(o2v(t))+1==0){
      printf("baka9\n");
      exit(1);
    }
@@ -988,7 +988,7 @@ int i,j,k;
     exit(1);
   }
  }
-  exit(1);
+ //  exit(1);
  
  //  printf("\n");
  
@@ -1134,16 +1134,16 @@ void det(unsigned short g[]){
   vec e;
 
   HH=malloc(D*sizeof(unsigned short *));
-  for(i=0;i<2*K+1;i++) {
+  for(i=0;i<K+1;i++) {
 	HH[i] = malloc(sizeof(unsigned short) * D);
 }
   //    memcpy(cc,g,sizeof(g));
-  for(i=0;i<2*K+1;i++){
+  for(i=0;i<K+1;i++){
       cc[i]=g[i];
     printf("%d,",g[i]);
   }
   printf("\n");
-  //  exit(1);
+  //exit(1);
     //    cc[i]=g[i];
   k=cc[K];
   w=setpol(g,K+1);
@@ -1168,9 +1168,10 @@ void det(unsigned short g[]){
   ww=odiv(f,h);
 
   b=oinv(a);
+  printf("g^-%d=%d\n",i,gf[b]);
   t.a=gf[b];
   t.n=0;
-
+  //  exit(1);
   u=oterml(ww,t);
   e=o2v(u);
   
@@ -1186,11 +1187,88 @@ void det(unsigned short g[]){
     //#pragma omp parallel for
     for(j=0;j<D;j++){
     m2[i][j]=mat[i][j]=HH[i][j];
-    printf("%d,",mat[i][j]);
+    printf("%d,",gf[mat[i][j]]);
     }
     printf("\n");
   }  
   //  exit(1);
+}
+
+
+
+void det2(unsigned short g[]){
+  OP f,h={0},w,u;
+  unsigned short cc[K+1]={0},d[2]={0};
+  unsigned short **HH;
+  int i,j,a,b;
+  oterm t={0};
+  vec e[K]={0};
+
+  
+  HH=malloc(D*sizeof(unsigned short *));
+  for(i=0;i<K+1;i++) {
+	HH[i] = malloc(sizeof(unsigned short) * D);
+}
+  //    memcpy(cc,g,sizeof(g));
+  for(i=0;i<K+1;i++){
+      cc[i]=g[i];
+    printf("%d,",g[i]);
+  }
+  printf("\n");
+  //exit(1);
+    //    cc[i]=g[i];
+  k=cc[K];
+  w=setpol(g,K+1);
+
+  //#pragma omp parallel for       
+  for(i=0;i<D;i++){
+  
+  a=trace(w,gf[i]);
+  cc[K]=k;
+  
+  cc[K]^=a;
+  f=setpol(cc,K+1);
+  
+  h.t[0].a=gf[i];
+  h.t[0].n=0;
+  h.t[1].a=1;
+  h.t[1].n=1;
+
+  OP ww={0};
+
+  memset(ss.t,0,sizeof(ss.t));
+  ww=odiv(f,h);
+
+  b=oinv(a);
+  // b=b-1;
+  printf("g^-%d=%d\n",i,gf[b]);
+  //for(j=0;j<K;j++)
+  //  for(j=0;j<K;j++){
+  e[0].x[i]=b;
+  e[1].x[i]=mlt(b,fg[gf[i]^f.t[1].a]);
+    //}
+  t.n=0;
+  //  exit(1);
+  //u=oterml(ww,t);
+  //e=o2v(u);
+  
+  #pragma omp parallel for 
+  for(j=0;j<K;j++)
+    HH[j][i]=e[j].x[i]; //e.x[K-1-j];  
+
+  }
+  
+  
+  //#pragma omp parallel for    
+  for(i=0;i<K;i++){
+    //#pragma omp parallel for
+    for(j=0;j<D;j++){
+    m2[i][j]=mat[i][j]=HH[i][j];
+    printf("%d,",mat[i][j]);
+    }
+    printf("\n");
+  }  
+  exit(1);
 }
 
 
@@ -1293,7 +1371,7 @@ void key2(unsigned short g[]){
 
   printf("鍵を生成中です。４分程かかります。\n");
   fp=fopen("H.key","wb");
-  det(g);
+  det2(g);
   //  exit(1);
       for(i=0;i<D;i++){
 	for(j=0;j<K;j++)
@@ -1365,16 +1443,19 @@ int main(int argc,char **argv){
 
   //  unsigned short syn[K]={4,12,7,8,11,13};
   //unsigned short g[K+1]={1,0,0,0,1,0,1};
-  unsigned short g[K/2+1]={1,0,1,1};
+  //unsigned short g[K+1]={1,0,1,1,0,1,1};
+  unsigned short g[K+1]={1,1,2};
+  //  unsigned short g[K/2+1]={1,0,1,1};
   //  makegf(M);
   //  makefg(M);
   srand(clock()+time(&t));
   //  ginit();
-  //w=setpol(g,K+1);
-  //printpol(o2v(w));
+  w=setpol(g,K+1);
+  printpol(o2v(w));
   //  exit(1);
-  
-  //---------------
+
+  /*  
+  //---------------２乗するときに外す
    w=setpol(g,K/2+1);
   printpol(o2v(w));
   printf("\n");
@@ -1393,19 +1474,20 @@ int main(int argc,char **argv){
   printf("\n");
   //   exit(1);
   //--------------
-  
+  */  
   
 #pragma omp parallel for  
   for(i=0;i<D;i++){
-    a=trace(w,i);
+    a=trace(w,gf[i]);
     if(a==0){
-      printf("trace 0\n");
-      exit(1);
+      printf("trace 0 %d\n",i);
+      //exit(1);
     }
   }
+
   //keygen(g);
-  key2(gg);
-  //exit(1);
+  key2(g);
+  //  exit(1);
   /*
   for(i=0;i<K;i++){
     for(j=0;j<M;j++){
@@ -1413,7 +1495,7 @@ int main(int argc,char **argv){
     }
     printf("\n");
   }
-  //exit(1);
+  exit(1);
   */
   
 
@@ -1440,7 +1522,7 @@ int main(int argc,char **argv){
   a=trace(w,i);
   if(a==0){
     printf("trace 0\n");
-        exit(1);
+    //  exit(1);
   }
   }
   //printpol(o2v(w));
@@ -1481,14 +1563,14 @@ int main(int argc,char **argv){
     }
   }
   //  for(i=0;i<T;i++)
-    zz[0]=1;
-    zz[1]=1;
-    zz[2]=1;
+  //    zz[3]=1;
+    zz[4]=1;
+    //    zz[5]=1;
   //  zz[0]=1;
   //zz[1]=2;
   //zz[2]=4;
   
-  // det(g);
+    //det(g);
 
 
   fq=fopen("H.key","rb");
