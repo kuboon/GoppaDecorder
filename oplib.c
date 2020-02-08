@@ -868,7 +868,7 @@ OP bibun(vec a){
  vec tmp={0};
  
  
- n=deg(a)+1;
+ n=deg(a);
  printf("n=%d\n",n);
  if(n==0){
    printf("baka8\n");
@@ -892,7 +892,7 @@ OP bibun(vec a){
        t=omul(t,w[j]);
    }
    //printpol(o2v(t));
-   if(deg(o2v(t))+1==0){
+   if(deg(o2v(t))==0){
      printf("baka9\n");
      exit(1);
    }
@@ -987,7 +987,7 @@ int i,j,k;
     exit(1);
   }
  }
- //  exit(1);
+  exit(1);
  
  //  printf("\n");
  
@@ -1124,6 +1124,8 @@ return g;
 }
 
 
+
+
 void det(unsigned short g[]){
   OP f,h={0},w,u;
   unsigned short cc[K+1]={0},d[2]={0};
@@ -1133,16 +1135,16 @@ void det(unsigned short g[]){
   vec e;
 
   HH=malloc(D*sizeof(unsigned short *));
-  for(i=0;i<K+1;i++) {
+  for(i=0;i<2*K+1;i++) {
 	HH[i] = malloc(sizeof(unsigned short) * D);
 }
   //    memcpy(cc,g,sizeof(g));
-  for(i=0;i<K+1;i++){
+  for(i=0;i<2*K+1;i++){
       cc[i]=g[i];
     printf("%d,",g[i]);
   }
   printf("\n");
-  //exit(1);
+  //  exit(1);
     //    cc[i]=g[i];
   k=cc[K];
   w=setpol(g,K+1);
@@ -1167,10 +1169,9 @@ void det(unsigned short g[]){
   ww=odiv(f,h);
 
   b=oinv(a);
-  printf("g^-%d=%d\n",i,gf[b]);
   t.a=gf[b];
   t.n=0;
-  //  exit(1);
+
   u=oterml(ww,t);
   e=o2v(u);
   
@@ -1186,7 +1187,7 @@ void det(unsigned short g[]){
     //#pragma omp parallel for
     for(j=0;j<D;j++){
     m2[i][j]=mat[i][j]=HH[i][j];
-    printf("%d,",gf[mat[i][j]]);
+    printf("%d,",mat[i][j]);
     }
     printf("\n");
   }  
@@ -1453,6 +1454,9 @@ int main(int argc,char **argv){
 
   //  unsigned short syn[K]={4,12,7,8,11,13};
   //unsigned short g[K+1]={1,0,0,0,1,0,1};
+  //unsigned short g[K/2+1]={1,0,1,1};
+    //  unsigned short syn[K]={4,12,7,8,11,13};
+  //unsigned short g[K+1]={1,0,0,0,1,0,1};
   //unsigned short g[K+1]={1,0,1,1,0,1,1};
   // unsigned short g[K/2+1]={1,11,1};
     unsigned short g[K+1]={1,0,0,9,1};
@@ -1464,9 +1468,8 @@ int main(int argc,char **argv){
   w=setpol(g,K+1);
   printpol(o2v(w));
   //  exit(1);
-
-  /*  
-  //---------------２乗するときに外す
+  /*
+  //---------------
    w=setpol(g,K/2+1);
   printpol(o2v(w));
   printf("\n");
@@ -1485,20 +1488,19 @@ int main(int argc,char **argv){
   printf("\n");
   //   exit(1);
   //--------------
-  */  
+  */
   
 #pragma omp parallel for  
   for(i=0;i<D;i++){
-    a=trace(w,gf[i]);
+    a=trace(w,i);
     if(a==0){
-      printf("trace 0 %d\n",i);
-      //exit(1);
+      printf("trace 0\n");
+      //   exit(1);
     }
   }
-
   //keygen(g);
   key2(g);
-  //  exit(1);
+  //exit(1);
   /*
   for(i=0;i<K;i++){
     for(j=0;j<M;j++){
@@ -1506,7 +1508,7 @@ int main(int argc,char **argv){
     }
     printf("\n");
   }
-  exit(1);
+  //exit(1);
   */
   
 
@@ -1533,7 +1535,7 @@ int main(int argc,char **argv){
   a=trace(w,i);
   if(a==0){
     printf("trace 0\n");
-    //  exit(1);
+    //   exit(1);
   }
   }
   //printpol(o2v(w));
@@ -1574,16 +1576,16 @@ int main(int argc,char **argv){
     }
   }
   //  for(i=0;i<T;i++)
-  zz[3]=1;
-    zz[4]=1;
-    //    zz[5]=1;
+  //    zz[0]=1;
+    zz[11]=1;
+    zz[12]=1;
   //  zz[0]=1;
   //zz[1]=2;
   //zz[2]=4;
   
-    //det(g);
+  // det(g);
 
-    /*
+
   fq=fopen("H.key","rb");
 
   fread(dd,2,K*D,fq);
@@ -1592,7 +1594,7 @@ int main(int argc,char **argv){
   for(j=0;j<K;j++)
     mat[j][i]=dd[K*i+j];
     }
-    */
+  
   
   for(j=0;j<D;j++){
     flg=0;
