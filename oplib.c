@@ -19,7 +19,7 @@
 
 
 
-#define K 2*2
+#define K 1*2
 #define DEG 1024
 #define T K/2
 #define E 4
@@ -1458,8 +1458,8 @@ int main(int argc,char **argv){
     //  unsigned short syn[K]={4,12,7,8,11,13};
   //unsigned short g[K+1]={1,0,0,0,1,0,1};
   //unsigned short g[K+1]={1,0,1,1,0,1,1};
-  // unsigned short g[K/2+1]={1,11,1};
-    unsigned short g[K+1]={1,0,0,9,1};
+   unsigned short g[K+1]={1,11,1};
+  // unsigned short g[K+1]={1,0,0,9,1};
   //  unsigned short g[K/2+1]={1,0,1,1};
   //  makegf(M);
   //  makefg(M);
@@ -1468,8 +1468,9 @@ int main(int argc,char **argv){
   w=setpol(g,K+1);
   printpol(o2v(w));
   //  exit(1);
+
   /*
-  //---------------
+  //-------------２乗するとき外す
    w=setpol(g,K/2+1);
   printpol(o2v(w));
   printf("\n");
@@ -1576,8 +1577,8 @@ int main(int argc,char **argv){
     }
   }
   //  for(i=0;i<T;i++)
-  //    zz[0]=1;
-    zz[11]=1;
+  // zz[5]=1;
+  //zz[11]=1;
     zz[12]=1;
   //  zz[0]=1;
   //zz[1]=2;
