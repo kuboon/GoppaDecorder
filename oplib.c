@@ -19,7 +19,7 @@
 
 
 
-#define K 2*2
+#define K 1*2
 #define DEG 1024
 #define T K/2
 #define E 4
@@ -794,7 +794,9 @@ OP vx(OP f,OP g){
   ww=odiv(f,g);
     }
     
-  printf("ss=");
+  printf("ww======= ");
+  printpol(o2v(ww));
+  printf("\n");
   v[i]=oadd(v[i-2],omul(ww,v[i-1]));
   printf("-------");
   memset(f.t,0,sizeof(f.t));
@@ -872,7 +874,7 @@ OP bibun(vec a){
  printf("n=%d\n",n);
  if(n==0){
    printf("baka8\n");
-  exit(1);
+   //  exit(1);
  }
  
  for(i=0;i<T;i++){
@@ -894,7 +896,7 @@ OP bibun(vec a){
    //printpol(o2v(t));
    if(deg(o2v(t))==0){
      printf("baka9\n");
-     exit(1);
+     // exit(1);
    }
    l=oadd(l,t);
  }
@@ -987,7 +989,7 @@ int i,j,k;
     exit(1);
   }
  }
-  exit(1);
+ //  exit(1);
  
  //  printf("\n");
  
@@ -1456,7 +1458,8 @@ int main(int argc,char **argv){
   unsigned short d=0;
   time_t t;
   unsigned short gg[K+1]={0};
-
+  oterm rr={0};
+  
   //  unsigned short syn[K]={4,12,7,8,11,13};
   //unsigned short g[K+1]={1,0,0,0,1,0,1};
   //unsigned short g[K/2+1]={1,0,1,1};
@@ -1464,8 +1467,8 @@ int main(int argc,char **argv){
   //unsigned short g[K+1]={1,0,0,0,1,0,1};
   //unsigned short g[K+1]={1,0,1,1,0,1,1};
   // unsigned short g[K+1]={1,11,1};
-   unsigned short g[K+1]={1,0,9,0,1};
-  //  unsigned short g[K/2+1]={1,0,1,1};
+  //unsigned short g[K+1]={1,0,9,0,1};
+    unsigned short g[K+1]={1,0,1};
   //  makegf(M);
   //  makefg(M);
   srand(clock()+time(&t));
@@ -1582,9 +1585,9 @@ int main(int argc,char **argv){
     }
   }
   //  for(i=0;i<T;i++)
-  // zz[5]=1;
-  zz[11]=1;
-  zz[12]=1;
+   zz[6]=1;
+  //zz[11]=1;
+  //zz[12]=1;
   //  zz[0]=1;
   //zz[1]=2;
   //zz[2]=4;
@@ -1639,13 +1642,34 @@ int main(int argc,char **argv){
   printf("\n");
   //  exit(1);
 
+  //unsigned short yy[K]={14,13,2,0};
   
-  f=setpol(syn,K);
+    f=setpol(syn,K);
+  // f=setpol(yy,K);
   //  exit(1);
   printpol(o2v(f));
   printf("\nsyn1=================\n");
   //   exit(1);
-  /*  
+    r=vx(w,f);
+  printpol(o2v(r));
+  printf("\nr=============\n");
+  /*
+  rr=LT(r);
+  printf("c=%d\n",rr.a);
+  ff.t[0].a=rr.a;
+  ff.t[0].n=0;
+  r=odiv(r,ff);
+  printpol(o2v(r));
+  printf("\nnew==========\n");
+  */
+  v=chen(r);
+  for(i=0;i<D;i++){
+    if(v.x[i]>0)
+    printf("%d %d\n",v.x[i],i);
+  }
+  // exit(1);
+  
+  /*
   ff=inv(f,w);
   printpol(o2v(ff));
   printf("\nff3================\n");
