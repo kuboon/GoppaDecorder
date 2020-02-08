@@ -19,7 +19,7 @@
 
 
 
-#define K 1*2
+#define K 2*2
 #define DEG 1024
 #define T K/2
 #define E 4
@@ -1245,8 +1245,13 @@ void det2(unsigned short g[]){
   printf("g^-%d=%d\n",i,mlt(b,b));
   //for(j=0;j<K;j++)
   //  for(j=0;j<K;j++){
+
+  /*
+  e[0].x[i]=b;
+  e[1].x[i]=mlt(b,fg[gf[i]^f.t[1].a]);
+  */
+
   e[0].x[i]=mlt(b,b);
-  
   aa=gf[i]; //gf[mltn(j,i)]^gf[mlt(j-1,mlt(7,7))];
   e[1].x[i]=mlt(mlt(b,b),fg[aa]);
   e[2].x[i]=mlt(mlt(b,b),fg[gf[mltn(2,fg[aa])]^gf[15]]);
@@ -1458,8 +1463,8 @@ int main(int argc,char **argv){
     //  unsigned short syn[K]={4,12,7,8,11,13};
   //unsigned short g[K+1]={1,0,0,0,1,0,1};
   //unsigned short g[K+1]={1,0,1,1,0,1,1};
-   unsigned short g[K+1]={1,11,1};
-  // unsigned short g[K+1]={1,0,0,9,1};
+  // unsigned short g[K+1]={1,11,1};
+   unsigned short g[K+1]={1,0,9,0,1};
   //  unsigned short g[K/2+1]={1,0,1,1};
   //  makegf(M);
   //  makefg(M);
@@ -1578,8 +1583,8 @@ int main(int argc,char **argv){
   }
   //  for(i=0;i<T;i++)
   // zz[5]=1;
-  //zz[11]=1;
-    zz[12]=1;
+  zz[11]=1;
+  zz[12]=1;
   //  zz[0]=1;
   //zz[1]=2;
   //zz[2]=4;
@@ -1677,3 +1682,4 @@ int main(int argc,char **argv){
 
   return 0;
 }
+
