@@ -121,3 +121,10 @@ http://lupus.is.kochi-u.ac.jp/shiota/misc/field/FiniteField.html
 https://klevas.mif.vu.lt/~skersys/vsd/crypto_on_codes/goppamceliece.pdf
 
 この文献が非常に参考になった。ありがたい。
+
+20200209
+
+https://digitalcommons.csbsju.edu/cgi/viewcontent.cgi?article=1019&context=honors_theses
+
+これもすごい。
+
