@@ -1594,9 +1594,9 @@ int main(int argc,char **argv){
   zz[6]=1;
   zz[11]=1;
   zz[12]=1;
-    zz[0]=1;
-  zz[1]=1;
-  zz[2]=1;
+  //zz[0]=1;
+  //zz[1]=1;
+  //zz[2]=1;
   
   // det(g);
 
@@ -1651,10 +1651,12 @@ int main(int argc,char **argv){
   unsigned short yy[K]={15,12,2,11,10,2};
   unsigned short xx[K]={11,15,1,9,5,11}; 
   f=setpol(syn,K);
-  
+  /*
   printpol(o2v(f));
   printf(" syn=========\n");
   // exit(1);
+  
+  //実験中
   ff=inv(f,w);
   tt.t[1].n=1;
   tt.t[1].a=1;
@@ -1684,15 +1686,18 @@ int main(int argc,char **argv){
   printf(" x*b^2================\n");
   printpol(o2v(ff));
   printf(" aptha^2================\n");
-  ff=oadd(ff,r);
-  printpol(o2v(ff));
-  printf(" rho================\n");
+  //  ff=oadd(ff,r);
+  // printpol(o2v(ff));
+  //printf(" rho================\n");
+  for(i=0;i<D;i++)
+    printf("x=%d %d\n",trace(r,i),i);
+  exit(1);
   //ff=omod(ff,w);
   v=chen(ff);
   for(i=0;i<16;i++)
     printf("x[%d]=1\n",v.x[i]);
   exit(1);
-    
+  */  
     /*
   exit(1);
   printpol(o2v(ss));
