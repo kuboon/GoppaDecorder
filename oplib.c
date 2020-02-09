@@ -1679,12 +1679,21 @@ int main(int argc,char **argv){
   printf(" beta==============\n");
   printpol(o2v(ss));
   printf(" alpha==============\n");
-    exit(1);
-    
-    /*
-  v=chen(h);
+  r=omul(omul(r,r),tt);
+  printpol(o2v(r));
+  printf(" x*b^2================\n");
+  printpol(o2v(ff));
+  printf(" aptha^2================\n");
+  ff=oadd(ff,r);
+  printpol(o2v(ff));
+  printf(" rho================\n");
+  //ff=omod(ff,w);
+  v=chen(ff);
   for(i=0;i<16;i++)
     printf("x[%d]=1\n",v.x[i]);
+  exit(1);
+    
+    /*
   exit(1);
   printpol(o2v(ss));
   printf(" b^2==============\n");
