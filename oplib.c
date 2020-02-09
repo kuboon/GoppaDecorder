@@ -1666,16 +1666,21 @@ int main(int argc,char **argv){
   printpol(o2v(ff));
   printf(" sqrt===============\n");
   r=vx(w,ff);
-  r=omul(omul(r,r),h);
-  r=omod(r,w);
-  ss=omul(ss,ss);
+  h=omul(omul(r,r),h);
+  f=omod(h,w);
+  ff=omul(ss,ss);
   //h=oadd(r,ss);
   //  f=omod(r,w);
+  printpol(o2v(f));
+  printf(" B^2*x*(h+x) mod g==============\n");
+  printpol(o2v(ff));
+  printf(" alpha^2==============\n");
   printpol(o2v(r));
-  printf(" B^2*x+a^2==============\n");
+  printf(" beta==============\n");
   printpol(o2v(ss));
   printf(" alpha==============\n");
     exit(1);
+    
     /*
   v=chen(h);
   for(i=0;i<16;i++)
