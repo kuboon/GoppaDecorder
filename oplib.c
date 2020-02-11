@@ -442,14 +442,7 @@ OP omod(OP f,OP g){
       printpol(o2v(h));
       printf("\n");
       printf("modh===================\n");
-      if(LT(h).n==5 && h.t[0].n==1){
-	e.t[0].n=0;
-	e.t[0].a=4;
-	//h=omod(h,e);
-	printpol(o2v(h));
-	printf("\nin modh=========\n");
-	//exit(1);
-      }
+
       printpol(o2v(f));
       printf("\nmodf===================\n");
       //     exit(1);
@@ -848,12 +841,12 @@ OP gcd(OP a,OP b){
   printf(" a==============\n");
   printpol(o2v(b));
   printf(" b==============\n");
-  //  exit(1);
+  // exit(1);
   /* ユークリッドの互除法 */
   r = omod(a , b);
   if(deg(o2v(r))>0){
   printpol(o2v(r));
-  printf(" r==============\n");
+  printf(" rrr==============\n");
   }
   // exit(1);
   while(deg(o2v(r))>=0){
@@ -870,13 +863,9 @@ OP gcd(OP a,OP b){
     if(deg(o2v(r))==0 && r.t[0].a==1)
       return r;
     if(deg(o2v(r))==0 && r.t[0].a==0)
-      return a;
+      return b;
   }
-  printpol(o2v(b));
-  printf(" be=================\n");
-  //  return b;
-  //    exit(1);
-}
+ }
 
 
 
@@ -907,6 +896,7 @@ OP benor(int ww,int nn){
     
     v.x[0]=1;
     v.x[nn]=1;
+    //    v.x[6]=1;
     k=0;
     
     while(k<ww){
@@ -916,6 +906,7 @@ OP benor(int ww,int nn){
 	k++;
       }
     }
+    
   printpol(v);
   printf(" v=============\n");
   tt=v2o(v);
@@ -931,7 +922,8 @@ OP benor(int ww,int nn){
     ff=gcd(tt,f);
     if(deg(o2v(ff))>0){
       printpol(o2v(ff));
-      printf(" lcm==============\n");
+      printf(" lcm==============%d\n",i);
+      break;
     }
     if(deg(o2v(ff))==0)
       j++;
@@ -1613,10 +1605,28 @@ int main(int argc,char **argv){
   //  makefg(M);
   srand(clock()+time(&t));
   //  ginit();
+  /*
+  ff.t[0].a=1;
+  ff.t[0].n=0;
+  ff.t[1].a=1;
+  ff.t[1].n=6;
+  ff.t[2].a=1;
+  ff.t[2].n=10;
+  f.t[0].a=1;
+  f.t[0].n=1;
+  f.t[1].a=1;
+  f.t[1].n=32;
+  */
+  //  h=gcd(f,ff);
+  //printpol(o2v(h));
+  //printf("gcd=========\n");
+  //  benor(1,10);
+  //exit(1);
+  
   ff=benor(3,10);
   printpol(o2v(ff));
   printf(" irr?=============\n");
-  //  exit(1);
+  exit(1);
   
   w=setpol(g,K+1);
   printpol(o2v(w));
