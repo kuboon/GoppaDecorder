@@ -839,6 +839,140 @@ vec genrandompol(int n){
 }
 
 
+OP gcd(OP a,OP b){
+  OP r={0},s={0};
+
+  s=a;
+  
+  printpol(o2v(a));
+  printf(" a==============\n");
+  printpol(o2v(b));
+  printf(" b==============\n");
+  //  exit(1);
+  /* ユークリッドの互除法 */
+  r = omod(a , b);
+  if(deg(o2v(r))>0){
+  printpol(o2v(r));
+  printf(" r==============\n");
+  }
+  // exit(1);
+  while(deg(o2v(r))>=0){
+    printpol(o2v(r));
+    printf(" r2==============\n");
+
+    a = b;
+    b = r;
+     if(deg(o2v(b))>0)
+      r = omod(a ,b);
+      //  } 
+    printpol(o2v(a));
+    printf(" aa==============\n");
+    if(deg(o2v(r))==0 && r.t[0].a==1)
+      return r;
+    if(deg(o2v(r))==0 && r.t[0].a==0)
+      return a;
+  }
+  printpol(o2v(b));
+  printf(" be=================\n");
+  //  return b;
+  //    exit(1);
+}
+
+
+
+
+unsigned int ipow(unsigned int q,unsigned int u){
+unsigned int i,m=1;
+
+  for(i=0;i<u;i++)
+    m*=q;
+
+  printf("in ipow====%d\n",m);
+
+  return m;
+}
+
+
+
+
+
+OP benor(int ww,int nn){
+  OP w={0},ff={0},f={0},tt={0};
+  int flg=0,i,j,k;
+  vec v={0};
+
+  while(1){
+    for(i=0;i<DEG;i++)
+      v.x[i]=0;
+    
+    v.x[0]=1;
+    v.x[nn]=1;
+    k=0;
+    
+    while(k<ww){
+      j=xor128()%10;
+      if(j!=0 && j!=10 && v.x[j]==0){
+	v.x[j]=1;
+	k++;
+      }
+    }
+  printpol(v);
+  printf(" v=============\n");
+  tt=v2o(v);
+  //  exit(1);
+  j=0;
+  //    tt=irr(1,10);
+  for(i=1;i<deg(v)/2+1;i++){
+    f.t[0].a=1;
+    f.t[0].n=1;
+    f.t[1].a=1;
+    f.t[1].n=ipow(2,i);
+    
+    ff=gcd(tt,f);
+    if(deg(o2v(ff))>0){
+      printpol(o2v(ff));
+      printf(" lcm==============\n");
+    }
+    if(deg(o2v(ff))==0)
+      j++;
+    printpol(o2v(ff));
+    printf(" ff=============\n");
+    printf("j=%d\n",j);
+    printpol(v);
+    printf(" vv===================\n");
+  }
+  if(j==deg(v)/2){
+    printpol(o2v(tt));
+    printf(" irr?============\n");
+    return tt;
+  }
+  j=0;
+  //exit(1);
+    }
+
+  
+}
+
+
+
+unsigned char chk(OP f){
+  int i,j,flg=0;
+  vec x={0};
+
+  x=o2v(f);
+  for(i=0;i<DEG;i++){
+    if(x.x[i]>0){
+      flg=1;
+      return 1;
+    }
+  }
+  if(flg==0)
+    return 0;
+  
+}
+
+
+
 OP ogcd(OP f,OP g){
   OP h={0},ww={0};
   oterm a,b;
@@ -1479,6 +1613,11 @@ int main(int argc,char **argv){
   //  makefg(M);
   srand(clock()+time(&t));
   //  ginit();
+  ff=benor(3,10);
+  printpol(o2v(ff));
+  printf(" irr?=============\n");
+  //  exit(1);
+  
   w=setpol(g,K+1);
   printpol(o2v(w));
   //  exit(1);
@@ -1594,9 +1733,9 @@ int main(int argc,char **argv){
   zz[6]=1;
   zz[11]=1;
   zz[12]=1;
-  //zz[0]=1;
-  //zz[1]=1;
-  //zz[2]=1;
+  zz[0]=1;
+  zz[1]=1;
+  zz[2]=1;
   
   // det(g);
 
@@ -1651,7 +1790,7 @@ int main(int argc,char **argv){
   unsigned short yy[K]={15,12,2,11,10,2};
   unsigned short xx[K]={11,15,1,9,5,11}; 
   f=setpol(syn,K);
-  /*
+  
   printpol(o2v(f));
   printf(" syn=========\n");
   // exit(1);
@@ -1674,9 +1813,10 @@ int main(int argc,char **argv){
   //h=oadd(r,ss);
   //  f=omod(r,w);
   printpol(o2v(f));
-  printf(" B^2*x*(h+x) mod g==============\n");
+  printf(" B^2*(h+x) mod g==============\n");
   printpol(o2v(ff));
   printf(" alpha^2==============\n");
+  exit(1);
   printpol(o2v(r));
   printf(" beta==============\n");
   printpol(o2v(ss));
@@ -1697,7 +1837,7 @@ int main(int argc,char **argv){
   for(i=0;i<16;i++)
     printf("x[%d]=1\n",v.x[i]);
   exit(1);
-  */  
+    
     /*
   exit(1);
   printpol(o2v(ss));
@@ -1777,7 +1917,6 @@ int main(int argc,char **argv){
   h=vx(w,r);
   printpol(o2v(h));
   printf(" beta^2=================\n");
-
   //  exit(1);
   f=omod(omul(h,r),w);
   printpol(o2v(f));
@@ -1799,7 +1938,6 @@ int main(int argc,char **argv){
     //  exit(1);
   }
  }
-
  //  hh=bibun(v);
  // printpol(o2v(hh));
  //printf("w=================\n");
@@ -1848,4 +1986,3 @@ int main(int argc,char **argv){
 
   return 0;
 }
-
