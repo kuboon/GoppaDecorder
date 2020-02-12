@@ -20,7 +20,7 @@
 
 
 #define K 64*2
-#define DEG 32768
+#define DEG 4096
 #define T K/2
 #define E 4
 #define D 2*K
@@ -397,11 +397,11 @@ oterm LTdiv(OP f,oterm t){
 
 
 OP omod(OP f,OP g){
-  int i=0,j,n,k,m;
+  int i=0,j,n,k;
   OP h={0},e={0};
   oterm a,b={0},c={0};
   
-  m=deg(o2v(f));
+  
   n=LT(g).n;
   if(deg(o2v(f))==0){ 
     printf("baka^\n");
@@ -450,13 +450,12 @@ OP omod(OP f,OP g){
       f=oadd(f,h);
       printpol(o2v(f));
       printf("\nff1=====================\n");
-      if(deg(o2v(f))>m+1){
+      if(deg(o2v(f))>10){
 	printf("baka500\n");
-	break;
+	//break;
       }
-      
-      if(c.n==0)
-	break;
+
+
     }
     
     return f;
@@ -464,11 +463,10 @@ OP omod(OP f,OP g){
 
 
 OP odiv(OP f,OP g){
-  int i=0,j,n,k,m;
+  int i=0,j,n,k;
   OP h={0},e={0},tt={0},o={0};
   oterm a,b={0},c={0};
 
-  m=deg(o2v(f));
   o=f; 
 
   if(deg(o2v(f))==0){ 
@@ -526,9 +524,9 @@ printpol(o2v(g));
     
       //printpol(o2v(f));
       //printf("\nff=====================\n");
-      if(deg(o2v(f))>m+1){
+      if(deg(o2v(f))>500){
 	printf("baka500\n");
-	break;
+	exit(1);
       }
       
       if(c.n==0)
@@ -866,8 +864,6 @@ OP gcd(OP a,OP b){
       return r;
     if(deg(o2v(r))==0 && r.t[0].a==0)
       return b;
-    if(deg(o2v(b))==1)
-      break;
   }
  }
 
@@ -891,11 +887,10 @@ unsigned int i,m=1;
 
 OP benor(int ww,int nn){
   OP w={0},ff={0},f={0},tt={0};
-  int flg=0,i,j,k,count=0;
+  int flg=0,i,j,k;
   vec v={0};
 
   while(1){
-#pragma omp parallel for   
     for(i=0;i<DEG;i++)
       v.x[i]=0;
     
@@ -905,7 +900,7 @@ OP benor(int ww,int nn){
     k=0;
     
     while(k<ww){
-      j=xor128()%nn;
+      j=xor128()%10;
       if(j!=0 && j!=10 && v.x[j]==0){
 	v.x[j]=1;
 	k++;
@@ -918,13 +913,10 @@ OP benor(int ww,int nn){
   //  exit(1);
   j=0;
   //    tt=irr(1,10);
-  //  #pragma omp parallel for  
   for(i=1;i<deg(v)/2+1;i++){
     f.t[0].a=1;
     f.t[0].n=1;
     f.t[1].a=1;
-    if(i>64)
-      exit(1);
     f.t[1].n=ipow(2,i);
     
     ff=gcd(tt,f);
@@ -948,8 +940,7 @@ OP benor(int ww,int nn){
   }
   j=0;
   //exit(1);
-  
-  }
+    }
 
   
 }
@@ -971,6 +962,8 @@ unsigned char chk(OP f){
     return 0;
   
 }
+
+
 
 
 
@@ -1004,7 +997,7 @@ OP ogcd(OP f,OP g){
 OP bibun(vec a){
   OP w[T]={0};
   OP l={0},t={0};
- unsigned long long int i,j,k,n;
+ int i,j,k,n;
  vec tmp={0};
  
  
@@ -1603,7 +1596,7 @@ int main(int argc,char **argv){
   //unsigned short g[K/2+1]={1,0,1,1};
     //  unsigned short syn[K]={4,12,7,8,11,13};
   //unsigned short g[K+1]={1,0,0,0,1,0,1};
-  //unsigned short g[K+1]={1,0,1,1,0,1,1};
+  unsigned short g[K+1]={1,0,1,1,0,1,1};
   // unsigned short g[K+1]={1,11,1};
   //unsigned short g[K+1]={1,0,9,0,1};
   //  unsigned short g[K+1]={1,0,1};
@@ -1615,11 +1608,27 @@ int main(int argc,char **argv){
   srand(clock()+time(&t));
     ginit();
   
+  ff.t[0].a=1;
+  ff.t[0].n=0;
+  ff.t[1].a=1;
+  ff.t[1].n=6;
+  ff.t[2].a=1;
+  ff.t[2].n=10;
+  f.t[0].a=1;
+  f.t[0].n=1;
+  f.t[1].a=1;
+  f.t[1].n=32;
   
-  ff=benor(3,128);
-   printpol(o2v(ff));
+    h=gcd(f,ff);
+  printpol(o2v(h));
+  printf("gcd=========\n");
+
+  ff=benor(3,10);
+  printpol(o2v(ff));
   printf(" irr?=============\n");
-    exit(1);
+  //  exit(1);
+
+
   
   w=setpol(g,K+1);
   printpol(o2v(w));
@@ -1656,7 +1665,7 @@ int main(int argc,char **argv){
     }
   }
   //keygen(g);
-  //key2(g);
+  key2(g);
   //exit(1);
   /*
   for(i=0;i<K;i++){
@@ -1716,36 +1725,25 @@ int main(int argc,char **argv){
   printf("\n");
   //exit(1);
   */
-
-    printf("debug\n");
-  j=0;
   /*
+  j=0;
   while(j<T){
-    printf("j=%d\n",j);
     flg=0;
-    //    if(jj[j]==0){
+    if(jj[j]==0){
       l=xor128()%D;
-      
    	for(k=0;k<T;k++){
 	  if(l==jj[k])
 	    flg=1;
 	}
-      
-      if(jj[j]==0){
-	  jj[j]=1;
+	if(flg==0){
+	  jj[j]=l;
 	  j++;
-	  }
-	//    }
-  }
-  */
-  i=0;
-  while(i<T){
-    l=xor128()%D;
-    if(zz[l]==0){
-      zz[i]=1;
-      i++;
+	}
     }
   }
+  */
+  for(i=0;i<T+1;i++)
+    zz[i]=1;
   //zz[6]=1;
   //zz[11]=1;
   //zz[12]=1;
@@ -1790,7 +1788,7 @@ int main(int argc,char **argv){
   for(i=0;i<K;i++){
     syn[i]=0;
     //#pragma omp parallel for
-    for(j=0;j<T;j++){
+    for(j=0;j<D;j++){
       //   printf("%u,",zz[jj[j]]);
       syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
     }
@@ -1798,9 +1796,9 @@ int main(int argc,char **argv){
   }
   printf("\n");
   //    exit(1);  
-  //  for(i=0;i<K;i++)
-  //printf("mat[%d][1]=%d\n",i,mat[i][1]);
-  //printf("\n");
+  for(i=0;i<K;i++)
+    printf("mat[%d][1]=%d\n",i,mat[i][1]);
+  printf("\n");
   //    exit(1);
   
   unsigned short yy[K]={15,12,2,11,10,2};
@@ -1809,7 +1807,7 @@ int main(int argc,char **argv){
   
   printpol(o2v(f));
   printf(" syn=========\n");
-  //  exit(1);
+  // exit(1);
   /*
   //実験中
   ff=inv(f,w);
@@ -2002,3 +2000,5 @@ int main(int argc,char **argv){
 
   return 0;
 }
+
+
