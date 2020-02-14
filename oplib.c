@@ -1596,7 +1596,7 @@ int main(int argc,char **argv){
   //unsigned short g[K/2+1]={1,0,1,1};
     //  unsigned short syn[K]={4,12,7,8,11,13};
   //unsigned short g[K+1]={1,0,0,0,1,0,1};
-  unsigned short g[K+1]={1,0,1,1,0,1,1};
+  //unsigned short g[K+1]={1,0,1,1,0,1,1};
   // unsigned short g[K+1]={1,11,1};
   //unsigned short g[K+1]={1,0,9,0,1};
   //  unsigned short g[K+1]={1,0,1};
@@ -1742,7 +1742,7 @@ int main(int argc,char **argv){
     }
   }
   */
-  for(i=0;i<T+1;i++)
+  for(i=0;i<T;i++)
     zz[i]=1;
   //zz[6]=1;
   //zz[11]=1;
@@ -2000,5 +2000,3 @@ int main(int argc,char **argv){
 
   return 0;
 }
-
-
