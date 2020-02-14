@@ -1109,7 +1109,6 @@ int i,j,k;
  printf("\n");
  exit(1);
  */
-	
 
  
  for(i=0;i<T;i++){
@@ -1607,7 +1606,7 @@ int main(int argc,char **argv){
   //  makegf(M);
   //  makefg(M);
   srand(clock()+time(&t));
-   // ginit();
+    ginit();
   
   ff.t[0].a=1;
   ff.t[0].n=0;
@@ -1628,23 +1627,6 @@ int main(int argc,char **argv){
   printpol(o2v(ff));
   printf(" irr?=============\n");
   //  exit(1);
-
-flg=0;
-  do{
-    flg=0;
-    for(i=0;i<K+1;i++)
-      g[i]=0;
-    g[K]=1;
-    g[0]=1;
-    for(i=0;i<10;i++)
-      g[rand()%K]=1;
-    w=setpol(g,K+1);
-    for(i=0;i<D;i++){
-      c=trace(w,i);
-      if(c==0)
-	flg=1;
-    }
-  }while(flg==1);
 
 
   
