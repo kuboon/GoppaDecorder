@@ -791,14 +791,10 @@ OP vx(OP f,OP g){
   //  exit(1);
   i=2;
        for(i=2;i<T+2;i++){
-    memset(ss.t,0,DEG);
-    if(deg(o2v(f))>=deg(o2v(g)) && deg(o2v(g))>0){
-      if(deg(o2v(g))==0){
-	printf("baka vx\n");
-	exit(1);
-      }
-	
-      if(deg(o2v(g))>0)
+	 // memset(ss.t,0,DEG*sizeof(ss));
+    //    if(deg(o2v(f))>=deg(o2v(g)) && deg(o2v(g))>0){
+    if(deg(o2v(vv))<T){
+
 	h=omod(f,g);
       printpol(o2v(g));
       printf(" mod vx==============\n");
