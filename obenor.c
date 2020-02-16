@@ -10,7 +10,7 @@
 
 
 #define K 64*2
-#define DEG 1024
+#define DEG 8192
 #define T K/2
 #define E 4
 #define D 2*K
@@ -208,11 +208,9 @@ int i,j,k,n;
 
 n=distance(f);
 printf("n=%d\n",n);
- if(terms(f)>50)
-printf("terms opol=%d\n",terms(f));
+printf("terms=%d\n",terms(f));
 printf("deg=%d\n",odeg(f));
-
-   
+ 
 //exit(1);
 
 for(i=0;i<n+1;i++){
@@ -332,12 +330,10 @@ oterm LT(OP f){
 
   k=terms(f);
   s=f.t[0];
-  //  #pragma omp parallel for
   for(i=0;i<k+1;i++){
     //printf("a=%d %d\n",f.t[i].a,f.t[i].n);
     if(f.t[i].a>0){
-      // printf("in LT=%d %d\n",s.a,s.n);
-      #pragma omp parallel for
+      printf("in LT=%d %d\n",s.a,s.n);
       for(j=i;j<k+1;j++){
 	if(s.n<f.t[j].n){
 	  s.n=f.t[j].n;
@@ -370,23 +366,11 @@ n2=terms(g);
  if(n1>n2){
 
  }
- if(terms(f)>50){
+
  oprintpol(f);
  printf(" fff==============\n");
- }
- if(terms(f)>254){
-   printf("too many terms in add\n");
-   exit(1);
- }
- if(terms(g)>50){
  oprintpol(g); 
  printf(" ggg==============\n");
- }
- if(terms(g)>254){
-   printf("g terms ga hen\n");
-   exit(1);
- }
-   
  o1=LT(f);
  o2=LT(g);
  printf("LTadd==%d %d\n",o1.n,o2.n);
@@ -422,15 +406,6 @@ n2=terms(g);
  if(odeg(h)>0)
  oprintpol(h);
  printf(" addh==============\n");
- if(terms(h)>50){
-   /*
-   oprintpol(g);
-   printf("addg %d\n",terms(g));
-   oprintpol(f);
-   printf("addf %d\n",terms(f));
-   */
-   printf(" terms at addi %d\n",terms(h));
- }
  //  exit(1);
 
  return h;
@@ -546,21 +521,15 @@ OP omod(OP f,OP g){
       //    exit(1);
       
       c=LTdiv(f,b);
-      if(c.n==0)
-	break;
       printf("cc========%dx^%d\n",c.a,c.n);
       //   exit(1);
       //ss.t[i]=c;
       //i++;
-      if(terms(g)>50)
-	printf("g terms over %d",terms(g));
       oprintpol(g);
       printf("\ng=================\n");
       
       h=oterml(g,c);
       oprintpol(h);
-      if(terms(h)>50)
-	printf("h terms over %d",terms(h));
       // printf("\n");
       printf(" modh===================\n");
       //  exit(1);
@@ -569,17 +538,14 @@ OP omod(OP f,OP g){
       //     exit(1);
       
       f=add(f,h);
-      if(terms(f)>50)
-	printf("f terms over %d",terms(f));
-
       if(odeg(f)>0)
       oprintpol(f);
       printf(" ff1=====================\n");
       //  exit(1);
-      //      if(odeg(f)>m+1){
-      //printf("baka500\n");
+      if(odeg(f)>m+1){
+	printf("baka500\n");
 	//break;
-      //}
+      }
       count++;
     
       if(c.n==0)
@@ -615,10 +581,10 @@ OP odiv(OP f,OP g){
     printpol(o2v(g));
     printf("in odiv1 g===========%d %d\n",b.a,b.n);
   
-    if(deg(o2v(f))<deg(o2v(g)))
-      return f;
+    if(deg(o2v(f))<deg(o2v(g))){
+  return f;
   //  a=LT(f);
-    
+    }
   printf("odiv in b=========%dx^%d\n",b.a,b.n);
 printpol(o2v(g));
  printf("\nf===================\n");
@@ -757,6 +723,12 @@ OP inv(OP a,OP n){
     oprintpol(a);
     printf("\nin roop a==================%d\n",deg(o2v(a)));
     printf("\n");
+    if(LT(a).n==5 && a.t[0].n==1){
+      //h=omod(h,e);
+      oprintpol(a);
+      printf("\nin modh=========\n");
+      exit(1);
+      }
     
     x = s;
     s = t;
@@ -814,6 +786,7 @@ OP inv(OP a,OP n){
 OP gcd(OP a,OP b){
   OP r={0},s={0};
   int count=0;
+
   
   s=a;
   
@@ -821,53 +794,44 @@ OP gcd(OP a,OP b){
   printf(" a==============\n");
   oprintpol(b);
   printf(" b==============\n");
-
   //   exit(1);
   /* ユークリッドの互除法 */
   r = omod(a , b);
   if(odeg(r)>0){
-    oprintpol(r);
-    printf(" rrr==============\n");
-  }
-  //exit(1);
-  //  #pragma omp parallel 
-  while(odeg(r)>0){
   oprintpol(r);
-  printf(" r2==============\n");
-  
-  a = b;
-  b = r;
-  if(odeg(b)>0)
-    r = omod(a ,b);
-  if(terms(a)>50 || terms(b)>50){
-  printf("tterms-a=%d\n",terms(a));
-  printf("tterms-b=%d\n",terms(b));
+  printf(" rrr==============\n");
   }
-  if(terms(a)>254 || terms(b)>254){
-    printf("too many terms\n");
-    exit(1);
-  }
-    
-  if(odeg(r)>0)
+  //if(odeg(omod(a,b))==0)
+  //return b;
+  //exit(1);
+  while(odeg(r)>0){
     oprintpol(r);
-  printf(" ttt==============\n");
-  //  exit(1);
-  //  } 
-  
-  if(odeg(r)==0 && r.t[0].a==1)
-    return r;
-  if(odeg(r)==0 && r.t[0].a==0)
-    return b;
-  if(odeg(b)==1)
-    break;
-  count++;
-  if(count>0xff){
-    printf("baka100\n");
-    break;
+    printf(" r2==============\n");
+
+    a = b;
+    b = r;
+     if(odeg(b)>0)
+      r = omod(a ,b);
+     if(odeg(r)>0)
+     oprintpol(r);
+    printf(" ttt==============\n");
+    //  exit(1);
+      //  } 
+
+    if(odeg(r)==0 && r.t[0].a==1)
+      return r;
+    if(odeg(r)==0 && r.t[0].a==0)
+      return b;
+    if(odeg(b)==1)
+      break;
+    count++;
+    if(count>0xff){
+      printf("baka100\n");
+      exit(1);
+    }
   }
-}
-  
-  }
+ 
+ }
 
 
 
@@ -897,7 +861,7 @@ OP benor(int ww,int nn){
   OP v={0};
 
   //  while(1){
- label:
+
 #pragma omp parallel for   
     for(i=0;i<256;i++){
       v.t[i].a=0;
@@ -921,7 +885,7 @@ OP benor(int ww,int nn){
     k=1;
     
     do{
-      j=xor128()%64;
+      j=xor128()%16;
       if(j>0 && j<nn && v.t[k-1].n<j && k<ww+2){
 	v.t[k].a=1;
         v.t[k].n=j;
@@ -929,7 +893,7 @@ OP benor(int ww,int nn){
       }
   
       count++;
-      if(count>100){
+      if(count>10){
         k=0;
         for(i=1;i<256;i++){
           v.t[i].a=0;
@@ -937,14 +901,14 @@ OP benor(int ww,int nn){
         }
   
         k=1;
-	if(count==100)
+	if(count==10)
 	  break;
         //break;
       }
       printf("nozomi=%d\n",ww+2);
       oprintpol(v);
       if(odeg(v)==0)
-	goto label;
+	break;
       printf(" v==============\n");
       
     }while(terms(v)<ww+2); 
@@ -953,18 +917,9 @@ OP benor(int ww,int nn){
   oprintpol(v);  
   printf(" v=============\n");
   printf("odeg=%d\n",odeg(v));
-  if(terms(v)<ww+2){
-  printf("terms @ v less than benor=%d\n",terms(v));
-  exit(1);
-  }
-  if(terms(v)==ww+2){
-    oprintpol(v);
-    printf(" ========term success\n");
-  }
-  if(terms(v)>254){
-    printf("terms is over v in");
-    exit(1);
-  }
+  printf("terms=%d\n",terms(v));
+  //  if(terms(v)<ww+3)
+  //   exit(1);
 
 //  exit(1);
 
@@ -982,43 +937,31 @@ OP benor(int ww,int nn){
     f.t[1].n=ipow(2,i);
     oprintpol(f);
     // exit(1);
-    if(odeg(tt)>0){
+    if(odeg(tt)>0)
     ff=gcd(tt,f);
-
-    }
     oprintpol(ff);
     printf(" benor===========\n");
     if(odeg(ff)>0){
       oprintpol(ff);
       printf(" lcm==============%d\n",i);
+      // return ff;
     }
     if(odeg(ff)==0){
       j++;
     
     oprintpol(ff);
     printf(" ffaa=============\n");
-    
+    }
     printf("j=%d\n",j);
-    if(j>nn/2){
-      printf("baka>\n");
-      exit(1);
     oprintpol(v);
     printf(" vv===================\n");
-    }
-    }
-    
-  if(terms(tt)>ww+2){
-    printf("over\n");
-    //  exit(1);
   }
-  }
-  if(j==nn/2 && odeg(tt)>0){
+  if(j==nn/2 && terms(tt)==ww+2 && odeg(tt)>0){
     oprintpol(tt);
     printf(" irr?============\n");
     return tt;
     printf("i==%d\n",i);
   }
-  
 //  j=0;
   if(terms(v)<ww+2)
   return v;  
@@ -1129,26 +1072,33 @@ int main(int argc,char **argv){
   //printf("%llu\n",u);
   /*  
   ff.t[0].a=1;
-  ff.t[0].n=1;
+  ff.t[0].n=0;
   ff.t[1].a=1;
-  ff.t[1].n=ipow(2,16);
-  //  ff.t[2].a=1;
-  //ff.t[2].n=ipow(2,32);
+  ff.t[1].n=1;
+  ff.t[2].a=1;
+  ff.t[2].n=16;
+  f.t[0].a=1;
+  f.t[0].n=1;
   f.t[1].a=1;
-  f.t[1].n=0;
-  f.t[2].a=1;
-  f.t[2].n=3;
-  f.t[3].a=1;
-  f.t[3].n=22;
-  f.t[4].a=1;
-  f.t[4].n=32;
-  h=gcd(ff,f);
-  oprintpol(h);
-  exit(1);
+  f.t[1].n=256;
+  h=gcd(f,ff);
+  if(odeg(h)>0)
+    oprintpol(h);
+  printf("\n");
+  if(odeg(h)==0 && odeg(omod(f,ff))==0){
+    oprintpol(ff);
+    printf(" gcd=======\n");
+    exit(1);
+  }
   */
-  //  f.t[5].a=1;
-  // f.t[5].n=10;
-
+  /*
+  f.t[3].a=1;
+  f.t[3].n=4;
+  f.t[4].a=1;
+  f.t[4].n=8;
+  f.t[5].a=1;
+  f.t[5].n=10;
+  */
   /*
   f.t[0].a=1;
   f.t[0].n=1;
@@ -1175,11 +1125,11 @@ int main(int argc,char **argv){
    
 
   while(odeg(ff)<16){
-      ff=benor(1,16);
+      ff=benor(3,32);
   }
     oprintpol(ff);
     printf(" irr?=============\n");
-    //exit(1);
+    exit(1);
 
   return 0;
 }
