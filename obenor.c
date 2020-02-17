@@ -356,7 +356,7 @@ OP add(OP f,OP g){
 //  vec a={0},b={0},c={0};
   uint64_t i,k,j,n1=0,n2=0,tmp,m1=0,m2,flg=0,count=0;
   OP h={0},a={0},b={0};
-  oterm o1={0},o2={0};
+  oterm o1={0},o2={0},oo={0};
 
   
 n1=terms(f);
@@ -403,6 +403,16 @@ n2=terms(g);
    }
    
  }
+ for (i=0; i<count; ++i) {
+    for (j=i+1; j<count; ++j) {
+      if (h.t[i].n > h.t[j].n) {
+        oo =  h.t[i];
+        h.t[i] = h.t[j];
+        h.t[j] = oo;
+      }
+    }
+  }
+
  if(odeg(h)>0)
  oprintpol(h);
  printf(" addh==============\n");
@@ -789,7 +799,7 @@ OP gcd(OP a,OP b){
 
   
   s=a;
-  
+ label:  
   oprintpol(a);
   printf(" a==============\n");
   oprintpol(b);
@@ -801,9 +811,8 @@ OP gcd(OP a,OP b){
   oprintpol(r);
   printf(" rrr==============\n");
   }
-  //if(odeg(omod(a,b))==0)
-  //return b;
   //exit(1);
+  //#pragma omp parallel  
   while(odeg(r)>0){
     oprintpol(r);
     printf(" r2==============\n");
@@ -817,21 +826,31 @@ OP gcd(OP a,OP b){
     printf(" ttt==============\n");
     //  exit(1);
       //  } 
-
+    
     if(odeg(r)==0 && r.t[0].a==1)
       return r;
     if(odeg(r)==0 && r.t[0].a==0)
       return b;
+    
     if(odeg(b)==1)
       break;
+    
     count++;
     if(count>0xff){
       printf("baka100\n");
       exit(1);
     }
   }
- 
- }
+  /*
+  if(odeg(r)==0 && r.t[0].a==1){
+    return r;
+  }else if(odeg(r)==0 && r.t[0].a==0){
+    return b;
+  }else{
+    goto label;
+  }
+  */
+}
 
 
 
@@ -857,11 +876,14 @@ uint64_t ipow(unsigned int q,unsigned int u){
 
 OP benor(int ww,int nn){
   OP w={0},ff={0},f={0},tt={0};
-  int flg=0,i,j,k,count=0;
+  unsigned int flg=0,i,j,jj[64]={0},k,count=0;
   OP v={0};
+  oterm o={0};
 
+  
   //  while(1){
-
+  printf("ww=%d\n",ww);
+ label:
 #pragma omp parallel for   
     for(i=0;i<256;i++){
       v.t[i].a=0;
@@ -883,17 +905,58 @@ OP benor(int ww,int nn){
     oprintpol(v);
     //exit(1);
     k=1;
-    
+    count=0;
+    while(1){
+      flg=0;
+      j=xor128()%36;
+      if(j>0 && j<nn){// && v.t[k-1].n<j){
+	for(i=0;i<k+1;i++){
+	  if(v.t[i].n==j)
+	    flg=1;
+	}
+	if(flg==0){
+	  v.t[k].a=1;
+	  v.t[k].n=j;
+	  k++;
+	  printf("k=%d\n",k);
+	}
+      }
+      count++;
+      if(terms(v)==ww+2 || count==100)
+	break;
+    }
+     if(terms(v)<ww+2)
+       exit(1);
+
+     for (i=0; i<ww+2; ++i) {
+       for (j=i+1; j<ww+2; ++j) {
+	 if (v.t[i].n > v.t[j].n) {
+	   o =  v.t[i];
+	   v.t[i] = v.t[j];
+	   v.t[j] = o;
+	 }
+       }
+     }
+     oprintpol(v);
+     printf(" sorted======\n");
+     // exit(1);
+     
+    //goto label;
+
+    /*
     do{
-      j=xor128()%16;
-      if(j>0 && j<nn && v.t[k-1].n<j && k<ww+2){
+      k=1;
+      while(k<ww+1){
+	j=xor128()%36;
+      if(j>0 && j<nn && v.t[k-1].n<j){
 	v.t[k].a=1;
         v.t[k].n=j;
 	k++;
+	printf("k=%d\n",k);
       }
-  
+      }
       count++;
-      if(count>10){
+      if(count>100){
         k=0;
         for(i=1;i<256;i++){
           v.t[i].a=0;
@@ -901,33 +964,32 @@ OP benor(int ww,int nn){
         }
   
         k=1;
-	if(count==10)
+	if(count==100)
 	  break;
         //break;
       }
       printf("nozomi=%d\n",ww+2);
       oprintpol(v);
-      if(odeg(v)==0)
-	break;
+      //if(odeg(v)==0)
+      //break;
       printf(" v==============\n");
       
-    }while(terms(v)<ww+2); 
-    //exit(1);
+    }while(terms(v)<ww+2);
+    */
+    if(terms(v)<ww+2)
+      exit(1);
   printf("ww,deg,k=%d %d %d\n",ww,odeg(v),k);
   oprintpol(v);  
   printf(" v=============\n");
   printf("odeg=%d\n",odeg(v));
   printf("terms=%d\n",terms(v));
-  //  if(terms(v)<ww+3)
-  //   exit(1);
-
-//  exit(1);
 
   tt=v;
   //  exit(1);
-  j=0;
+  for(i=0;i<64;i++)
+  jj[i]=0;
   //    tt=irr(1,10);
-  //  #pragma omp parallel for  
+  #pragma omp parallel for  
   for(i=1;i<nn/2+1;i++){
     f.t[0].a=1;
     f.t[0].n=1;
@@ -939,24 +1001,30 @@ OP benor(int ww,int nn){
     // exit(1);
     if(odeg(tt)>0)
     ff=gcd(tt,f);
+    if(odeg(ff)>0)
     oprintpol(ff);
     printf(" benor===========\n");
     if(odeg(ff)>0){
       oprintpol(ff);
       printf(" lcm==============%d\n",i);
-      // return ff;
+      break;
+      // goto label;
+      // jj[i]=0;
     }
     if(odeg(ff)==0){
-      j++;
-    
-    oprintpol(ff);
+      jj[i]++;
+
+      //  oprintpol(ff);
     printf(" ffaa=============\n");
     }
-    printf("j=%d\n",j);
+    printf("jj=%d\n",jj[i]);
     oprintpol(v);
     printf(" vv===================\n");
   }
-  if(j==nn/2 && terms(tt)==ww+2 && odeg(tt)>0){
+  k=0;
+  for(i=0;i<nn/2+1;i++)
+    k+=jj[i];
+  if(k==nn/2 && terms(tt)==ww+2 && odeg(tt)>0){
     oprintpol(tt);
     printf(" irr?============\n");
     return tt;
@@ -1001,7 +1069,7 @@ OP ogcd(OP f,OP g){
   //  exit(1);
   
   while(i<T && deg(o2v(f))>=deg(o2v(g))){
-    memset(ss.t,0,DEG*sizeof(ss));
+    //    memset(ss.t,0,DEG*sizeof(ss));
     h=omod(f,g);
     ww=odiv(f,g);
   f=g;
@@ -1124,8 +1192,8 @@ int main(int argc,char **argv){
   //     exit(1);
    
 
-  while(odeg(ff)<16){
-      ff=benor(3,32);
+  while(odeg(ff)<36){
+      ff=benor(15,36);
   }
     oprintpol(ff);
     printf(" irr?=============\n");
