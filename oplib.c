@@ -2191,9 +2191,9 @@ int main(int argc,char **argv){
   zz[6]=1;
   zz[11]=1;
   zz[12]=1;
-  //zz[0]=1;
-  //zz[1]=1;
-  //zz[2]=1;
+  zz[0]=1;
+  zz[1]=1;
+  zz[2]=1;
   
   // det(g);
 
@@ -2257,9 +2257,10 @@ int main(int argc,char **argv){
   printf(" sqrt(syn)==========\n");
   exit(1);
   */
-  r=vx(w,f);
+  //r=vx(w,f);
   oprintpol(f);
   printf(" syn=========\n");
+  exit(1);
   /*
   printpol(o2v(hh.u));
   printf(" u=============\n");
