@@ -573,7 +573,7 @@ OP odiv(OP f,OP g){
     b=LT(g);
     oprintpol((g));
     printf("in odiv1 g===========%d %d\n",b.a,b.n);
-  
+    
     if(deg(o2v(f))<deg(o2v(g))){
   return f;
   //  a=LT(f);
@@ -586,6 +586,8 @@ oprintpol((g));
  //printf("\ng^2================\n");
 
  printf("\nin odiv2 g=============%d\n",deg(o2v(g)));
+ // if(deg(o2v(g))==0)
+ // return g;
  i=0;
  while((deg(o2v(f))-deg(o2v(g)))>=0){
     //  printf("in!\n");
@@ -706,7 +708,7 @@ OP inv(OP a,OP n){
   x.t[0].n = 0;
   s.t[0].a = 1;
   s.t[0].n = 0;
-  while (LT(a).n>0){
+  while (LT(a).n!=0){
 
     r=omod(d ,a);
     q=odiv(d, a);
@@ -1038,8 +1040,8 @@ EX xgcd(OP f,OP g){
 
   i=1;
   k=0;
-  //while(deg(o2v(f))>0){
-  for(i=1;i<T;i++){
+  // while(deg(o2v(f))>0){
+    for(i=1;i<T;i++){
     if(deg(o2v(g))==0)
       break;
     h=omod(f,g);
@@ -1066,7 +1068,7 @@ EX xgcd(OP f,OP g){
   printf(" u=============\n");
   printpol(o2v(h));
   printf(" h=============\n");
-  //exit(1);
+  //  exit(1);
 
   e.d=h;
   e.v=v[i];
@@ -1753,7 +1755,7 @@ void pattarson(OP w,OP f){
 
     OP g1={0},ll={0},s={0};
   int i,j,k,l,c;
-  unsigned long a,x,count=1;
+  unsigned long a,x,count=0;
   //  unsigned short cc[K]={0};
   unsigned short m[K],mm[T]={0},dd[K*D]={0};
   time_t timer;
@@ -1766,7 +1768,7 @@ void pattarson(OP w,OP f){
   unsigned short zz[D]={0};
   //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
   int y,flg,o1=0;
-  OP h={0},r={0},aa[8]={0},tt={0},ff={0};
+  OP h={0},r={0},aa[K]={0},tt={0},ff={0};
   EX hh={0};
   vec v;
   unsigned short d=0;
@@ -1826,7 +1828,6 @@ void pattarson(OP w,OP f){
     exit(1);
   */
 
-  
     // exit(1);
 
   /*  
@@ -1869,7 +1870,8 @@ void pattarson(OP w,OP f){
     printpol(o2v(g1));
   printf(" g1!=========\n");
   //exit(1);
-  hh=xgcd(w,g1);
+   hh=xgcd(w,g1);
+  //  exit(1);
   ff=omod(omul(hh.v,g1),w);
   printpol(o2v(ff));
   printf(" beta!=========\n");
@@ -1877,10 +1879,15 @@ void pattarson(OP w,OP f){
   printf(" alpha!=========\n");
   //exit(1);
   ll=oadd(omul(ff,ff),omul(tt,omul(hh.v,hh.v)));
+  printf("あっ、でる・・・！\n");
   v=chen(ll);
-  for(i=0;i<T*2;i++)
-    printf("%d\n",v.x[i]);
-  exit(1);
+   printf("う\n"); 
+   for(i=0;i<T*2;i++){
+    printf("%d お\n",v.x[i]);
+    ++count;
+   }
+   printf("err=%dっ！\n",count);
+   //  exit(1);
 
 
 }
@@ -1910,57 +1917,11 @@ int main(int argc,char **argv){
   oterm rr={0};
   OP r1={0},r2={0},t1={0},t2={0},a1={0},b1={0},a2={0},b2={0};
   
-  //  unsigned short syn[K]={4,12,7,8,11,13};
-  //unsigned short g[K+1]={1,0,0,0,1,0,1};
-  //unsigned short g[K/2+1]={1,0,1,1};
-    //  unsigned short syn[K]={4,12,7,8,11,13};
-  //unsigned short g[K+1]={1,0,0,0,1,0,1};
-  //unsigned short g[K+1]={1,3,9,4,5,2,3,5,10};
-  //unsigned short g[K+1]={2,14,5,4,4,0,15,12,10,1,14,7,1};
-  //unsigned short g[K+1]={1,1,0,2,5,3,1,0,1};
-  //unsigned short g[K+1]={1,1,2};
-  //unsigned short g[K+1]={1,0,9,0,1};
-  //  unsigned short g[K+1]={1,0,1};
-  //unsigned short g[K+1]={1,1,1};
-  //unsigned short g[K+1]={2,2,12,1,2,8,4,13,5,10,8,2,15,10,7,3,5};
-  unsigned short yy[5]={15,0,8,0,11};
-  /*
-  r1=setpol(yy,5);
-  w=setpol(g,7);
-  r2=osqrt(r1,w);
-  printpol(o2v(r2));
-  printf(" osqrt==========\n");
-  */
-  //exit(1);
-  //  makegf(M);
-  //  makefg(M);
+  
   srand(clock()+time(&t));
   printf("@");
   ginit();
-  /*  
-  ff.t[0].a=1;
-  ff.t[0].n=0;
-  ff.t[1].a=1;
-  ff.t[1].n=4;
-  ff.t[2].a=1;
-  ff.t[2].n=10;
-  f.t[0].a=1;
-  f.t[0].n=1;
-  f.t[1].a=1;
-  f.t[1].n=32;
   
-    h=gcd(f,ff);
-  oprintpol(h);
-  printf("gcd=========\n");
-  while(odeg(ff)<10){
-  ff=benor(3,10);
-  }
-  oprintpol((ff));
-  
-  printf(" irr?=============\n");
-    exit(1);
-  */
-
   
     w=setpol(g,K+1);
     oprintpol(w);
@@ -2003,6 +1964,7 @@ int main(int argc,char **argv){
   //keygen(g);
   key2(g);
   //exit(1);
+
   /*
   for(i=0;i<K;i++){
     for(j=0;j<M;j++){
@@ -2014,22 +1976,6 @@ int main(int argc,char **argv){
   */
   
 
-  /*
-  do{
-  flg=0;
-  v=genrandompol(K+1);
-  for(i=0;i<K+1;i++)
-    g[i]=(unsigned short)v.x[i];
-    for(i=0;i<K+1;i++){
-      w=setpol(g,K+1);
-      a=trace(w,i);
-    if(a==0)
-      flg=1;
-      }
-  } while(deg(v)<K || flg==1);
-  */
-
-  //  w=setpol(g,K+1);
   printf("すげ、オレもうイキそ・・・\n");
 
   uu=0;
@@ -2063,23 +2009,69 @@ int main(int argc,char **argv){
   //exit(1);
   */
 
-  /*
+
+
   j=0;
   while(j<T){
-    flg=0;
-    l=xor128()%6688;
-    printf("%d,",l);
-       for(k=0;k<T;k++){
-	 if(l==jj[k])
-	   flg=1;
-       }
-       if(flg==0){
-	 jj[j]=l;
-	 zz[jj[j]]=1;
-	 j++;
-       }
+    l=xor128()%D;
+    printf("l=%d\n",l);
+    if(0==zz[l]){
+      zz[l]=l;
+      j++;
+    }
   }
-  */
+
+  for(i=0;i<K;i++){
+    syn[i]=0;
+    //#pragma omp parallel for
+    for(j=0;j<D;j++){
+      //   printf("%u,",zz[jj[j]]);
+      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
+    }
+       printf("syn%d,",syn[i]);
+  }
+  printf("\n");
+  //    exit(1);  
+  for(i=0;i<K;i++)
+    printf("mat[%d][1]=%d\n",i,mat[i][1]);
+  printf("\n");
+  //    exit(1);
+  
+  f=setpol(syn,K);
+  printpol(o2v(f));
+  printf(" syn=============\n");
+  //   exit(1);
+
+  
+  r=decode(w,f);
+  
+  
+  for(i=0;i<T;i++){
+    mm[i]=r.t[i].a;
+    if(i==0){
+     printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"う");
+    }else{     printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"お");
+}
+    if(r.t[i].a==0){
+      printf("------------------\n");
+      
+       printf("err=%d i=%d\n",o1,i);
+        exit(1);
+    }
+  }
+  printf("         っ！！\n");
+    for(i=0;i<D;i++){
+    if(zz[i]>0)
+      o1++;
+  }
+  printf("err=%d\n",o1);
+
+  scanf("%d",&n);
+
+  
+  for(i=0;i<D;i++)
+    zz[i]=0;
+  
   
   j=0;
   while(j<T*2){
@@ -2093,16 +2085,6 @@ int main(int argc,char **argv){
   
    
   
-  
-  //  for(i=0;i<T;i++)
-  //zz[i]=1;
-  
-  // det(g);
-
-  //  exit(1);
-  //x^4 + a^3*x^3 + (a + 1)*x^2 + (a + 1)*x + a^3 + a
-  //a^3*x^3 + (a^3 + a)*x^2 + 1
-
 
   fq=fopen("H.key","rb");
   
@@ -2156,31 +2138,9 @@ int main(int argc,char **argv){
   printf(" syn=============\n");
   //   exit(1);
 
-  pattarson(w,f);
-  
-  
-  r=decode(w,f);
-  
-  
-  for(i=0;i<T*2;i++){
-    mm[i]=r.t[i].a;
-    if(i==0){
-     printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"う");
-    }else{     printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"お");
-}
-    if(r.t[i].a==0){
-      printf("------------------\n");
-      
-       printf("err=%d i=%d\n",o1,i);
-        exit(1);
-    }
-  }
-  printf("         っ！！\n");
-    for(i=0;i<D;i++){
-    if(zz[i]>0)
-      o1++;
-  }
-  printf("err=%d\n",o1);
+   pattarson(w,f);
+   //  exit(1);
+   
 
 
   return 0;
