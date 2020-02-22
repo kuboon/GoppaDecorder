@@ -128,3 +128,8 @@ https://digitalcommons.csbsju.edu/cgi/viewcontent.cgi?article=1019&context=honor
 
 これもすごい。
 
+20200222
+
+パターソンアルゴリズムを完全実装しました。
+
+
