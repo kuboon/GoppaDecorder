@@ -799,7 +799,7 @@ OP vx(OP f,OP g){
   //printf("in vx\n");
   //  exit(1);
   
-  for(i=0;i<T;i++){
+  for(i=2;i<T+2;i++){
     // memset(ss.t,0,DEG*sizeof(ss));
     //    if(deg(o2v(f))>=deg(o2v(g)) && deg(o2v(g))>0){
     if(deg(o2v(vv))<T){
@@ -813,7 +813,7 @@ OP vx(OP f,OP g){
     printf("ww======= ");
     oprintpol((ww));
     printf("\n");
-    v[i+2]=oadd(v[i],omul(ww,v[i+1]));
+    v[i]=oadd(v[i-2],omul(ww,v[i-1]));
     printf("-------");
     memset(f.t,0,sizeof(f.t));
     f=g;
@@ -821,8 +821,8 @@ OP vx(OP f,OP g){
     memset(g.t,0,sizeof(g.t));
     g=h;
     
-    if(deg(o2v(v[i+2]))<=T){
-      vv=v[i+2];
+    if(deg(o2v(v[i]))<=T){
+      vv=v[i];
       printf("vv==");
       oprintpol((vv));
       printf("\n");
@@ -920,36 +920,34 @@ EX xgcd(OP f,OP g){
   k=0;
   
   for(i=0;i<T;i++){
-    if(deg(o2v(v[i+2]))<T){
+    
     h=omod(f,g);
     ww=odiv(f,g);
-    }
+    
     v[i+2]=oadd(v[i],omul(ww,v[i+1]));
     u[i+2]=oadd(u[i],omul(ww,u[i+1]));
     printf("i+1=%d\n",i+1);
     f=g;
     g=h;
     
-  
+    }
     
     //v[i]=odiv(v[i],h);
     //u[i]=odiv(u[i],h);
     // h.t[0].a=1;
     //h.t[0].n=0;
     printf("i=%d\n",i);
-    printpol(o2v(v[i+1]));
+    printpol(o2v(v[i]));
     printf(" v=============\n");
-    printpol(o2v(u[i+1]));
+    printpol(o2v(u[i]));
     printf(" u=============\n");
     printpol(o2v(h));
     printf(" h=============\n");
     //   exit(1);
-    if(deg(o2v(v[i+2]))<T){
+    
     e.d=h;
-    e.v=v[i+2];
-    e.u=u[i+2];
-    }
-  }
+    e.v=v[i];
+    e.u=u[i];
     
   return e;
 }
@@ -1638,9 +1636,6 @@ void pattarson(OP w,OP f){
   printf(" alpha!=========\n");
   //exit(1);
   ll=oadd(omul(ff,ff),omul(tt,omul(hh.v,hh.v)));
-  printpol(o2v(ll));
-  printf(" locater!============\n");
-  //exit(1);
   printf("あっ、でる・・・！\n");
   v=chen(ll);
    printf("う\n"); 
