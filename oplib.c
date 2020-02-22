@@ -19,11 +19,11 @@
 #include "lu.c"
 
 
-#define K 16*2
+#define K 128*2
 #define DEG 3*K
 #define T K/2
-#define E 8
-#define D 256
+#define E 13
+#define D 8192
 
 unsigned char tmp[E*K][D]={0};
 unsigned char pub[E*K][D]={0};
@@ -1077,7 +1077,7 @@ EX xgcd(OP f,OP g){
 
 
 OP bibun(vec a){
-  OP w[T]={0};
+  OP w[T*2]={0};
   OP l={0},t={0};
  int i,j,k,n;
  vec tmp={0};
@@ -1759,7 +1759,7 @@ int main(int argc,char **argv){
 
   unsigned short g2[7]={1,0,9,0,0,6,4};
   //  unsigned short s[K]={0}; //{4,12,7,8,11,13};
-  unsigned short jj[T]={0};
+  unsigned short jj[T*2]={0};
   unsigned short ee[10]={1,2,3,4,5,6,7,8,9,10};
   unsigned short zz[D]={0};
   //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
@@ -2047,238 +2047,13 @@ int main(int argc,char **argv){
   v=chen(ll);
   for(i=0;i<T*2;i++)
     printf("%d\n",v.x[i]);
-   exit(1);
-  /*  
-  // r=vx(w,f);
-  //s=omod(omul(r,g1),w);
-  
-  hh=xgcd(w,g1);
-  printpol(o2v(r));
-  printf(" vx===========\n");
-  printpol(o2v(hh.v));
-  printf(" hh.v==============\n");
-  printpol(o2v(hh.u));
-  printf(" hh.v*g1==============\n");
-  
-  ll=r;
-  v=chen(ll);
-  for(i=0;i<D;i++)
-    printf("%d\n",v.x[i]);
   exit(1);
   
-  s=inv(f,w);
-  s=oadd(s,tt);
-  printpol(o2v(s));
-  printf(" s^-1+x===========\n");
-  // exit(1);
   
-  //r=vx(w,f);
-   
-  //g1=osqrt(s,w);
-  //r=vx(w,g1);
-  //hh=xgcd(g1,w);
-  */
-  /*
-  s=vx(g1,hh.u);
-  r=vx(g1,s);
-  f=omod(hh.v,w);
-  printpol(o2v(s));
-  printf(" a?===============\n");
-  printpol(o2v(r));
-  printf(" b?============\n");
-  printpol(o2v(f));
-  printf(" v?============\n");
-  printpol(o2v(hh.u));
-  printf(" u?============\n");
-  //exit(1);
-  //ff=vx(w,f);
-   //  printf(" beta^2============\n");
-  ll=oadd(omul(tt,omul(s,s)),omul(r,r));
-  v=chen(ll);
-  for(i=0;i<D;i++)
-    printf("%d\n",v.x[i]);
-  exit(1);
-  
-  g1=osqrt(s,w);
-  printpol(o2v(g1));
-  printf(" s^-1+x==========\n");
-  //exit(1);
-  r=vx(w,g1);
-  r1=omod(omul(g1,r),w);
-  oprintpol(r);
-  printf(" b?=========\n");
-  printpol(o2v(r1));
-  printf(" a?==========\n");
-  //r=omod(omul(r1,g1),w);
-  //exit(1);
-  
-  hh=xgcd(g1,w);
-  //s=omod(omul(r1,g1),w);
-  ll=omod(oadd(omul(hh.u,hh.u),omul(tt,omul(hh.v,hh.v))),w);
-  
-  printpol(o2v(ll));
-  printf(" locater?============\n");
-  v=chen(ll);
-  for(i=0;i<D;i++)
-    printf("%d\n",v.x[i]);
-  exit(1);
-  */
-  /*
-  printpol(o2v(hh.u));
-  printf(" u=============\n");
-  printpol(o2v(hh.v));
-  printf(" v=============\n");
-  printpol(o2v(hh.d));
-  printf(" d=============\n");
-  ll=oadd(omul(hh.v,hh.v),omul(omul(hh.u,hh.u),tt));
-  */
-  /*
-  v=chen(r);
-  for(i=0;i<D;i++)
-    printf("%d\n",v.x[i]);
-  //exit(1);
-  
-  if(deg(o2v(f))==0)
-    exit(1);
-  
-  ff=inv(f,w);
-  ff=oadd(tt,ff);
-  oprintpol(ff);
-  printf(" inv(s)+x\n");
-  //exit(1);
-  r=vx(w,f);
-  oprintpol(r);
-  printf(" locater========\n");
-  h=omod(omul(f,r),w);
-  r=omod(omul(ff,h),w);
-  printpol(o2v(r));
-  printf(" b^2============\n");
-  //exit(1);
-  //ff=oadd(r,omul(h,tt));
-    //ff=omod(omul(ff,h),w);
-  //  ff=(omul(ff,h),w);
-  //printpol(o2v(ff));
-  //printf(" a^2=============\n");
-  //r=oadd(ff,omul(h,tt));
-  //printpol(o2v(r));
-  //printf(" locate2============\n");
-  //  exit(1);
-  //exit(1);
-  h=vx(w,g1);
-  f=omod(omul(h,g1),w);
-  h=omod(omul(f,g1),w);
-  ll=omod(oadd(omul(h,h),omul(omul(f,f),tt)),w);
-  
-  printpol(o2v(ll));
-  printf(" locater?==========\n");
-  //exit(1);
-  v=chen(ll);
-  for(i=0;i<D;i++)
-    printf("%d\n",v.x[i]);
-  exit(1);
-  */
-  /*
-  printpol(o2v(ff));
-  printf(" b?==========\n");
-  //  exit(1);
-  printf(" again a=======\n");
-  ff=omod(omul(f,g1),w);
-  printpol(o2v(ff));
-  printf(" again b==========\n");
-  exit(1);
-  ff=omod(omul(ff,g1),w);
-  ff=coeff(ff,9);
-  printpol(o2v(ff));
-  printf(" regain a==========\n");
-  printpol(o2v(f));
-  printf(" again a=======\n");
-  exit(1);
-  ll=oadd(ff,h);
-  //  exit(1);
-    printpol(o2v(ll));
-  printf(" locater?=============\n");
-  //  exit(1);
-  v=chen(ll);
-  for(i=0;i<D;i++)
-    printf("%d\n",v.x[i]);
-  exit(1);
-  */
-  /*
-  r1.t[0].a=9;
-  r1.t[0].n=0;
-  r1.t[1].a=14;
-  r1.t[1].n=1;
-  r1.t[2].a=8;
-  r1.t[2].n=2;
-  r1.t[3].a=15;
-  r1.t[3].n=3;
-  r1.t[4].a=4;
-  r1.t[4].n=4;
-  r1.t[5].a=9;
-  r1.t[5].n=5;
-  r2.t[0].a=14;
-  r2.t[0].n=0;
-  r2.t[1].a=2;
-  r2.t[1].n=1;
-  r2.t[2].a=9;
-  r2.t[2].n=2;
-  r2.t[3].a=1;
-  r2.t[3].n=1;
-  r2.t[4].a=8;
-  r2.t[4].n=4;
-  r2.t[5].a=14;
-  r2.t[5].n=5;
-  b1=vx(w,r1);
-  oprintpol(b1);
-  printf(" b1=======\n");
-  //  oprintpol(t1);
-  //printf(" test=====\n");
-  a1=omod(w,omul(r1,b1));
-  oprintpol(a1);
-  printf(" a1==========\n");
-  t1=omod(oadd(omul(a1,a1),omul(omul(b1,b1),tt)),w);
-  oprintpol(t1);
-  printf(" rho1=======\n");
-  b2=vx(w,r2);
-  oprintpol(b2);
-  printf(" b2=========\n");
-  a2=omod(omul(r2,b2),w);
-  oprintpol(a2);
-  printf("a2============\n");
-  t2=omod(w,oadd(omul(a2,a2),omul(omul(b2,b2),tt)));
-  oprintpol(t2);
-  printf(" rho2=======\n");
-  v=chen(t1);
-  for(i=0;i<D;i++)
-    printf("%d\n",v.x[i]);
-  //  exit(1);
-  */
-  //r=vx(w,f);
-  /*
-  r=vx(w,f);
-    oprintpol(r);
-  printf(" real=========\n");
-  exit(1);
-  h=omod(omul(r,f),w);
-  printpol(o2v(h));
-  printf(" const?=====\n");
-  h=coeff(omul(r,f),h.t[0].a);
-  printpol(o2v(h));
-  
-  ff=vx(w,r);
-  printpol(o2v(ff));
-  printf(" b^2=======\n");
-  exit(1);
-  v=chen(r);
-  for(i=0;i<D;i++)
-    printf("%d\n",v.x[i]);
-  exit(1);
-  */
-
   r=decode(w,f);
   
   
-  for(i=0;i<T;i++){
+  for(i=0;i<T*2;i++){
     mm[i]=r.t[i].a;
     if(i==0){
      printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"う");
@@ -2302,174 +2077,3 @@ int main(int argc,char **argv){
   return 0;
 }
 
-
-  //exit(1);
-
-
-  //  return h;
-
-     /*
-  //実験中
-  ff=inv(f,w);
-  tt.t[1].n=1;
-  tt.t[1].a=1;
-  h=oadd(ff,tt);
-  oprintpol((h));
-  printf(" d^2==================\n");
-  //    exit(1);
-  //ff=setpol(xx,K);
-  //oprintpol((ff));
-  printf(" sqrt===============\n");
-  r=vx(w,ff);
-  h=omul(omul(r,r),h);
-  f=omod(h,w);
-  ff=omul(ss,ss);
-  //h=oadd(r,ss);
-  //  f=omod(r,w);
-  oprintpol((f));
-  printf(" B^2*(h+x) mod g==============\n");
-  oprintpol((ff));
-  printf(" alpha^2==============\n");
-  exit(1);
-  oprintpol((r));
-  printf(" beta==============\n");
-  oprintpol((ss));
-  printf(" alpha==============\n");
-  r=omul(omul(r,r),tt);
-  oprintpol((r));
-  printf(" x*b^2================\n");
-  oprintpol((ff));
-  printf(" aptha^2================\n");
-  //  ff=oadd(ff,r);
-  // oprintpol((ff));
-  //printf(" rho================\n");
-  #pragma omp parallel for
-  for(i=0;i<D;i++)
-    printf("x=%d %d\n",trace(r,i),i);
-  exit(1);
-  //ff=omod(ff,w);
-  v=chen(ff);
-  for(i=0;i<16;i++)
-    printf("x[%d]=1\n",v.x[i]);
-  exit(1);
-  */  
-    /*
-  exit(1);
-  oprintpol((ss));
-  printf(" b^2==============\n");
-  exit(1);
-  
-  h=inv(f,w);
-  tt.t[1].n=1;
-  tt.t[1].a=1;
-  h=oadd(tt,f);
-  oprintpol((h));
-  printf(" d^2==================\n");
-  //  exit(1);
-  ff=setpol(xx,K);
-  r=vx(w,ff);
-  //  exit(1);
-  oprintpol((r));
-  r=omul(r,r);
-  printf(" b=================\n");
-  //  exit(1);
-  ff=omul(r,tt);
-  ss=omul(ss,ss);
-  h=oadd(ff,ss);
-  oprintpol((h));
-  printf(" rho1=================\n");
-  f=omod(h,w);
-  //  f=omod(f,w);
-  oprintpol((f));
-  printf(" rho2================\n");
-  v=chen(f);
-  for(i=0;i<16;i++)
-    printf("x[%d]=1\n",v.x[i]);
-     exit(1);
-    r=inv(f,w);
-    ff.t[1].n=1;
-    ff.t[1].a=1;
-    ff.t[0].a=0;
-    ff.t[0].n=0;
-    r=oadd(r,ff);
-    //    tt=omul(r,f);
-  oprintpol((r));
-  printf(" d^2=============\n");
-  oprintpol((w));
-  printf(" g================\n");
-  exit(1);
-  h.t[1].n=1;
-  h.t[1].a=7;
-  ff=vx(w,r);
-  oprintpol((ff));
-  printf(" beta^2==============\n");
-  exit(1);
-  oprintpol((omod(omul(r,f),w)));
-  printf("\nmodg===============\n");
-  oprintpol((tt));
-  printf(" tt===================\n");
-  */
-  //  rr=LT(r);
-  /*
-  printf("c=%d\n",rr.a);
-  ff.t[0].a=rr.a;
-  ff.t[0].n=0;
-  r=odiv(r,ff);
-  */
-  /*
-  r=inv(f,w);
-  oprintpol((r));
-  printf(" h==========\n");
-  ff=omod(omul(r,f),w);
-  oprintpol((ff));
-  printf(" omod=============\n");
-  //  exit(1);
-  //oprintpol((r));
-  //printf("s^-1=============\n");
-  oprintpol((r));
-  printf(" d^2============\n");
-  //  exit(1);
-  h=vx(w,r);
-  oprintpol((h));
-  printf(" beta^2=================\n");
-  //  exit(1);
-  f=omod(omul(h,r),w);
-  oprintpol((f));
-  printf(" alpha=============\n");
-  h=oadd(omul(h,ff),f);
-  oprintpol((h));
-  printf(" rho============\n");
-  //exit(1);
-  v=chen(h);
-  //  exit(1);
-  // v=chen(h);
-  k=0;
- for(i=0;i<6;i++){
-  printf("x[%d]=1\n",v.x[i]);
-  if(v.x[i]==0)
-    k++;
-  if(k>1){
-    printf("baka0\n");
-    //  exit(1);
-  }
- }
- //  hh=bibun(v);
- // oprintpol((hh));
- //printf("w=================\n");
-  exit(1);
-  v=chen(r);
-  for(i=0;i<D;i++){
-    if(v.x[i]>0)
-    printf("%d %d\n",v.x[i],i);
-  }
-  // exit(1);
-  */
-  /*
-  ff=inv(f,w);
-  oprintpol((ff));
-  printf("\nff3================\n");
-  // exit(1);
- oprintpol((omod(omul(f,ff),w)));
-  printf("\n");
-  //   exit(1);
-  */
