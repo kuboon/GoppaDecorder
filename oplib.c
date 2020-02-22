@@ -565,6 +565,8 @@ OP odiv(OP f,OP g){
     printf("baka--\n");
     exit(1);
   }
+  if(deg(o2v(g))==0 && g.t[0].a==1)
+    return f;
     printf("in odiv\n");
     //oprintpol((g));
     
@@ -586,8 +588,7 @@ oprintpol((g));
  //printf("\ng^2================\n");
 
  printf("\nin odiv2 g=============%d\n",deg(o2v(g)));
- // if(deg(o2v(g))==0)
- // return g;
+
  i=0;
  while((deg(o2v(f))-deg(o2v(g)))>=0){
     //  printf("in!\n");
