@@ -1749,6 +1749,143 @@ OP osqrt(OP f,OP w){
 }
 
 
+void pattarson(OP w,OP f){
+
+    OP g1={0},ll={0},s={0};
+  int i,j,k,l,c;
+  unsigned long a,x,count=1;
+  //  unsigned short cc[K]={0};
+  unsigned short m[K],mm[T]={0},dd[K*D]={0};
+  time_t timer;
+  FILE *fp,*fq;
+
+  unsigned short g2[7]={1,0,9,0,0,6,4};
+  //  unsigned short s[K]={0}; //{4,12,7,8,11,13};
+  unsigned short jj[T*2]={0};
+  unsigned short ee[10]={1,2,3,4,5,6,7,8,9,10};
+  unsigned short zz[D]={0};
+  //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
+  int y,flg,o1=0;
+  OP h={0},r={0},aa[8]={0},tt={0},ff={0};
+  EX hh={0};
+  vec v;
+  unsigned short d=0;
+  time_t t;
+  unsigned short gg[K+1]={0};
+  oterm rr={0};
+  OP r1={0},r2={0},t1={0},t2={0},a1={0},b1={0},a2={0},b2={0};
+  
+  //  unsigned short syn[K]={4,12,7,8,11,13};
+  //unsigned short g[K+1]={1,0,0,0,1,0,1};
+  //unsigned short g[K/2+1]={1,0,1,1};
+    //  unsigned short syn[K]={4,12,7,8,11,13};
+  //unsigned short g[K+1]={1,0,0,0,1,0,1};
+  //unsigned short g[K+1]={1,3,9,4,5,2,3,5,10};
+  //unsigned short g[K+1]={2,14,5,4,4,0,15,12,10,1,14,7,1};
+  //unsigned short g[K+1]={1,1,0,2,5,3,1,0,1};
+  //unsigned short g[K+1]={1,1,2};
+  //unsigned short g[K+1]={1,0,9,0,1};
+  //  unsigned short g[K+1]={1,0,1};
+  //unsigned short g[K+1]={1,1,1};
+  //unsigned short g[K+1]={2,2,12,1,2,8,4,13,5,10,8,2,15,10,7,3,5};
+  unsigned short yy[5]={15,0,8,0,11};
+  /*
+  r1=setpol(yy,5);
+  w=setpol(g,7);
+  r2=osqrt(r1,w);
+  printpol(o2v(r2));
+  printf(" osqrt==========\n");
+  */
+  //exit(1);
+  //  makegf(M);
+  //  makefg(M);
+  srand(clock()+time(&t));
+  printf("@");
+  ginit();
+  /*  
+  ff.t[0].a=1;
+  ff.t[0].n=0;
+  ff.t[1].a=1;
+  ff.t[1].n=4;
+  ff.t[2].a=1;
+  ff.t[2].n=10;
+  f.t[0].a=1;
+  f.t[0].n=1;
+  f.t[1].a=1;
+  f.t[1].n=32;
+  
+    h=gcd(f,ff);
+  oprintpol(h);
+  printf("gcd=========\n");
+  while(odeg(ff)<10){
+  ff=benor(3,10);
+  }
+  oprintpol((ff));
+  
+  printf(" irr?=============\n");
+    exit(1);
+  */
+
+  
+    // exit(1);
+
+  /*  
+  //-------------２乗するとき外す
+   w=setpol(g,K/2+1);
+  oprintpol((w));
+  printf("\n");
+  //   exit(1);
+  w=omul(w,w);
+  oprintpol((w));
+  printf("\n");
+  //exit(1);
+    
+  v=o2v(w);
+  for(i=0;i<K+1;i++){
+    printf("%d,",v.x[K-i]);
+    gg[K-i]=v.x[i];
+  }
+  printf("\n");
+  //w=setpol(gg,K+1);
+  //oprintpol((w));
+  //printf("\n");
+  //   exit(1);
+  //--------------
+  */
+
+  tt.t[0].n=1;
+  tt.t[0].a=1;
+
+  
+  ff=inv(f,w);
+  printpol(o2v(ff));
+  printf("locater==========\n");
+  //exit(1);
+  r2=oadd(ff,tt);
+  printpol(o2v(r2));
+  printf(" h+x==============\n");
+  //  exit(1);
+  g1=osqrt(r2,w);
+    printpol(o2v(g1));
+  printf(" g1!=========\n");
+  //exit(1);
+  hh=xgcd(w,g1);
+  ff=omod(omul(hh.v,g1),w);
+  printpol(o2v(ff));
+  printf(" beta!=========\n");
+  printpol(o2v(hh.v));
+  printf(" alpha!=========\n");
+  //exit(1);
+  ll=oadd(omul(ff,ff),omul(tt,omul(hh.v,hh.v)));
+  v=chen(ll);
+  for(i=0;i<T*2;i++)
+    printf("%d\n",v.x[i]);
+  exit(1);
+
+
+}
+
+
 int main(int argc,char **argv){
   int i,j,k,l,c;
   unsigned long a,x,count=1;
@@ -2014,40 +2151,12 @@ int main(int argc,char **argv){
   printf("\n");
   //    exit(1);
   
-  OP g1={0},ll={0},s={0};
-
-  tt.t[0].n=1;
-  tt.t[0].a=1;
-
   f=setpol(syn,K);
   printpol(o2v(f));
   printf(" syn=============\n");
   //   exit(1);
-  
-  ff=inv(f,w);
-  printpol(o2v(ff));
-  printf("locater==========\n");
-  //exit(1);
-  r2=oadd(ff,tt);
-  printpol(o2v(r2));
-  printf(" h+x==============\n");
-  //  exit(1);
-  g1=osqrt(r2,w);
-    printpol(o2v(g1));
-  printf(" g1!=========\n");
-  //exit(1);
-  hh=xgcd(w,g1);
-  ff=omod(omul(hh.v,g1),w);
-  printpol(o2v(ff));
-  printf(" beta!=========\n");
-  printpol(o2v(hh.v));
-  printf(" alpha!=========\n");
-  //exit(1);
-  ll=oadd(omul(ff,ff),omul(tt,omul(hh.v,hh.v)));
-  v=chen(ll);
-  for(i=0;i<T*2;i++)
-    printf("%d\n",v.x[i]);
-  exit(1);
+
+  pattarson(w,f);
   
   
   r=decode(w,f);
