@@ -1,3 +1,4 @@
+ 
 //date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
@@ -18,8 +19,7 @@
 #include "lu.c"
 
 
-
-#define K 8*2
+#define K 16*2
 #define DEG 3*K
 #define T K/2
 #define E 8
@@ -93,9 +93,9 @@ static void ginit(void){
        
   g[K]=1;
   g[0]=1;
-  while(count<5){
+  while(count<K/2-1){
     printf("@\n");
-    j=rand()%K;
+    j=rand()%(K-1);
     if(j<K && j>0 && g[j]==0){
       g[j]=1;
       count++;
@@ -1013,7 +1013,7 @@ OP ogcd(OP f,OP g){
 
 
 EX xgcd(OP f,OP g){
-  OP h={0},ww={0},v[K*2]={0},u[10]={0};
+  OP h={0},ww={0},v[K*2]={0},u[K*2]={0};
   oterm a,b;
   int i=0,j,k;
   EX e={0};
@@ -1785,7 +1785,7 @@ int main(int argc,char **argv){
   //unsigned short g[K+1]={1,0,9,0,1};
   //  unsigned short g[K+1]={1,0,1};
   //unsigned short g[K+1]={1,1,1};
-  unsigned short g[K+1]={2,2,12,1,2,8,4,13,5,10,8,2,15,10,7,3,5};
+  //unsigned short g[K+1]={2,2,12,1,2,8,4,13,5,10,8,2,15,10,7,3,5};
   unsigned short yy[5]={15,0,8,0,11};
   /*
   r1=setpol(yy,5);
@@ -1799,7 +1799,7 @@ int main(int argc,char **argv){
   //  makefg(M);
   srand(clock()+time(&t));
   printf("@");
-  //ginit();
+  ginit();
   /*  
   ff.t[0].a=1;
   ff.t[0].n=0;
@@ -1815,7 +1815,6 @@ int main(int argc,char **argv){
     h=gcd(f,ff);
   oprintpol(h);
   printf("gcd=========\n");
-
   while(odeg(ff)<10){
   ff=benor(3,10);
   }
@@ -2116,11 +2115,9 @@ int main(int argc,char **argv){
   hh=xgcd(g1,w);
   //s=omod(omul(r1,g1),w);
   ll=omod(oadd(omul(hh.u,hh.u),omul(tt,omul(hh.v,hh.v))),w);
-
   
   printpol(o2v(ll));
   printf(" locater?============\n");
-
   v=chen(ll);
   for(i=0;i<D;i++)
     printf("%d\n",v.x[i]);
@@ -2166,7 +2163,6 @@ int main(int argc,char **argv){
   //printpol(o2v(r));
   //printf(" locate2============\n");
   //  exit(1);
-
   //exit(1);
   h=vx(w,g1);
   f=omod(omul(h,g1),w);
@@ -2220,7 +2216,6 @@ int main(int argc,char **argv){
   r1.t[4].n=4;
   r1.t[5].a=9;
   r1.t[5].n=5;
-
   r2.t[0].a=14;
   r2.t[0].n=0;
   r2.t[1].a=2;
