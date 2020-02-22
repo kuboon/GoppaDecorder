@@ -539,10 +539,11 @@ OP omod(OP f,OP g){
       printf("\nff1=====================\n");
       if(deg(o2v(f))==0 || deg(o2v(f))>100){
 	printf("baka500\n");
-	//break;
+	
       }
 
-
+      if(c.n==0)
+	break;
     }
     
     return f;
@@ -575,7 +576,8 @@ OP odiv(OP f,OP g){
     b=LT(g);
     oprintpol((g));
     printf("in odiv1 g===========%d %d\n",b.a,b.n);
-    
+    if(b.a==1 && b.n==0)
+      return f;
     if(deg(o2v(f))<deg(o2v(g))){
   return f;
   //  a=LT(f);
@@ -796,8 +798,8 @@ OP vx(OP f,OP g){
 
   //printf("in vx\n");
   //  exit(1);
-  i=2;
-  for(i=2;i<T+2;i++){
+  
+  for(i=0;i<T;i++){
     // memset(ss.t,0,DEG*sizeof(ss));
     //    if(deg(o2v(f))>=deg(o2v(g)) && deg(o2v(g))>0){
     if(deg(o2v(vv))<T){
@@ -811,7 +813,7 @@ OP vx(OP f,OP g){
     printf("ww======= ");
     oprintpol((ww));
     printf("\n");
-    v[i]=oadd(v[i-2],omul(ww,v[i-1]));
+    v[i+2]=oadd(v[i],omul(ww,v[i+1]));
     printf("-------");
     memset(f.t,0,sizeof(f.t));
     f=g;
@@ -819,8 +821,8 @@ OP vx(OP f,OP g){
     memset(g.t,0,sizeof(g.t));
     g=h;
     
-    if(deg(o2v(v[i]))<=T){
-      vv=v[i];
+    if(deg(o2v(v[i+2]))<=T){
+      vv=v[i+2];
       printf("vv==");
       oprintpol((vv));
       printf("\n");
