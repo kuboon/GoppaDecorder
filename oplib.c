@@ -23,7 +23,7 @@
 #define DEG 3*K
 #define T K/2
 #define E 13
-#define D 8192
+#define D 6688
 
 unsigned char tmp[E*K][D]={0};
 unsigned char pub[E*K][D]={0};
@@ -1661,7 +1661,7 @@ void decrypt(){
 int isqrt(unsigned short u){
   int i,j,k;
 
-  for(i=0;i<D;i++){
+  for(i=0;i<M;i++){
     if(gf[mlt(i,i)]==u)
       return i;
   }
@@ -1884,6 +1884,7 @@ void pattarson(OP w,OP f){
    printf("う\n"); 
    for(i=0;i<T*2;i++){
     printf("%d お\n",v.x[i]);
+    if(v.x[i]>0)
     ++count;
    }
    printf("err=%dっ！\n",count);
@@ -2010,7 +2011,32 @@ int main(int argc,char **argv){
   */
 
 
+  fq=fopen("H.key","rb");
+  
+  fread(dd,2,K*D,fq);
+  #pragma omp parallel for
+  for(i=0;i<D;i++){
+  for(j=0;j<K;j++)
+    mat[j][i]=dd[K*i+j];
+    }
+  
+  
+  for(j=0;j<D;j++){
+    flg=0;
+    for(i=0;i<K;i++){
+      //printf("%d,",mat[i][j]);
+      if(mat[i][j]>0)
+	flg=1;
+      //      printf("\n");
+    }
+    if(flg==0)
+      printf("0 is %d\n",j);
+  }
+  
+  //  exit(1);   
 
+
+  
   j=0;
   while(j<T){
     l=xor128()%D;
@@ -2075,7 +2101,7 @@ int main(int argc,char **argv){
   
   j=0;
   while(j<T*2){
-    l=xor128()%D;
+    l=xor128()%6688;
     printf("l=%d\n",l);
     if(0==zz[l]){
       zz[l]=1;
@@ -2086,29 +2112,6 @@ int main(int argc,char **argv){
    
   
 
-  fq=fopen("H.key","rb");
-  
-  fread(dd,2,K*D,fq);
-  #pragma omp parallel for
-  for(i=0;i<D;i++){
-  for(j=0;j<K;j++)
-    mat[j][i]=dd[K*i+j];
-    }
-  
-  
-  for(j=0;j<D;j++){
-    flg=0;
-    for(i=0;i<K;i++){
-      //printf("%d,",mat[i][j]);
-      if(mat[i][j]>0)
-	flg=1;
-      //      printf("\n");
-    }
-    if(flg==0)
-      printf("0 is %d\n",j);
-  }
-  
-  //  exit(1);   
 
   
   printf("zz=");
