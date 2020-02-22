@@ -920,34 +920,36 @@ EX xgcd(OP f,OP g){
   k=0;
   
   for(i=0;i<T;i++){
-    
+    if(deg(o2v(v[i+2]))<T){
     h=omod(f,g);
     ww=odiv(f,g);
-    
+    }
     v[i+2]=oadd(v[i],omul(ww,v[i+1]));
     u[i+2]=oadd(u[i],omul(ww,u[i+1]));
     printf("i+1=%d\n",i+1);
     f=g;
     g=h;
     
-    }
+  
     
     //v[i]=odiv(v[i],h);
     //u[i]=odiv(u[i],h);
     // h.t[0].a=1;
     //h.t[0].n=0;
     printf("i=%d\n",i);
-    printpol(o2v(v[i]));
+    printpol(o2v(v[i+1]));
     printf(" v=============\n");
-    printpol(o2v(u[i]));
+    printpol(o2v(u[i+1]));
     printf(" u=============\n");
     printpol(o2v(h));
     printf(" h=============\n");
     //   exit(1);
-    
+    if(deg(o2v(v[i+2]))<T){
     e.d=h;
-    e.v=v[i];
-    e.u=u[i];
+    e.v=v[i+2];
+    e.u=u[i+2];
+    }
+  }
     
   return e;
 }
@@ -1636,6 +1638,9 @@ void pattarson(OP w,OP f){
   printf(" alpha!=========\n");
   //exit(1);
   ll=oadd(omul(ff,ff),omul(tt,omul(hh.v,hh.v)));
+  printpol(o2v(ll));
+  printf(" locater!============\n");
+  //exit(1);
   printf("あっ、でる・・・！\n");
   v=chen(ll);
    printf("う\n"); 
