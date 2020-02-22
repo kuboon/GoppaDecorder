@@ -1,4 +1,4 @@
- 
+//date 20200222 : pattarson algorithm implementation ver 1.0
 //date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
@@ -2092,6 +2092,7 @@ int main(int argc,char **argv){
   }
   printf("err=%d\n",o1);
 
+  printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
   scanf("%d",&n);
 
   
