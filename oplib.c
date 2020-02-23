@@ -87,6 +87,7 @@ OP p0={0};
 static void ginit(void){
   int i,j,count=0;
   unsigned short gg[K+1]={0};
+  //unsigned short g[K+1]={0};
   
   printf("in ginit\n");
   //   g[128]=g[126]=g[124]=g[120]=g[118]=g[117]=g[116]=g[115]=g[114]=g[113]=g[112]=g[110]=g[108]=g[106]=g[105]=g[104]=g[102]=g[101]=g[99]=g[98]=g[97]=g[94]=g[93]=g[89]=g[88]=g[85]=g[82]=g[81]=g[78]=g[77]=g[76]=g[74]=g[72]=g[69]=g[68]=g[66]=g[62]=g[61]=g[60]=g[57]=g[56]=g[54]=g[52]=g[51]=g[49]=g[48]=g[47]=g[46]=g[41]=g[40]=g[36]=g[35]=g[32]=g[30]=g[28]=g[27]=g[26]=g[24]=g[19]=g[17]=g[13]=g[10]=g[8]=g[6]=g[4]=g[3]=g[2]=g[1]=g[0]=1;
@@ -1552,7 +1553,7 @@ int isqrt(unsigned short u){
 
 OP osqrt(OP f,OP w){
   int i,j,k,jj;
-  OP even={0},odd={0},h={0},r={0},ww={0},s={0};
+  OP even={0},odd={0},h={0},r={0},ww={0},s={0},tmp={0},t={0};
   oterm o={0};
   vec v={0};
 
@@ -1601,51 +1602,49 @@ OP osqrt(OP f,OP w){
   //  exit(1);
   if(LT(r).n>0){
   s=inv(r,w);
-  }else{
-    printf("r======0\n");
+  }else if(LT(r).n==0){
+    printpol(o2v(r));
+    printf(" r======0\n");
     exit(1);
   }
-  if(LT(s).a==0){
-    printf("inv r==0\n");
-    exit(1);
-  }
+
   
   if(LT(omod(omul(s,r),w)).n>0){
     printf(" r is not inv\n");
      exit(1);
   }
   if(LT(h).n>0){
-    ww=omul(h,s);
-  }else{
+    ww=omod(omul(h,s),w);
+  }else if(LT(h).n==0){
     printf("h=========0\n");
     exit(1);
   }
-  if(LT(omod(omul(ww,ww),w)).n==1){
-    printf("ww succsess!===========\n");
+
+  if(LT(ww).n==0 && LT(ww).a==0){
+    printpol(o2v(s));
+    printf(" s===========\n");
+    printpol(o2v(w));
+    printf(" w==============\n");
+    printpol(o2v(h));
+    printf(" omod mul h,r===0\n");
+    exit(1);
+  }
+  
+  tmp=omod(omul(ww,ww),w);
+  if(LT(tmp).n==1){
+    printpol(o2v(ww));
+    printf(" ww succsess!===========\n");
   }else{
+    printpol(o2v(tmp));
+    printf(" mod w^2==========\n");
     printpol(o2v(ww));
     printf(" ww^2 failed!========\n");
     printpol(o2v(w));
     printf(" w==============\n");
     exit(1);
   }
-  if(LT(ww).n==0 && LT(ww).a==0){
-    printf(" omoul h,r===0\n");
-    exit(1);
-  }
-  //h=om(ww,ww);
+
   
-  if(LT(ww).n>LT(w).n){
-    ww=omod(ww,w);
-    if(LT(ww).a==0){
-      printf("ww is diviable\n");
-      // ww=w;
-       exit(1);
-    }
-  }
-  
-    printpol(o2v(ww));
-    printf(" w==============\n");
     //    exit(1);
   printpol(o2v(s));
   printf(" g1^-1=========\n");
@@ -1700,9 +1699,9 @@ void pattarson(OP w,OP f){
   //unsigned short g[K+1]={2,2,12,1,2,8,4,13,5,10,8,2,15,10,7,3,5};
   unsigned short yy[5]={15,0,8,0,11};
 
-  srand(clock()+time(&t));
-  printf("@");
-  ginit();
+  //srand(clock()+time(&t));
+  //printf("@");
+  //ginit();
 
   /*  
   //-------------２乗するとき外す
@@ -1815,6 +1814,9 @@ int main(int argc,char **argv){
   
   srand(clock()+time(&t));
   printf("@");
+ label:
+  for(i=0;i<K+1;i++)
+    g[i]=0;
   ginit();
   
   
@@ -1852,7 +1854,8 @@ int main(int argc,char **argv){
     a=trace(w,i);
     if(a==0){
       printf("trace 0 @ %d\n",i);
-         exit(1);
+      goto label;
+      //  exit(1);
     }
   }
   printf("@");
@@ -1930,7 +1933,7 @@ int main(int argc,char **argv){
   //  exit(1);   
 
 
-  
+  /*  
   j=0;
   while(j<T){
     l=xor128()%D;
@@ -1985,9 +1988,12 @@ int main(int argc,char **argv){
       o1++;
   }
   printf("err=%dっ！！\n",o1);
-
+  
+*/
+  k=0;  
   printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
   //  scanf("%d",&n);
+  while(1){
     
   for(i=0;i<D;i++)
     zz[i]=0;
@@ -2034,7 +2040,10 @@ int main(int argc,char **argv){
 
    pattarson(w,f);
    //  exit(1);
-   
+   k++;
+   if(k>5)
+     goto label;
+  }
 
 
   return 0;
