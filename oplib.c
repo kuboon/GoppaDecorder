@@ -481,6 +481,19 @@ oterm LTdiv(OP f,oterm t){
 }
 
 
+OP coeff(OP f,unsigned short d){
+  int i,j,k;
+  vec a,b;
+  
+  for(i=0;i<deg(o2v(f))+1;i++)
+    f.t[i].a=gf[mlt(fg[f.t[i].a],oinv(d))];
+
+
+  return f;
+
+}
+
+
 OP omod(OP f,OP g){
   int i=0,j,n,k;
   OP h={0},e={0};
@@ -568,12 +581,12 @@ OP odiv(OP f,OP g){
     //return f;
         exit(1);
   }
-  if(deg(o2v(g))==0 && g.t[0].a==0){
+  if(LT(g).a==0){
     printf("baka--\n");
     exit(1);
   }
-  if(deg(o2v(g))==0 && g.t[0].a==1)
-    return f;
+  if(deg(o2v(g))==0 && g.t[0].a>1)
+    return coeff(f,g.t[0].a);
     printf("in odiv\n");
     //printpol(o2v(g));
     
@@ -589,7 +602,7 @@ OP odiv(OP f,OP g){
       exit(1);
     }
     if(deg(o2v(f))<deg(o2v(g))){
-  return f;
+      return f;
   //  a=LT(f);
     }
   printf("odiv in b=========%dx^%d\n",b.a,b.n);
@@ -602,7 +615,7 @@ printpol(o2v(g));
  printf("\nin odiv2 g=============%d\n",deg(o2v(g)));
 
  i=0;
- while((deg(o2v(f))-deg(o2v(g)))>=0){
+ while(deg(o2v(f))>0 && deg(o2v(g))>0){
     //  printf("in!\n");
     //    exit(1);
     
@@ -683,17 +696,6 @@ unsigned short trace(OP f,unsigned short x){
 }
 
 
-OP coeff(OP f,unsigned short d){
-  int i,j,k;
-  vec a,b;
-  
-  for(i=0;i<deg(o2v(f))+1;i++)
-    f.t[i].a=gf[mlt(fg[f.t[i].a],oinv(d))];
-
-
-  return f;
-
-}
 
 
 // invert of polynomial
@@ -707,6 +709,11 @@ OP inv(OP a,OP n){
     printf("baka_i\n");
     exit(1);
   }
+  if(LT(a).a==0){
+    printf(" a ga 0\n");
+    exit(1);
+  }
+    
   tt=n;
   
   printf("n=============\n");
@@ -738,7 +745,7 @@ OP inv(OP a,OP n){
     s = t;
   }
   // exit(1);
-  if(LT(a).a>0){
+  //  if(LT(a).a>0){
     d = a;
     a = r;
     printpol(o2v(a));
@@ -767,34 +774,45 @@ OP inv(OP a,OP n){
    v=oadd(x,n);
    printpol(o2v(v));
    printf("\n");
+   if(LT(v).a==0){
+     printf("v=============0\n");
+   }
+     
     printf("d==============\n");
-  }
+    //  } //end of a>0
   w=tt;
-  printpol(o2v(w));
+  printpol(o2v(v));
   printf("\n");
   printf("ss==============\n");
   //       exit(1);
   // if(deg(o2v(w))>0)
-  if(LT(w).a>0){
+  if(LT(v).a>0){
   u=omod(v, w);
   }else{
-    printf("w==0\n");
+    printpol(o2v(x));
+    printf(" x==0?\n");
+    printpol(o2v(n));
+    printf(" n==0?\n");
+    
     exit(1);
   }
-  if(LT(u).a>0){
-  u=odiv(u, d);
-  }else{
-    printf("inv mod 0\n");
-    //exit(1);
+  if(LT(u).a>0 && LT(d).a>0){
+    u=odiv(u, d);
   }
-  if(LT(t).a==0){
-    printf("inv div u==0\n");
-    exit(1);
+
+  if(LT(u).a==0 || LT(d).a==0){
+    printf("inv div u or d==0\n");
+    // exit(1);
   }
   //u=coeff(u,d.t[0].a);
   printpol(o2v(u));
   printf("\nu==================\n");
-  //   exit(1); 
+  if(LT(u).a==0){
+    printf("no return at u==0\n");
+    exit(1);
+  }
+
+  
   return u;
 
 }
@@ -918,6 +936,32 @@ unsigned char chk(OP f){
   
 }
 
+OP ogcd(OP f,OP g){
+  OP h={0},ww={0};
+  oterm a,b;
+  int i=0;
+
+
+  //oprintpol((f));
+  //oprintpol((g));
+  //  exit(1);
+  
+  for(i=0;i<T;i++){// && deg(o2v(f))>=deg(o2v(g))){
+  //while(deg(o2v(g))<T){
+    //    memset(ss.t,0,DEG);
+    h=omod(f,g);
+    ww=odiv(f,g);
+  f=g;
+  g=h;
+  //  i++;
+  //   if(deg(o2v(g))<T)
+  // break;
+  }
+  // exit(1);
+
+    
+  return h;
+}
 
 
 
@@ -1117,8 +1161,9 @@ int i,j,k;
 printf("@@@@@@@@@\n");
 //exit(1);
 
- hh=xgcd(f,s);
+ h=ogcd(f,s);
  printpol(o2v(hh.d));
+
  //  exit(1);
 t1=LT(r);
 // printf("t1=%d %d\n",t1.a,t1.n);
@@ -1140,14 +1185,14 @@ l=oterml(w,t2);
  //    exit(1);
 for(i=0;i<deg(x)+1;i++){
   //  if(x.x[i]>0){
-  e.t[i].a=gf[mlt(fg[trace(hh.d,x.x[i])],oinv(trace(l,x.x[i])))];
+  e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(l,x.x[i])))];
 e.t[i].n=x.x[i];
 
 // }
  }
 
    for(i=0;i<T;i++)
-    if(gf[trace(hh.d,x.x[i])]==0)
+    if(gf[trace(h,x.x[i])]==0)
       printf("h=0");
    //printf("\n");
   for(i=0;i<T;i++)
@@ -1507,7 +1552,7 @@ int isqrt(unsigned short u){
 
 OP osqrt(OP f,OP w){
   int i,j,k,jj;
-  OP even={0},odd={0},h={0},r={0},ww={0};
+  OP even={0},odd={0},h={0},r={0},ww={0},s={0};
   oterm o={0};
   vec v={0};
 
@@ -1533,7 +1578,7 @@ OP osqrt(OP f,OP w){
   // exit(1);
 
   
-  k=distance(w);
+  k=deg(o2v(w));
   printf("%d\n",k);
   //exit(1);
   j=0;
@@ -1554,27 +1599,55 @@ OP osqrt(OP f,OP w){
   printf(" sqrt(g0)=======\n");
   
   //  exit(1);
-  r=inv(r,w);
-  if(LT(r).a==0){
+  if(LT(r).n>0){
+  s=inv(r,w);
+  }else{
+    printf("r======0\n");
+    exit(1);
+  }
+  if(LT(s).a==0){
     printf("inv r==0\n");
     exit(1);
   }
-  //exit(1);
-  ww=omul(h,r);
-  if(LT(ww).a==0){
+  
+  if(LT(omod(omul(s,r),w)).n>0){
+    printf(" r is not inv\n");
+     exit(1);
+  }
+  if(LT(h).n>0){
+    ww=omul(h,s);
+  }else{
+    printf("h=========0\n");
+    exit(1);
+  }
+  if(LT(omod(omul(ww,ww),w)).n==1){
+    printf("ww succsess!===========\n");
+  }else{
+    printpol(o2v(ww));
+    printf(" ww^2 failed!========\n");
+    printpol(o2v(w));
+    printf(" w==============\n");
+    exit(1);
+  }
+  if(LT(ww).n==0 && LT(ww).a==0){
     printf(" omoul h,r===0\n");
     exit(1);
   }
   //h=om(ww,ww);
+  
+  if(LT(ww).n>LT(w).n){
     ww=omod(ww,w);
     if(LT(ww).a==0){
-      printf("ww mod=0");
-      exit(1);
+      printf("ww is diviable\n");
+      // ww=w;
+       exit(1);
     }
+  }
+  
     printpol(o2v(ww));
     printf(" w==============\n");
     //    exit(1);
-  printpol(o2v(r));
+  printpol(o2v(s));
   printf(" g1^-1=========\n");
   printpol(o2v(h));
   printf(" g0=========\n");
@@ -1582,12 +1655,12 @@ OP osqrt(OP f,OP w){
   printpol(o2v(ww));
   printf(" ww==========\n");
   //  exit(1);
-  h=ww;
+   h=ww;
   if(odeg(omod(omul(h,ww),w))==1){
     ww=h;
     h=omod(oadd(even,omul(ww,odd)),w);
     return h;
-  }else{
+  }else if(LT(ww).a==0){
     printf("vaka\n");
     exit(1);
   }
@@ -1672,10 +1745,24 @@ void pattarson(OP w,OP f){
   printf(" g1!=========\n");
   //exit(1);
    hh=xgcd(w,g1);
-  //  exit(1);
+
   ff=omod(omul(hh.v,g1),w);
   printpol(o2v(ff));
   printf(" beta!=========\n");
+  if(deg(o2v(ff))!=K/2){
+    printf("beta baka\n");
+    if(LT(hh.v).n%2==0){
+    hh.v=osqrt(hh.v,w);
+    ff=omod(omul(hh.v,g1),w);
+    printpol(o2v(ff));
+    printf("re culc\n");
+    //exit(1);
+    }else if(LT(ff).n%2==1){
+      printpol(o2v(ff));
+      printf(" degree baka=============\n");
+      exit(1);
+    }
+  }
   printpol(o2v(hh.v));
   printf(" alpha!=========\n");
   //exit(1);
@@ -1900,7 +1987,7 @@ int main(int argc,char **argv){
   printf("err=%dっ！！\n",o1);
 
   printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
-  scanf("%d",&n);
+  //  scanf("%d",&n);
     
   for(i=0;i<D;i++)
     zz[i]=0;
@@ -1908,7 +1995,7 @@ int main(int argc,char **argv){
   
   j=0;
   while(j<T*2){
-    l=xor128()%6688;
+    l=xor128()%D;
     printf("l=%d\n",l);
     if(0==zz[l]){
       zz[l]=1;
@@ -1952,4 +2039,3 @@ int main(int argc,char **argv){
 
   return 0;
 }
-
