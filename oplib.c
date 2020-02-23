@@ -1627,7 +1627,8 @@ OP osqrt(OP f,OP w){
     printf(" w==============\n");
     printpol(o2v(h));
     printf(" omod mul h,r===0\n");
-    exit(1);
+    return ww;;
+    // exit(1);
   }
   
   tmp=omod(omul(ww,ww),w);
@@ -1641,7 +1642,9 @@ OP osqrt(OP f,OP w){
     printf(" ww^2 failed!========\n");
     printpol(o2v(w));
     printf(" w==============\n");
-    exit(1);
+
+    return ww;
+    // exit(1);
   }
 
   
@@ -1742,6 +1745,12 @@ void pattarson(OP w,OP f){
   g1=osqrt(r2,w);
     printpol(o2v(g1));
   printf(" g1!=========\n");
+  if(LT(g1).n==0 && LT(g1).a==0){
+    printpol(o2v(w));
+    printf(" badkey=========\n");
+    exit(1);
+    // goto label;
+  }
   //exit(1);
    hh=xgcd(w,g1);
 
@@ -1787,6 +1796,144 @@ void pattarson(OP w,OP f){
 }
 
 
+OP keyfinder(void){
+  int i,j,k,l,c;
+  unsigned long a,x,count=1;
+  //  unsigned short cc[K]={0};
+  unsigned short m[K],mm[T]={0},dd[K*D]={0};
+  time_t timer;
+  FILE *fp,*fq;
+
+  unsigned short g2[7]={1,0,9,0,0,6,4};
+  //  unsigned short s[K]={0}; //{4,12,7,8,11,13};
+  unsigned short jj[T*2]={0};
+  unsigned short ee[10]={1,2,3,4,5,6,7,8,9,10};
+  short zz[D]={0};
+  //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
+  int y,flg,o1=0;
+  OP f={0},h={0},r={0},w={0},aa[8]={0},tt={0},ff={0},g1={0};
+  EX hh={0};
+  vec v;
+  unsigned short d=0;
+  time_t t;
+  unsigned short gg[K+1]={0};
+  oterm rr={0};
+  OP r1={0},r2={0},t1={0},t2={0},a1={0},b1={0},a2={0},b2={0};
+
+ label:
+  for(i=0;i<K+1;i++)
+    g[i]=0;
+  ginit();
+  
+  
+    w=setpol(g,K+1);
+    oprintpol(w);
+
+    #pragma omp parallel for  
+  for(i=0;i<D;i++){
+    a=trace(w,i);
+    if(a==0){
+      printf("trace 0 @ %d\n",i);
+      goto label;
+      //  exit(1);
+    }
+  }
+  printf("@");
+  //keygen(g);
+  key2(g);
+
+  fq=fopen("H.key","rb");
+  
+  fread(dd,2,K*D,fq);
+  #pragma omp parallel for
+  for(i=0;i<D;i++){
+  for(j=0;j<K;j++)
+    mat[j][i]=dd[K*i+j];
+    }
+  
+  
+  for(j=0;j<D;j++){
+    flg=0;
+    for(i=0;i<K;i++){
+      //printf("%d,",mat[i][j]);
+      if(mat[i][j]>0)
+	flg=1;
+      //      printf("\n");
+    }
+    if(flg==0)
+      printf("0 is %d\n",j);
+  }
+  
+  //  exit(1);   
+  for(i=0;i<D;i++)
+    zz[i]=0;
+  
+  
+  j=0;
+  while(j<T*2){
+    l=xor128()%D;
+    printf("l=%d\n",l);
+    if(0==zz[l]){
+      zz[l]=1;
+      j++;
+    }
+  }
+  
+
+  
+  printf("zz=");
+  for(i=0;i<D;i++)
+    printf("%d,",zz[i]);
+  printf("\n");
+  //    exit(1);
+  //  
+  for(i=0;i<K;i++){
+    syn[i]=0;
+    //#pragma omp parallel for
+    for(j=0;j<D;j++){
+      //   printf("%u,",zz[jj[j]]);
+      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
+    }
+       printf("syn%d,",syn[i]);
+  }
+  printf("\n");
+  //    exit(1);  
+  for(i=0;i<K;i++)
+    printf("mat[%d][1]=%d\n",i,mat[i][1]);
+  printf("\n");
+  //    exit(1);
+  
+    
+  f=setpol(syn,K);
+  printpol(o2v(f));
+  printf(" syn=============\n");
+  //   exit(1);
+
+  tt.t[0].n=1;
+  tt.t[0].a=1;
+
+  
+  ff=inv(f,w);
+  printpol(o2v(ff));
+  printf("locater==========\n");
+  //exit(1);
+  r2=oadd(ff,tt);
+  printpol(o2v(r2));
+  printf(" h+x==============\n");
+  //  exit(1);
+  g1=osqrt(r2,w);
+    printpol(o2v(g1));
+  printf(" g1!=========\n");
+  if(LT(g1).n==0 && LT(g1).a==0){
+    printpol(o2v(w));
+    printf(" badkey=========\n");
+    goto label;
+  }
+
+  
+  return w;
+}
+
 int main(int argc,char **argv){
   int i,j,k,l,c;
   unsigned long a,x,count=1;
@@ -1814,7 +1961,8 @@ int main(int argc,char **argv){
   
   srand(clock()+time(&t));
   printf("@");
- label:
+  // label:
+  /*
   for(i=0;i<K+1;i++)
     g[i]=0;
   ginit();
@@ -1822,7 +1970,9 @@ int main(int argc,char **argv){
   
     w=setpol(g,K+1);
     oprintpol(w);
+  */
 
+  
     // exit(1);
 
   /*  
@@ -1848,21 +1998,23 @@ int main(int argc,char **argv){
   //   exit(1);
   //--------------
   */
-  
+ label:
+  w=keyfinder();
+  /*
 #pragma omp parallel for  
   for(i=0;i<D;i++){
     a=trace(w,i);
     if(a==0){
       printf("trace 0 @ %d\n",i);
-      goto label;
-      //  exit(1);
+      //goto label;
+        exit(1);
     }
   }
   printf("@");
   //keygen(g);
   key2(g);
   //exit(1);
-
+  */
   /*
   for(i=0;i<K;i++){
     for(j=0;j<M;j++){
@@ -1993,12 +2145,18 @@ int main(int argc,char **argv){
   k=0;  
   printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
   //  scanf("%d",&n);
+
+
+  OP g1={0};  
+  
   while(1){
     
-  for(i=0;i<D;i++)
-    zz[i]=0;
-  
-  
+    //  w=keyfinder();
+    
+    for(i=0;i<D;i++)
+      zz[i]=0;
+    
+    
   j=0;
   while(j<T*2){
     l=xor128()%D;
@@ -2038,11 +2196,35 @@ int main(int argc,char **argv){
   printf(" syn=============\n");
   //   exit(1);
 
+  /*  
+  tt.t[0].n=1;
+  tt.t[0].a=1;
+
+  
+  ff=inv(f,w);
+  printpol(o2v(ff));
+  printf("locater==========\n");
+  //exit(1);
+  r2=oadd(ff,tt);
+  printpol(o2v(r2));
+  printf(" h+x==============\n");
+  //  exit(1);
+  g1=osqrt(r2,w);
+    printpol(o2v(g1));
+  printf(" g1!=========\n");
+  if(LT(g1).n==0 && LT(g1).a==0){
+    printpol(o2v(w));
+    printf(" badkey=========\n");
+    goto label;
+  }
+  */
+
+  
    pattarson(w,f);
    //  exit(1);
    k++;
    if(k>5)
-     goto label;
+   goto label;
   }
 
 
