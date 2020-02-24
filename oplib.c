@@ -1941,7 +1941,7 @@ OP keyfinder(void){
 
 int main(int argc,char **argv){
   int i,j,k,l,c;
-  unsigned long a,x,count=1;
+  unsigned long a,x,count=0;
   //  unsigned short cc[K]={0};
   unsigned short m[K],mm[T]={0},dd[K*D]={0};
   time_t timer;
@@ -2100,19 +2100,34 @@ int main(int argc,char **argv){
 
   
   while(1){
-  //  exit(1);   
+
+  belal:
+    count=0;    
+
+    //  exit(1);   
   for(i=0;i<D;i++)
     zz[i]=0;
   
   j=0;
   while(j<T){
     l=xor128()%D;
-    printf("l=%d\n",l);
+    //printf("l=%d\n",l);
     if(0==zz[l] && l>0){
       zz[l]=l;
       j++;
     }
   }
+  /*
+  for(j=0;j<D;j++){
+    if(zz[j]>0)
+      count++;
+  }
+  if(count<T){
+    printf("error pattarn too few\n");
+    goto belal;
+  }
+  */
+  
   for(i=0;i<K;i++){
     syn[i]=0;
     //#pragma omp parallel for
@@ -2141,7 +2156,21 @@ int main(int argc,char **argv){
     mm[i]=r.t[i].a;
     if(i==0){
      printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"う");
-    }else{     printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"お");
+    }else if(r.t[i].a==r.t[i].n){
+      printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"お");
+    }else if(r.t[i].a!=r.t[i].n){
+	printpol(o2v(w));
+	printf(" goppa polynomial==============\n");
+	for(l=0;l<D;l++){
+	  printf("%d,",zz[l]);
+	  if(zz[l]>0)
+	    count++;
+	}
+	if(count<T){
+	  printf("error pattarn too few\n");
+	  exit(1);
+	}
+
 }
     if(r.t[i].a==0){
       printf("------------------\n");
