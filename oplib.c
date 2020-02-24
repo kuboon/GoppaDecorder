@@ -92,7 +92,8 @@ static void ginit(void){
   
   printf("in ginit\n");
   //   g[128]=g[126]=g[124]=g[120]=g[118]=g[117]=g[116]=g[115]=g[114]=g[113]=g[112]=g[110]=g[108]=g[106]=g[105]=g[104]=g[102]=g[101]=g[99]=g[98]=g[97]=g[94]=g[93]=g[89]=g[88]=g[85]=g[82]=g[81]=g[78]=g[77]=g[76]=g[74]=g[72]=g[69]=g[68]=g[66]=g[62]=g[61]=g[60]=g[57]=g[56]=g[54]=g[52]=g[51]=g[49]=g[48]=g[47]=g[46]=g[41]=g[40]=g[36]=g[35]=g[32]=g[30]=g[28]=g[27]=g[26]=g[24]=g[19]=g[17]=g[13]=g[10]=g[8]=g[6]=g[4]=g[3]=g[2]=g[1]=g[0]=1;
-       
+  // g[256]=g[254]=g[253]=g[249]=g[244]=g[242]=g[239]=g[238]=g[236]=g[235]=g[233]=g[232]=g[228]=g[222]=g[221]=g[220]=g[219]=g[217]=g[214]=g[213]=g[212]=g[206]=g[205]=g[203]=g[202]=g[201]=g[199]=g[195]=g[194]=g[193]=g[192]=g[191]=g[186]=g[183]=g[180]=g[179]=g[178]=g[177]=g[173]=g[170]=g[167]=g[166]=g[165]=g[162]=g[160]=g[157]=g[156]=g[154]=g[151]=g[147]=g[143]=g[142]=g[141]=g[140]=g[139]=g[137]=g[136]=g[135]=g[133]=g[132]=g[131]=g[128]=g[125]=g[122]=g[118]=g[117]=g[115]=g[112]=g[108]=g[107]=g[106]=g[104]=g[103]=g[102]=g[100]=g[97]=g[95]=g[94]=g[90]=g[89]=g[87]=g[85]=g[84]=g[83]=g[81]=g[80]=g[75]=g[70]=g[69]=g[67]=g[66]=g[65]=g[64]=g[63]=g[62]=g[61]=g[60]=g[59]=g[58]=g[57]=g[54]=g[51]=g[49]=g[48]=g[46]=g[45]=g[44]=g[43]=g[42]=g[41]=g[39]=g[36]=g[31]=g[30]=g[26]=g[23]=g[22]=g[21]=g[16]=g[14]=g[13]=g[10]=g[8]=g[7]=g[6]=g[5]=g[3]=g[1]=g[0]=1;
+  
   g[K]=1;
   g[0]=1;
   while(count<K/2-1){
@@ -1163,7 +1164,7 @@ int i,j,k;
 printf("@@@@@@@@@\n");
 //exit(1);
 
- h=ogcd(f,s);
+ hh=xgcd(f,s);
  printpol(o2v(hh.d));
 
  //  exit(1);
@@ -1187,14 +1188,14 @@ l=oterml(w,t2);
  //    exit(1);
 for(i=0;i<deg(x)+1;i++){
   //  if(x.x[i]>0){
-  e.t[i].a=gf[mlt(fg[trace(h,x.x[i])],oinv(trace(l,x.x[i])))];
+  e.t[i].a=gf[mlt(fg[trace(hh.d,x.x[i])],oinv(trace(l,x.x[i])))];
 e.t[i].n=x.x[i];
 
 // }
  }
 
    for(i=0;i<T;i++)
-    if(gf[trace(h,x.x[i])]==0)
+    if(gf[trace(hh.d,x.x[i])]==0)
       printf("h=0");
    //printf("\n");
   for(i=0;i<T;i++)
@@ -1791,6 +1792,9 @@ void pattarson(OP w,OP f){
     ++count;
    }
    printf("err=%dっ!! \n",count);
+
+   //printpol(o2v(w));
+   //printf(" poly==========\n");
    //  exit(1);
 
 
@@ -2093,7 +2097,9 @@ int main(int argc,char **argv){
     if(flg==0)
       printf("0 is %d\n",j);
   }
+
   
+  while(1){
   //  exit(1);   
   for(i=0;i<D;i++)
     zz[i]=0;
@@ -2139,9 +2145,15 @@ int main(int argc,char **argv){
 }
     if(r.t[i].a==0){
       printf("------------------\n");
-      
        printf("err=%d i=%d\n",o1,i);
-        exit(1);
+      printpol(o2v(w));
+      printf(" w==============\n");
+      printpol(o2v(f));
+      printf(" w==============\n");
+      for(l=0;l<D;l++)
+	printf("%d,",zz[l]);
+      printf("\n");
+       exit(1);
     }
   }
     for(i=0;i<D;i++){
@@ -2153,7 +2165,7 @@ int main(int argc,char **argv){
 
   k=0;  
   printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
-    scanf("%d",&n);
+  //scanf("%d",&n);
 
 
 
@@ -2279,17 +2291,20 @@ int main(int argc,char **argv){
   printpol(o2v(ff));
   printf(" beta!=========\n");
   if(deg(o2v(ff))!=K/2){
-    printf("beta baka\n");
+    printf("逆元が計算できない鍵です。\n");
+    //  scanf("%d",&n);
     goto label;
   }
 
 
 
   
-   pattarson(w,f);
-   //  exit(1);
-   //  }
-
+  pattarson(w,f);
+  k++;
+  if(k>1)
+    goto label;
+  }
+  
 
   return 0;
 }
