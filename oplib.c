@@ -2163,7 +2163,7 @@ int main(int argc,char **argv){
 	printf(" goppa polynomial==============\n");
 	for(l=0;l<D;l++){
 	  printf("%d,",zz[l]);
-	  if(zz[l]>0)
+	  if(zz[l]>0 && zz[l]==l)
 	    count++;
 	}
 	if(count<T){
