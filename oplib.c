@@ -33,23 +33,8 @@ unsigned short mat[K][D]={0};
 unsigned short m2[K][D]={0};
 
 static unsigned short g[K+1]={0};
-//{1,0,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,0,0,0,0,0,1,1,1,0,1,1,1,0,0,1,1,1,1,0,1,0,0,0,0,0,1,1,1,1,0,1,1,1,1,1,1,0,0,0,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1,0,0,1,0,1,1,0,0,1,0,0,0,0,0,1,1,1,0,1,0,0,1,0,0,0,0,0,0,0,1,0,1,0,1,1,1,0,0,1,0,0,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,0,0,1,1,0,0,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0,0,1,0,0,1,1,1,1,0,0,0,0,0,0,1,0,0,1,0,1,0,1,1,0,0,1,1,0,0,0,1,1,1,0,0,0,1,0,1,0,1,1,0,1,0,1,0,0,1,0,0,1,1,0,0,1,0,1,1,1,1,0,1,1,0,1,0,1,0,1,1,0,1,0,0,1,1,1,1,0,1,1,0,0,0,1,0,0,1,0,0,0,1,1,1,1,0,0,0,0,1,1,0,1,1};
-  /*
-  {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
-		       0,0,0,0,0,0,0,0,0,0,
-		       		       0,0,0,0,0,0,0,0,0,0,
-		       		       0,0,0,0,0,0,0,0,0,0,
-		       		       0,0,0,0,0,0,0,0,0,0,
-		       0,1};
-  */
-  //  unsigned short g[K+1]={1,1,0,1,1,0,0,1,1,0,1};
-//unsigned short g[K+1]={1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
-
-//,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
-//unsigned short g[K+1]={1,0,0,0,1,0,1};
 unsigned short syn[K]={0};
 unsigned char A[D][D]={0};
-//={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}; //={1,5,0,1,7,3,15}; //={1,2,9,4,0,6,4}; // //
 unsigned short P[D]={0};
 unsigned short inv_P[D]={0};
 unsigned short uu;
@@ -93,7 +78,10 @@ static void ginit(void){
   printf("in ginit\n");
   //   g[128]=g[126]=g[124]=g[120]=g[118]=g[117]=g[116]=g[115]=g[114]=g[113]=g[112]=g[110]=g[108]=g[106]=g[105]=g[104]=g[102]=g[101]=g[99]=g[98]=g[97]=g[94]=g[93]=g[89]=g[88]=g[85]=g[82]=g[81]=g[78]=g[77]=g[76]=g[74]=g[72]=g[69]=g[68]=g[66]=g[62]=g[61]=g[60]=g[57]=g[56]=g[54]=g[52]=g[51]=g[49]=g[48]=g[47]=g[46]=g[41]=g[40]=g[36]=g[35]=g[32]=g[30]=g[28]=g[27]=g[26]=g[24]=g[19]=g[17]=g[13]=g[10]=g[8]=g[6]=g[4]=g[3]=g[2]=g[1]=g[0]=1;
   // g[256]=g[254]=g[253]=g[249]=g[244]=g[242]=g[239]=g[238]=g[236]=g[235]=g[233]=g[232]=g[228]=g[222]=g[221]=g[220]=g[219]=g[217]=g[214]=g[213]=g[212]=g[206]=g[205]=g[203]=g[202]=g[201]=g[199]=g[195]=g[194]=g[193]=g[192]=g[191]=g[186]=g[183]=g[180]=g[179]=g[178]=g[177]=g[173]=g[170]=g[167]=g[166]=g[165]=g[162]=g[160]=g[157]=g[156]=g[154]=g[151]=g[147]=g[143]=g[142]=g[141]=g[140]=g[139]=g[137]=g[136]=g[135]=g[133]=g[132]=g[131]=g[128]=g[125]=g[122]=g[118]=g[117]=g[115]=g[112]=g[108]=g[107]=g[106]=g[104]=g[103]=g[102]=g[100]=g[97]=g[95]=g[94]=g[90]=g[89]=g[87]=g[85]=g[84]=g[83]=g[81]=g[80]=g[75]=g[70]=g[69]=g[67]=g[66]=g[65]=g[64]=g[63]=g[62]=g[61]=g[60]=g[59]=g[58]=g[57]=g[54]=g[51]=g[49]=g[48]=g[46]=g[45]=g[44]=g[43]=g[42]=g[41]=g[39]=g[36]=g[31]=g[30]=g[26]=g[23]=g[22]=g[21]=g[16]=g[14]=g[13]=g[10]=g[8]=g[7]=g[6]=g[5]=g[3]=g[1]=g[0]=1;
-  
+
+ g[256]=g[247]=g[246]=g[245]=g[244]=g[242]=g[235]=g[233]=g[232]=g[231]=g[228]=g[227]=g[225]=g[224]=g[223]=g[222]=g[221]=g[218]=g[215]=g[212]=g[211]=g[210]=g[206]=g[201]=g[199]=g[198]=g[197]=g[196]=g[191]=g[190]=g[189]=g[188]=g[186]=g[185]=g[183]=g[182]=g[181]=g[178]=g[177]=g[176]=g[174]=g[172]=g[171]=g[170]=g[169]=g[168]=g[167]=g[165]=g[164]=g[157]=g[156]=g[152]=g[149]=g[148]=g[147]=g[146]=g[145]=g[144]=g[143]=g[142]=g[141]=g[139]=g[137]=g[136]=g[135]=g[132]=g[127]=g[126]=g[123]=g[122]=g[119]=g[117]=g[116]=g[111]=g[106]=g[105]=g[104]=g[102]=g[101]=g[100]=g[99]=g[97]=g[96]=g[94]=g[93]=g[90]=g[87]=g[84]=g[80]=g[79]=g[77]=g[72]=g[71]=g[69]=g[68]=g[63]=g[59]=g[53]=g[52]=g[51]=g[50]=g[49]=g[48]=g[47]=g[46]=g[45]=g[44]=g[43]=g[42]=g[41]=g[38]=g[31]=g[29]=g[28]=g[26]=g[24]=g[23]=g[21]=g[20]=g[17]=g[15]=g[11]=g[9]=g[7]=g[6]=g[5]=g[4]=g[1]=g[0]=1;
+ 
+/* 
   g[K]=1;
   g[0]=1;
   while(count<K/2-1){
@@ -110,7 +98,8 @@ static void ginit(void){
     gg[i]=g[K-i];
   for(i=0;i<K+1;i++)
     g[i]=gg[i];
-  
+*/
+ 
 }
 
 
@@ -390,6 +379,129 @@ OP oadd(OP f,OP g){
 }
 
 
+
+OP sort(OP f){
+  oterm o={0};
+  int i,j,k;
+
+  
+  k=terms(f);
+  for (i=0; i<k+1; ++i) {
+    for (j=i+1; j<k+1; ++j) {
+      if (f.t[i].n > f.t[j].n) {
+        o =  f.t[i];
+        f.t[i] = f.t[j];
+        f.t[j] = o;
+      }
+    }
+  }
+
+  return f;
+}
+
+oterm oLT(OP f){
+  int i,k;
+  oterm t={0},s={0};
+
+  k=terms(f);
+  s=f.t[0];
+  for(i=0;i<k+1;i++){
+    //printf("a=%d %d\n",f.t[i].a,f.t[i].n);
+    if(f.t[i].a>0){
+      printf("in LT=%d %d\n",s.a,s.n);
+      for(j=i;j<k+1;j++){
+	if(s.n<f.t[j].n){
+	  s.n=f.t[j].n;
+	  s.a=f.t[j].a;
+	}
+	/*
+	else{
+	  t=s;
+	}
+	*/
+      }
+    }
+  }
+  //  exit(1);
+  return s;
+}
+
+
+
+OP add(OP f,OP g){
+//  vec a={0},b={0},c={0};
+ unsigned long long int i,k,j,n1=0,n2=0,tmp,m1=0,m2,flg=0,count=0;
+  OP h={0},a={0},b={0};
+  oterm o1={0},o2={0},oo={0};
+
+  
+n1=terms(f);
+ printf("n1=%d\n",n1);
+n2=terms(g);
+ printf("n2=%d\n",n2);
+ if(n1>n2){
+
+ }
+
+ oprintpol(f);
+ printf(" fff==============\n");
+ oprintpol(g); 
+ printf(" ggg==============\n");
+ o1=oLT(f);
+ o2=oLT(g);
+ printf("LTadd==%d %d\n",o1.n,o2.n);
+ m1=n1+n2;
+ printf("m1=%d\n",m1);
+ // exit(1);
+ 
+ for(i=0;i<n1+1;i++){
+   for(j=0;j<n2+1;j++){
+     if(f.t[i].n==g.t[j].n && g.t[j].a>0 && f.t[i].a>0){
+       o1=oLT(f);
+       o2=oLT(g);
+       printf("LT==%d %d\n",o1.n,o2.n);
+       printf("f.n==%d %d %d %d\n",f.t[i].n,g.t[j].n,i,j);
+       f.t[i].a=0;
+       g.t[j].a=0;
+     }
+   }
+ }
+ for(i=0;i<n2+1;i++){
+   if(g.t[i].a>0){
+     h.t[count++]=g.t[i];
+     g.t[i].a=0;
+   }
+ }
+ for(i=0;i<n1+1;i++){
+   if(f.t[i].a>0){
+     h.t[count++]=f.t[i];
+     f.t[i].a=0;
+   }
+   
+ }
+
+ h=sort(h);
+ /*
+ for (i=0; i<count; ++i) {
+    for (j=i+1; j<count; ++j) {
+      if (h.t[i].n > h.t[j].n) {
+        oo =  h.t[i];
+        h.t[i] = h.t[j];
+        h.t[j] = oo;
+      }
+    }
+  }
+ */
+ if(odeg(h)>0)
+ oprintpol(h);
+ printf(" addh==============\n");
+ //   exit(1);
+
+ return h;
+}
+
+
+
 OP oterml(OP f,oterm t){
   int i,k;
   OP h={0};
@@ -657,9 +769,6 @@ printpol(o2v(g));
 
     return tt;
 }
-
-
-
 
   
   
@@ -1105,6 +1214,7 @@ n=deg(o2v(f));
 return e;
 }
 
+
 OP decode(OP f,OP s){
 int i,j,k;
  OP r={0},w={0},e={0},l={0};
@@ -1300,98 +1410,6 @@ void det(unsigned short g[]){
   // exit(1);
 }
 
-
-void det2(unsigned short g[]){
-  OP f,h={0},w,u;
-  unsigned short cc[K+1]={0},d[2]={0};
-  unsigned short **HH;
-  int i,j,a,b,aa=0;
-  oterm t={0};
-  vec e[2*K]={0};
-
-  
-  HH=malloc(D*sizeof(unsigned short *));
-  for(i=0;i<2*K+1;i++) {
-	HH[i] = malloc(sizeof(unsigned short) * D);
-}
-  //    memcpy(cc,g,sizeof(g));
-  for(i=0;i<K/2+1;i++){
-      cc[i]=g[i];
-    printf("%d,",g[i]);
-  }
-  printf("\n");
-  //exit(1);
-    //    cc[i]=g[i];
-  k=cc[K];
-  w=setpol(g,K/2+1);
-  printpol(o2v(w));
-  printf("\nw=================\n");
-  //  exit(1);
-  //#pragma omp parallel for       
-  for(i=0;i<D;i++){
-  
-  a=trace(w,gf[i]);
-  //  cc[K]=k;
-  
-  //cc[K]^=a;
-  //f=setpol(cc,K+1);
-  
-  h.t[0].a=gf[i];
-  h.t[0].n=0;
-  h.t[1].a=1;
-  h.t[1].n=1;
-
-  OP ww={0};
-
-  //  memset(ss.t,0,sizeof(ss.t));
-  // ww=odiv(f,h);
-
-  b=oinv(a);
-  // b=b-1;
-  printf("g^-%d=%d\n",i,mlt(b,b));
-  //for(j=0;j<K;j++)
-  //  for(j=0;j<K;j++){
-
-  /*
-  e[0].x[i]=b;
-  e[1].x[i]=mlt(b,fg[gf[i]^f.t[1].a]);
-  */
-
-  e[0].x[i]=mlt(b,b);
-  aa=gf[i]; //gf[mltn(j,i)]^gf[mlt(j-1,mlt(7,7))];
-  e[1].x[i]=mlt(mlt(b,b),fg[aa]);
-  e[2].x[i]=mlt(mlt(b,b),fg[gf[mltn(2,fg[aa])]^gf[15]]);
-   e[3].x[i]=mlt(mlt(b,b),fg[gf[mltn(3,fg[aa])]^gf[mlt(15,fg[aa])]]);
-  /*
-    aa=0;
-  for(j=1;j<2*K+1;j++){
-    aa^=gf[mltn(j,i)]^gf[mlt(j-1,mlt(7,7))];
-    e[j].x[i]=mlt(mlt(b,b),fg[aa]);
-    }
-  t.n=0;
-  */
-  //  exit(1);
-  //u=oterml(ww,t);
-  //e=o2v(u);
-  
-  #pragma omp parallel for 
-  for(j=0;j<2*K;j++)
-    HH[j][i]=e[j].x[i]; //e.x[K-1-j];  
-
-  }
-  
-  
-  //#pragma omp parallel for    
-  for(i=0;i<K;i++){
-    //#pragma omp parallel for
-    for(j=0;j<D;j++){
-    m2[i][j]=mat[i][j]=HH[i][j];
-    printf("%d,",mat[i][j]);
-    }
-    printf("\n");
-  }  
-  //  exit(1);
-}
 
 
 
@@ -1676,21 +1694,14 @@ OP osqrt(OP f,OP w){
 
 
 void pattarson(OP w,OP f){
-
-    OP g1={0},ll={0},s={0};
+  OP g1={0},ll={0},s={0};
   int i,j,k,l,c;
   unsigned long a,x,count=0;
-  //  unsigned short cc[K]={0};
   unsigned short m[K],mm[T]={0},dd[K*D]={0};
   time_t timer;
   FILE *fp,*fq;
-
-  unsigned short g2[7]={1,0,9,0,0,6,4};
-  //  unsigned short s[K]={0}; //{4,12,7,8,11,13};
   unsigned short jj[T*2]={0};
-  unsigned short ee[10]={1,2,3,4,5,6,7,8,9,10};
   unsigned short zz[D]={0};
-  //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
   int y,flg,o1=0;
   OP h={0},r={0},aa[K]={0},tt={0},ff={0};
   EX hh={0};
@@ -1704,8 +1715,6 @@ void pattarson(OP w,OP f){
   //unsigned short g[K+1]={2,2,12,1,2,8,4,13,5,10,8,2,15,10,7,3,5};
   unsigned short yy[5]={15,0,8,0,11};
 
-  //srand(clock()+time(&t));
-  //printf("@");
   //ginit();
 
   /*  
@@ -1825,6 +1834,8 @@ OP keyfinder(void){
   oterm rr={0};
   OP r1={0},r2={0},t1={0},t2={0},a1={0},b1={0},a2={0},b2={0};
 
+
+  
  label:
   for(i=0;i<K+1;i++)
     g[i]=0;
@@ -1946,13 +1957,9 @@ int main(int argc,char **argv){
   unsigned short m[K],mm[T]={0},dd[K*D]={0};
   time_t timer;
   FILE *fp,*fq;
-
-  unsigned short g2[7]={1,0,9,0,0,6,4};
-  //  unsigned short s[K]={0}; //{4,12,7,8,11,13};
   unsigned short jj[T*2]={0};
-  unsigned short ee[10]={1,2,3,4,5,6,7,8,9,10};
-  short zz[D]={0};
-  //  unsigned short zz[T]={10,97,114,105,97,98,108,101,32,80,111,108,121,110,111,109};
+  unsigned short zz[D]={0};
+
   int y,flg,o1=0;
   OP f={0},h={0},r={0},w={0},aa[8]={0},tt={0},ff={0};
   EX hh={0};
@@ -1964,7 +1971,14 @@ int main(int argc,char **argv){
   OP r1={0},r2={0},t1={0},t2={0},a1={0},b1={0},a2={0},b2={0};
   OP g1={0};
 
-  
+
+ for(i=0;i<D;i++){
+   if(zz[i]>0)
+     count++;
+ }
+ printf("count=%d\n",count);
+ // exit(1);
+ 
   
   srand(clock()+time(&t));
   printf("@");  
@@ -2099,12 +2113,13 @@ int main(int argc,char **argv){
   }
 
   
-  while(1){
+  //  while(1){
 
   belal:
     count=0;    
 
-    //  exit(1);   
+    //  exit(1);
+    
   for(i=0;i<D;i++)
     zz[i]=0;
   
@@ -2117,6 +2132,7 @@ int main(int argc,char **argv){
       j++;
     }
   }
+    
   /*
   for(j=0;j<D;j++){
     if(zz[j]>0)
@@ -2191,10 +2207,10 @@ int main(int argc,char **argv){
   }
   printf("err=%dっ！！\n",o1);
   
-
+  //  exit(1);
   k=0;  
   printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
-  //scanf("%d",&n);
+  scanf("%d",&n);
 
 
 
@@ -2325,15 +2341,14 @@ int main(int argc,char **argv){
     goto label;
   }
 
-
-
   
   pattarson(w,f);
+  /*
   k++;
   if(k>1)
     goto label;
   }
-  
+  */
 
   return 0;
 }
