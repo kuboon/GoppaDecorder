@@ -211,8 +211,11 @@ printf("n=%d\n",n);
 printf("terms=%d\n",terms(f));
 printf("deg=%d\n",odeg(f));
  
-//exit(1);
-
+ if(n==0){
+   printf("0");
+   return;
+ }
+ 
 for(i=0;i<n+1;i++){
   if(f.t[i].a>0)
     printf("%ux^%u+",f.t[i].a,f.t[i].n);
@@ -244,6 +247,25 @@ void printpol(vec a){
   //  printf("\n");
 
   return;
+}
+
+OP sort(OP f){
+  oterm o={0};
+  int i,j,k;
+
+  
+  k=terms(f);
+  for (i=0; i<k+1; ++i) {
+    for (j=i+1; j<k+1; ++j) {
+      if (f.t[i].n > f.t[j].n) {
+        o =  f.t[i];
+        f.t[i] = f.t[j];
+        f.t[j] = o;
+      }
+    }
+  }
+
+  return f;
 }
 
 
@@ -403,6 +425,9 @@ n2=terms(g);
    }
    
  }
+
+ h=sort(h);
+ /*
  for (i=0; i<count; ++i) {
     for (j=i+1; j<count; ++j) {
       if (h.t[i].n > h.t[j].n) {
@@ -412,11 +437,11 @@ n2=terms(g);
       }
     }
   }
-
+ */
  if(odeg(h)>0)
  oprintpol(h);
  printf(" addh==============\n");
- //  exit(1);
+ //   exit(1);
 
  return h;
 }
@@ -841,15 +866,8 @@ OP gcd(OP a,OP b){
       exit(1);
     }
   }
-  /*
-  if(odeg(r)==0 && r.t[0].a==1){
-    return r;
-  }else if(odeg(r)==0 && r.t[0].a==0){
-    return b;
-  }else{
-    goto label;
-  }
-  */
+
+  
 }
 
 
@@ -928,6 +946,8 @@ OP benor(int ww,int nn){
      if(terms(v)<ww+2)
        exit(1);
 
+     v=sort(v);
+     /*
      for (i=0; i<ww+2; ++i) {
        for (j=i+1; j<ww+2; ++j) {
 	 if (v.t[i].n > v.t[j].n) {
@@ -937,6 +957,7 @@ OP benor(int ww,int nn){
 	 }
        }
      }
+     */
      oprintpol(v);
      printf(" sorted======\n");
      // exit(1);
@@ -1138,7 +1159,7 @@ int main(int argc,char **argv){
   
   //u=ipow(2,64);
   //printf("%llu\n",u);
-  /*  
+  
   ff.t[0].a=1;
   ff.t[0].n=0;
   ff.t[1].a=1;
@@ -1156,9 +1177,11 @@ int main(int argc,char **argv){
   if(odeg(h)==0 && odeg(omod(f,ff))==0){
     oprintpol(ff);
     printf(" gcd=======\n");
+    printf("terms=%d\n",terms(ff));
+    printf("LT(h)=%d\n",LT(ff).n);
     exit(1);
   }
-  */
+  
   /*
   f.t[3].a=1;
   f.t[3].n=4;
@@ -1192,8 +1215,8 @@ int main(int argc,char **argv){
   //     exit(1);
    
 
-  while(odeg(ff)<36){
-      ff=benor(15,36);
+  while(odeg(ff)<16){
+      ff=benor(7,32);
   }
     oprintpol(ff);
     printf(" irr?=============\n");
