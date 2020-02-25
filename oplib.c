@@ -2013,7 +2013,7 @@ int main(int argc,char **argv){
   for(j=0;j<K;j++)
     mat[j][i]=dd[K*i+j];
     }
-  fclose(fp);
+  fclose(fq);
   
   for(j=0;j<D;j++){
     flg=0;
@@ -2089,17 +2089,8 @@ int main(int argc,char **argv){
   //exit(1);
   */
 
+ 
 
-  fq=fopen("H.key","rb");
-  
-  fread(dd,2,K*D,fq);
-  #pragma omp parallel for
-  for(i=0;i<D;i++){
-  for(j=0;j<K;j++)
-    mat[j][i]=dd[K*i+j];
-    }
-  fclose(fp);
-  
   for(j=0;j<D;j++){
     flg=0;
     for(i=0;i<K;i++){
@@ -2112,10 +2103,11 @@ int main(int argc,char **argv){
       printf("0 is %d\n",j);
   }
 
-  
+
+    k=0;  
     while(1){
 
-  belal:
+
     count=0;    
 
     //  exit(1);
@@ -2133,16 +2125,6 @@ int main(int argc,char **argv){
     }
   }
     
-  /*
-  for(j=0;j<D;j++){
-    if(zz[j]>0)
-      count++;
-  }
-  if(count<T){
-    printf("error pattarn too few\n");
-    goto belal;
-  }
-  */
   
   for(i=0;i<K;i++){
     syn[i]=0;
@@ -2208,7 +2190,7 @@ int main(int argc,char **argv){
   printf("err=%dっ！！\n",o1);
   
   //  exit(1);
-  k=0;  
+
   printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
   //scanf("%d",&n);
 
@@ -2263,50 +2245,6 @@ int main(int argc,char **argv){
     //exit(1);
 
   //  w=keyfinder();
-    
-    for(i=0;i<D;i++)
-      zz[i]=0;
-    
-    
-  j=0;
-  while(j<T*2){
-    l=xor128()%D;
-    printf("l=%d\n",l);
-    if(0==zz[l]){
-      zz[l]=1;
-      j++;
-    }
-  }
-  
-
-  
-  printf("zz=");
-  for(i=0;i<D;i++)
-    printf("%d,",zz[i]);
-  printf("\n");
-  //    exit(1);
-  //  
-  for(i=0;i<K;i++){
-    syn[i]=0;
-    //#pragma omp parallel for
-    for(j=0;j<D;j++){
-      //   printf("%u,",zz[jj[j]]);
-      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
-    }
-       printf("syn%d,",syn[i]);
-  }
-  printf("\n");
-  //    exit(1);  
-  for(i=0;i<K;i++)
-    printf("mat[%d][1]=%d\n",i,mat[i][1]);
-  printf("\n");
-  //    exit(1);
-  
-  f=setpol(syn,K);
-  printpol(o2v(f));
-  printf(" syn=============\n");
-  //   exit(1);
-
 
   
   tt.t[0].n=1;
@@ -2338,8 +2276,8 @@ int main(int argc,char **argv){
   if(deg(o2v(ff))!=K/2){
     printf("逆元が計算できない鍵です。\n");
     scanf("%d",&n);
-    exit(1);
-    //goto label;
+    //exit(1);
+    goto label;
   }
 
   
