@@ -1972,13 +1972,6 @@ int main(int argc,char **argv){
   OP g1={0};
 
 
- for(i=0;i<D;i++){
-   if(zz[i]>0)
-     count++;
- }
- printf("count=%d\n",count);
- // exit(1);
- 
   
   srand(clock()+time(&t));
   printf("@");  
