@@ -2013,7 +2013,7 @@ int main(int argc,char **argv){
   for(j=0;j<K;j++)
     mat[j][i]=dd[K*i+j];
     }
-  
+  fclose(fp);
   
   for(j=0;j<D;j++){
     flg=0;
@@ -2098,7 +2098,7 @@ int main(int argc,char **argv){
   for(j=0;j<K;j++)
     mat[j][i]=dd[K*i+j];
     }
-  
+  fclose(fp);
   
   for(j=0;j<D;j++){
     flg=0;
@@ -2113,7 +2113,7 @@ int main(int argc,char **argv){
   }
 
   
-  //  while(1){
+    while(1){
 
   belal:
     count=0;    
@@ -2210,7 +2210,7 @@ int main(int argc,char **argv){
   //  exit(1);
   k=0;  
   printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
-  scanf("%d",&n);
+  //scanf("%d",&n);
 
 
 
@@ -2337,18 +2337,19 @@ int main(int argc,char **argv){
   printf(" beta!=========\n");
   if(deg(o2v(ff))!=K/2){
     printf("逆元が計算できない鍵です。\n");
-    //  scanf("%d",&n);
-    goto label;
+    scanf("%d",&n);
+    exit(1);
+    //goto label;
   }
 
   
   pattarson(w,f);
-  /*
+  
   k++;
   if(k>1)
     goto label;
   }
-  */
+  
 
   return 0;
 }
