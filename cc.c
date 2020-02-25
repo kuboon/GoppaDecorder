@@ -23,6 +23,7 @@ typedef struct a8 {
   unsigned char ar[8];
 } array8;
 
+
 typedef struct {
   unsigned int h[16];
 } array16;
