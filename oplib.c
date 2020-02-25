@@ -1,15 +1,10 @@
 //date 20200222 : pattarson algorithm implementation ver 1.0
-//date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229
-//auther    : the queer who thinking about cryptographic future
-//code name : OVP - One Variable Polynomial library with OpenMP friendly
-//status    : now in debugging (ver 0.8)
-// gcdの停止条件を修正した。vxの停止条件を修正した。
+// xgcd & osqrtを追加した   
 //date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229,20191230
 //auther    : the queer who thinking about cryptographic future
-//code name : OVP - One Variable Polynomial library with OpenMP friendly
+//code name :  一変数多項式演算ライブラリのつもり
 //status    : now in debugging (ver 0.8)
 // 0ベクトルが出ないように生成多項式のトレースチェックを入れた。
-   
 //date      :  20160310
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
@@ -70,6 +65,7 @@ OP qq={0};
 OP p0={0};
 
 
+//ランダム多項式の生成
 static void ginit(void){
   int i,j,count=0;
   unsigned short gg[K+1]={0};
@@ -104,7 +100,7 @@ static void ginit(void){
 
 
 
-
+//ランダム置換の生成（Niederreoter 暗号における置換）
 void random_permutation(unsigned short* a){
 	int i,j,x;
 	for(i = 0; i < D; i++){
@@ -125,7 +121,7 @@ void random_permutation(unsigned short* a){
 
 }
 
-
+//配列から置換行列への変換
 void P2Mat(unsigned short P[D]){
 int i,j;
 	
@@ -1572,7 +1568,7 @@ int isqrt(unsigned short u){
 
 
 OP osqrt(OP f,OP w){
-  int i,j,k,jj;
+  int i,j,k,jj,n;
   OP even={0},odd={0},h={0},r={0},ww={0},s={0},tmp={0},t={0};
   oterm o={0};
   vec v={0};
@@ -1662,7 +1658,8 @@ OP osqrt(OP f,OP w){
     printf(" ww^2 failed!========\n");
     printpol(o2v(w));
     printf(" w==============\n");
-
+    printf("この鍵では逆元が計算できません。");
+    scanf("%d",&n);
     return ww;
     // exit(1);
   }
@@ -2167,7 +2164,7 @@ int main(int argc,char **argv){
       printf("------------------\n");
        printf("err=%d i=%d\n",o1,i);
       printpol(o2v(w));
-      printf(" w==============\n");
+      printf(" goppa poly==============\n");
       printpol(o2v(f));
       printf(" w==============\n");
       for(l=0;l<D;l++)
@@ -2258,6 +2255,8 @@ int main(int argc,char **argv){
   if(LT(g1).n==0 && LT(g1).a==0){
     printpol(o2v(w));
     printf(" badkey=========\n");
+    printf("平方根が０になりました。\n");
+    scanf("%d",&n);
     goto label;
   }
 
@@ -2267,7 +2266,7 @@ int main(int argc,char **argv){
   printpol(o2v(ff));
   printf(" beta!=========\n");
   if(deg(o2v(ff))!=K/2){
-    printf("逆元が計算できない鍵です。\n");
+    printf("誤りロケータが計算できませんでした。\n");
     scanf("%d",&n);
     //exit(1);
     goto label;
