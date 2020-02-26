@@ -1074,11 +1074,16 @@ OP ogcd(OP f,OP g){
 
 
 EX xgcd(OP f,OP g){
-  OP h={0},ww={0},v[K*2]={0},u[K*2]={0};
+  OP h={0},ww={0},*v,*u;
   oterm a,b;
   int i=0,j,k;
   EX e={0};
 
+  
+  v=malloc(sizeof(OP)*K*2);
+  u=malloc(sizeof(OP)*K*2);
+  memset( v, 0, sizeof(v) );
+  memset( u, 0, sizeof(u) );
   
   u[0].t[0].a=1;
   u[0].t[0].n=0;
@@ -1803,7 +1808,6 @@ void pattarson(OP w,OP f){
    //printf(" poly==========\n");
    //  exit(1);
 
-
 }
 
 
@@ -2164,7 +2168,7 @@ int main(int argc,char **argv){
       printf("------------------\n");
        printf("err=%d i=%d\n",o1,i);
       printpol(o2v(w));
-      printf(" goppa poly==============\n");
+      printf(" w==============\n");
       printpol(o2v(f));
       printf(" w==============\n");
       for(l=0;l<D;l++)
@@ -2266,7 +2270,7 @@ int main(int argc,char **argv){
   printpol(o2v(ff));
   printf(" beta!=========\n");
   if(deg(o2v(ff))!=K/2){
-    printf("誤りロケータが計算できませんでした。\n");
+    printf("誤りロケータができませんでした。\n");
     scanf("%d",&n);
     //exit(1);
     goto label;
