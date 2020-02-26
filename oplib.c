@@ -954,9 +954,8 @@ OP vx(OP f,OP g){
   
   for(i=0;i<T;i++){
     // memset(ss.t,0,DEG*sizeof(ss));
-    //    if(deg(o2v(f))>=deg(o2v(g)) && deg(o2v(g))>0){
-    if(deg(o2v(vv))<T){
-      
+    if(deg(o2v(f))>=deg(o2v(g)) && deg(o2v(g))>0){
+          
       h=omod(f,g);
       printpol(o2v(h));
       printf(" modh vx==============\n");
@@ -1074,16 +1073,23 @@ OP ogcd(OP f,OP g){
 
 
 EX xgcd(OP f,OP g){
+  /*
+  OP h={0},ww={0},v[K*2]={0},u[K*2]={0};
+  oterm a,b;
+  int i=0,j,k;
+  EX e={0};
+  */
+      
   OP h={0},ww={0},*v,*u;
   oterm a,b;
   int i=0,j,k;
   EX e={0};
 
-  
   v=malloc(sizeof(OP)*K*2);
   u=malloc(sizeof(OP)*K*2);
-  memset( v, 0, sizeof(v) );
-  memset( u, 0, sizeof(u) );
+  memset( v, 0, sizeof(OP)*(K*2) );
+  memset( u, 0, sizeof(OP)*(K*2) );
+  
   
   u[0].t[0].a=1;
   u[0].t[0].n=0;
@@ -1300,7 +1306,7 @@ l=oterml(w,t2);
 for(i=0;i<deg(x)+1;i++){
   //  if(x.x[i]>0){
   e.t[i].a=gf[mlt(fg[trace(hh.d,x.x[i])],oinv(trace(l,x.x[i])))];
-e.t[i].n=x.x[i];
+  e.t[i].n=x.x[i];
 
 // }
  }
