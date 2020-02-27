@@ -136,5 +136,7 @@ https://digitalcommons.csbsju.edu/cgi/viewcontent.cgi?article=1019&context=honor
 
 アルゴリズムの検証作業に入ります。元ネタはここー＞
 
-https://digitalcommons.csbsju.edu/cgi/viewcontent.cgi?article=1019&context=honors_theses
+https://github.com/davidhoo1988/Code_Based_Cryptography_Python
+
+こういうのがあったんだけど古くて動かない。
 
