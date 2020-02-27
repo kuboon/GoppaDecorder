@@ -134,3 +134,7 @@ https://digitalcommons.csbsju.edu/cgi/viewcontent.cgi?article=1019&context=honor
 いよいよコードレビュー。まだomodとかの終了条件を理解してないのでそこから始めることになる。インデントとかは後回しになるかも。
 パラメータを変更した。変更後のパラメータは[n,k,t]=[6688,3328,256]である。
 
+アルゴリズムの検証作業に入ります。元ネタはここー＞
+
+https://digitalcommons.csbsju.edu/cgi/viewcontent.cgi?article=1019&context=honors_theses
+
