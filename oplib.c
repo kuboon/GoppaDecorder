@@ -11,6 +11,11 @@
 //status    : now in debugging (ver 0.1)
 
 
+#include "chash.cpp"
+#include "lu.c"
+
+
+
 #define K (128*2)
 #define DEG (2*K)
 #define T (K/2)
@@ -730,8 +735,7 @@ OP omod (OP f, OP g){
       if (LT (f).n == 0 || LT (g).n == 0)
 	{
 	  printf ("baka500\n");
-
-	  return f;
+	  break;
 	}
 
       if (c.n == 0)
@@ -795,8 +799,7 @@ OP odiv (OP f, OP g){
   printf ("\nin odiv2 g=============%d\n", deg (o2v (g)));
 
   i = 0;
-  while (LT(f).n > 0 && LT(g).n > 0)
-    {
+  while (LT(f).n > 0 && LT(g).n > 0){
       //  printf("in!\n");
       //    exit(1);
 
@@ -824,7 +827,7 @@ OP odiv (OP f, OP g){
       if (LT(f).n == 0 || LT(g).n==0)
 	{
 	  printf ("baka500\n");
-	  return f;
+	  break;
 	}
 
       if (c.n == 0)
@@ -902,7 +905,8 @@ OP inv (OP a, OP n){
       exit (1);
     }
 
-
+  
+  tt=n;
   printf ("n=============\n");
   printpol (o2v (n));
   printf ("\n");
@@ -975,12 +979,14 @@ OP inv (OP a, OP n){
   printf ("ss==============\n");
   //       exit(1);
   // if(deg(o2v(w))>0)
-  if (LT (v).a > 0)
+  if (LT (v).n > 0)
     {
       u = omod (v, w);
     }
   else
     {
+      printpol(o2v(v));
+      printf(" v===========\n");
       printpol (o2v (x));
       printf (" x==0?\n");
       printpol (o2v (n));
