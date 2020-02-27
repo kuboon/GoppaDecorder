@@ -116,11 +116,6 @@ http://lupus.is.kochi-u.ac.jp/shiota/misc/field/FiniteField.html
 まだ理解があやふやな部分があるので、ｔ個のエラーを訂正するのにｔ次規約多項式の自乗を使ってｔ個のエラーを訂正すれば今の方法を変更しなくても
 済むだろうと思った。Goppa多項式の次数は半分に減るので結果は同じだ。アルゴリズムを保ったまま秘密多項式の次数を下げられる。
 
-20200208
-
-https://klevas.mif.vu.lt/~skersys/vsd/crypto_on_codes/goppamceliece.pdf
-
-この文献が非常に参考になった。ありがたい。
 
 20200209
 
@@ -134,4 +129,7 @@ https://digitalcommons.csbsju.edu/cgi/viewcontent.cgi?article=1019&context=honor
 我ながらいい感じで使えているのでよかったと思います。ほかの人が満足するかわかりませんがｗ。このアルゴリズムによって、
 ｔ次の多項式に対してt個のバイナリエラーが訂正できます。できるかどうかわかりませんでしたができました。(polib.c)
 
+20200227
+
+いよいよコードレビュー。まだomodとかの終了条件を理解してないのでそこから始めることになる。インデントとかは後回しになるかも。
 
