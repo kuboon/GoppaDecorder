@@ -2286,8 +2286,8 @@ label:
   
   for (i = 0; i < K + 1; i++)
     g[i] = 0;
-  //ginit ();
-    
+  ginit ();
+  /*  
   fp=fopen("sk.key","rb");
   fread(g,2,K+1,fp);
   fclose(fp);
@@ -2295,7 +2295,7 @@ label:
     gg[K-i]=g[i];
   for(i=0;i<K+1;i++)
     g[i]=gg[i];
-  
+  */
   
   w = setpol (g, K + 1);
   oprintpol (w);
@@ -2655,74 +2655,8 @@ label:
       printf (" beta!=========\n");
       if (deg (o2v (ff)) != K / 2)
 	{
-	  for(l=0;l<D;l++){
-	    if(zz[l]>0){
-	      printf("zz=%d,%d\n",zz[l],l);
-	    }
-	  }
-	  for(l=0;l<D;l++){
-	    if(zz[l]>0){
-	    aa[ii].t[1].n=1;
-	    aa[ii].t[1].a=1;
-	    aa[ii].t[0].n=0;
-	    aa[ii++].t[0].a=l;
-	    }
-	  }
-	  a1=aa[0];
-	  for(l=1;l<ii;l++)
-	    a1=omul(a1,aa[l]);
-	  a2=omod(omul(f,a1),w);
-	  b1=osqrt(a2,w);
-	  b2=omod(omul(r2,a2),w);
-	  t1=osqrt(b2,w);
-	  t2=omul(tt,a2);
-	  tmp=omul(t1,t1);
-	  tmp=oadd(tmp,t2);
-	  ee=xgcd(w,a2);
-	  bb=xgcd(w,r2);
-	  
-	  printpol(o2v(ff));
-	  printf(" ff=========\n");
-	  printpol(o2v(w));
-	  printf(" w=========\n");
-	  printpol(o2v(hh.u));
-	  printf(" hh.u=========\n");
-	  printpol(o2v(hh.d));
-	  printf(" hh.d=========\n");
-	  printpol(o2v(hh.v));
-	  printf(" hh.v=========\n");
-	  printf ("誤りロケータができませんでした。\n");	  
-	  printpol(o2v(a1));
-	  printf(" locater==========\n");
-	  printpol(o2v(tmp));
-	  printf(" locater?==========\n");
-	  
-	  printpol(o2v(a2));
-	  printf(" beta^2===========\n");
-	  printpol(o2v(b1));
-	  printf(" beta===========\n");
-	  printpol(o2v(b2));
-	  printf(" alpha^2============\n");
-	  printpol(o2v(t1));
-	  printf(" alpha=========\n");
-	  printpol(o2v(ee.v));
-	  printf(" b^2?=========\n");
-	  printpol(o2v(ee.u));
-	  printf(" a^2?=========\n");
-	  printpol(o2v(bb.v));
-	  printf(" bb^2?=========\n");
-	  printpol(o2v(bb.u));
-	  printf(" aa^2?=========\n");
-	  
-	  //goto aa;
-	  /*
-	  for(l=0;l<D;l++)
-	    printf("%d,",zz[l]);
-	  printf("\n");
-	  */
 	  printf("count=%d\n",k);
-	  scanf ("%d", &n);  
-	  //exit(1);
+	  exit(1);
 	  //goto label;
 	}
 
@@ -2746,11 +2680,6 @@ label:
 	printpol(o2v(w));
 	printf(" (・∀・)ｲｲ!!\n");
 	k=0;
-	//for(l=0;l<K+1;l++)
-	//  ufu[l]=w.t[l].a;
-	//fwrite(ufu,2,K+1,fp);
-	//scanf("%d",&n);
-	//fclose(fp);
 	break;
 	//goto label;
       }
