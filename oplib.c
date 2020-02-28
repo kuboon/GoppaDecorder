@@ -1435,6 +1435,77 @@ EX xgcd (OP f, OP g){
 }
 
 
+//拡張ユークリッドアルゴリズム
+EX xgcd2 (OP f, OP g){
+  OP h = { 0 } , ww = { 0 } , *v, *u;
+  oterm a, b;
+  int i = 0, j, k;
+  EX e = { 0 };
+
+
+  v = malloc (sizeof (OP) * (K * 2));
+  u = malloc (sizeof (OP) * (K * 2));
+  memset (v, 0, sizeof (v));
+  memset (u, 0, sizeof (u));
+
+
+  u[0].t[0].a = 1;
+  u[0].t[0].n = 0;
+  u[1].t[0].a = 0;
+  u[1].t[0].n = 0;
+  u[2].t[0].a = 1;
+  u[2].t[0].n = 0;
+
+  v[0].t[0].a = 0;
+  v[0].t[0].n = 0;
+  v[1].t[0].a = 1;
+  v[1].t[0].n = 0;
+
+
+  //printpol(o2v(f));
+  //printpol(o2v(g));
+  //  exit(1);
+
+
+  k = 0;
+  //i=1;
+  while(deg(o2v(g))>0)
+    {
+      if (LT (g).a == 0)
+	break;
+      h = omod (f, g);
+      ww = odiv (f, g);
+
+      v[i + 2] = oadd (v[i], omul (ww, v[i + 1]));
+      u[i + 2] = oadd (u[i], omul (ww, u[i + 1]));
+      printf ("i+1=%d\n", i + 1);
+      f = g;
+      g = h;
+
+    }
+
+  //v[i]=odiv(v[i],h);
+  //u[i]=odiv(u[i],h);
+  // h.t[0].a=1;
+  //h.t[0].n=0;
+  printf ("i=%d\n", i);
+  printpol (o2v (v[i]));
+  printf (" v=============\n");
+  printpol (o2v (u[i]));
+  printf (" u=============\n");
+  printpol (o2v (h));
+  printf (" h=============\n");
+  //exit(1);
+
+  e.d = h;
+  e.v = v[i];
+  e.u = u[i];
+
+
+  return e;
+}
+
+
 //多項式の形式的微分
 OP bibun (vec a){
   OP w[T * 2] = { 0 };
@@ -1956,7 +2027,7 @@ OP osqrt(OP f,OP w){
     }
   }
   printpol(o2v(r));
-  printf(" sqrt(g0)=======\n");
+  printf(" sqrt(g1)=======\n");
   
   //  exit(1);
   if(LT(r).n>0){
@@ -1968,15 +2039,17 @@ OP osqrt(OP f,OP w){
     exit(1);
   }
 
-  
-  if(LT(omod(omul(s,r),w)).n>0){
-    printf(" r is not inv\n");
+  tmp=omod(omul(s,r),w);
+  if(deg(o2v(tmp))>0){
+    printpol(o2v(tmp));
+    printf(" r is not inv==========\n");
     scanf("%d",&n);
      exit(1);
   }
   if(LT(h).n>0){
     ww=omod(omul(h,s),w);
-  }else if(LT(h).n==0){
+  }
+  if(LT(h).n==0){
     printf("h=========0\n");
     exit(1);
   }
@@ -1986,8 +2059,13 @@ OP osqrt(OP f,OP w){
     printf(" s===========\n");
     printpol(o2v(w));
     printf(" w==============\n");
+    printpol(o2v(r));
+    printf(" r===========\n");
     printpol(o2v(h));
-    printf(" omod mul h,r===0\n");
+    printf(" h============\n");
+    printpol (o2v (ww));
+    printf (" ww==============\n");
+    printf(" wwが０になりました。error\n");
     //scanf("%d",&n);
     return ww;;
     // exit(1);
@@ -2002,10 +2080,16 @@ OP osqrt(OP f,OP w){
     printf(" mod w^2==========\n");
     printpol(o2v(ww));
     printf(" ww^2 failed!========\n");
+    printpol(o2v(s));
+    printf(" g1^-1==============\n");
     printpol(o2v(w));
     printf(" w==============\n");
-    printf("この鍵では逆元が計算できません。");
-    //scanf("%d",&n);
+    printpol(o2v(h));
+    printf(" g0===========\n");
+    printpol(o2v(r));
+    printf(" r===========\n");
+    printf("この鍵では逆元が計算できません。error");
+    scanf("%d",&n);
     return ww;
     // exit(1);
   }
@@ -2037,8 +2121,8 @@ OP osqrt(OP f,OP w){
 
 
 //パターソンアルゴリズムでバイナリGoppa符号を復号する
-void pattarson (OP w, OP f){
-  OP g1 = { 0 }, ll = { 0 }, s = { 0 };
+int pattarson (OP w, OP f){
+  OP g1 = { 0 }, ll = { 0 }, s = { 0 }, tmp={ 0 };
   int i, j, k, l, c;
   unsigned long a, x, count = 0;
   unsigned short m[K], mm[T] = { 0 }, dd[K * D] = { 0 };
@@ -2064,6 +2148,12 @@ void pattarson (OP w, OP f){
 
   ff = inv (f, w);
   printpol (o2v (ff));
+  b2=omod(omul(ff,f),w);
+  if(deg(o2v(b2))>0){
+    printf("逆元が計算できません。error\n");
+    scanf("%d",&n);
+    return -1;
+  }
   printf ("locater==========\n");
   //exit(1);
   r2 = oadd (ff, tt);
@@ -2072,13 +2162,28 @@ void pattarson (OP w, OP f){
   //  exit(1);
   g1 = osqrt (r2, w);
   printpol (o2v (g1));
+  b2=omod(omul(g1,g1),w);
+  if(LT2(b2).a!=LT2(r2).a){
+    printpol(o2v(w));
+    printf(" w============\n");
+    printpol(o2v(r2));
+    printf(" r2============\n");    
+    printpol(o2v(g1));
+    printf(" g1============\n");
+    printf(" g1は平方ではありません。error");
+    scanf("%d",&n);
+    return -1;
+  }  
   printf (" g1!=========\n");
   if (LT (g1).n == 0 && LT (g1).a == 0)
     {
       printpol (o2v (w));
       printf (" badkey=========\n");
-      exit (1);
-      // goto label;
+      printpol(o2v(g1));
+      printf(" g1============\n");
+      printf("平方が０になりました。 error\n");
+      scanf("%d",&n);
+      return -1;
     }
   //exit(1);
   hh = xgcd (w, g1);
@@ -2089,21 +2194,33 @@ void pattarson (OP w, OP f){
   if (deg (o2v (ff)) != K / 2)
     {
       printpol(o2v(w));
-      printf (" locater function failed!!\n");
-      if (LT (hh.v).n % 2 == 0)
+      printf (" locater function failed!! error\n");
+      if (LT (hh.v).n == K/2)
 	{
-	  hh.v = osqrt (hh.v, w);
-	  ff = omod (omul (hh.v, g1), w);
+	  tmp=ff;
+	  ff=hh.v;
+	  hh.v=tmp;
+	  // hh.v = osqrt (hh.v, w);
+	  //ff = omod (omul (hh.v, g1), w);
 	  printpol (o2v (ff));
-	  printf ("re culc\n");
+	  printf (" beta re culc error========\n");
+	  scanf("%d",&n);
 	  //exit(1);
 	}
-      else if (LT (ff).n % 2 == 1)
+      else if (LT (ff).n % 2 == 1 && deg(o2v(ff)) == K-1)
 	{
+	  tmp=ff;
+	  ff=hh.v;
+	  hh.v=tmp;
 	  printpol (o2v (ff));
-	  printf (" degree baka=============\n");
-	  exit (1);
-	}
+	  printf (" degree baka error=============\n");
+	  scanf("",&d);
+	  //  exit (1);
+	} else {
+	printf("cannot correct(bad key) error============\n");
+	scanf("%d",&n);
+	return -1;
+      }
     }
   
   printpol (o2v (hh.v));
@@ -2127,11 +2244,20 @@ void pattarson (OP w, OP f){
 	++count;
     }
   printf ("err=%dっ!! \n", count);
-
+  if(count<2*T-1){
+    printf(" decode failed error===========\n");
+    printpol(o2v(w));
+    printf(" w================\n");
+    printpol(o2v(f));
+    printf(" f================\n");
+    scanf("%d",&n);
+    return -1;
+  }
+  //scanf("%d",&n);
   //printpol(o2v(w));
   //printf(" poly==========\n");
   //  exit(1);
-
+  
 }
 
 
@@ -2140,9 +2266,7 @@ int main (int argc, char **argv){
   int i, j, k, l, c;
   unsigned long a, x, count = 0;
   //  unsigned short cc[K]={0};
-  unsigned short m[K], mm[T] = { 0 }, dd[K * D] =
-  {
-  0};
+  unsigned short m[K], mm[T] = { 0 }, dd[K * D] = { 0 };
   time_t timer;
   FILE *fp, *fq;
   unsigned short jj[T * 2] = { 0 };
@@ -2156,7 +2280,7 @@ int main (int argc, char **argv){
   unsigned short gg[K + 1] = { 0 };
   oterm rr = { 0 };
   OP r1 = { 0 }, r2 = { 0 }, t1 = { 0 }, t2 = { 0 }, a1 = { 0 }, b1 = { 0 }, a2 = { 0 }, b2 = { 0 };
-  OP g1 = { 0 };
+  OP g1 = { 0 },tmp={0};
 
 
 
@@ -2340,9 +2464,13 @@ label:
       printpol (o2v (f));
       printf (" syn=============\n");
       //   exit(1);
-
+      hh=xgcd2(w,f);
+      if(deg(o2v(hh.d))>0){
+	printf(" s,wは互いに素じゃありません。\n");
+	scanf("%d",&n);
+	goto label;
+      }
       r = decode (w, f);
-
 
       for (i = 0; i < T; i++)
 	{
@@ -2359,6 +2487,9 @@ label:
 	    {
 	      printpol (o2v (w));
 	      printf (" goppa polynomial==============\n");
+	      printpol (o2v (f));
+	      printf (" syndrome polynomial==============\n");
+	      
 	      for (l = 0; l < D; l++)
 		{
 		  printf ("%d,", zz[l]);
@@ -2451,7 +2582,13 @@ label:
       printpol (o2v (f));
       printf (" syn=============\n");
       //exit(1);
-
+      hh=xgcd2(w,f);
+      if(deg(o2v(hh.d))>0){
+	printf(" s,wは互いに素じゃありません。\n");
+	scanf("%d",&n);
+	goto label;
+      }
+	
 
       tt.t[0].n = 1;
       tt.t[0].a = 1;
@@ -2464,11 +2601,10 @@ label:
 	printf(" w===========\n");
 	printpol(o2v(f));
 	printf(" f===========\n");
-	printf(" 逆元を計算できません。\n");
-	goto label;
-	//scanf("%d",&n);
+	printf(" 逆元を計算できません。\n");	
+	scanf("%d",&n);
 	//exit(1);
-	//goto label;
+	goto label;
       }
       printpol (o2v (ff));
       printf ("locater==========\n");
@@ -2477,22 +2613,35 @@ label:
       printpol (o2v (r2));
       printf (" h+x==============\n");
       //  exit(1);
+      r1=inv(r2,w);
+      tmp=omod(omul(r1,r2),w);
+      if(deg(o2v(tmp))>0){
+	printpol(o2v(r2));
+	printf(" r2============\n");
+	printpol(o2v(w));
+	printf(" w============\n");
+	printf("この多項式では逆元計算ができません。");
+	scanf("%d",&n);
+	goto label;
+      }
       g1 = osqrt (r2, w);
       printpol (o2v (g1));
       printf (" g1!=========\n");
       r1 = omod(omul(r2,r2),w);
-      if(deg(o2v(g1))!=deg(o2v(r1))){
+      if(deg(o2v(g1))!=deg(o2v(r1)) && deg(o2v(g1))>0){
 	printpol(o2v(w));
 	printf(" w===========\n");
 	printpol(o2v(r2));
 	printf(" r2===========\n");
 	printf("平方根の計算に失敗しました。\n");
+	scanf("%d",&n);
 	goto label;
 	//exit(1);
       }
-      if (LT (g1).n == 0 && LT (g1).a == 0)
+      if (deg(o2v(g1)) == 0)
 	{
-	  
+	  printpol(o2v(g1));
+	  printf(" sqrt(h+x)==============\n");
 	  printpol (o2v (w));
 	  printf (" badkey=========\n");
 	  printf ("平方根が０になりました。\n");
@@ -2508,23 +2657,36 @@ label:
       printf (" beta!=========\n");
       if (deg (o2v (ff)) != K / 2)
 	{
+	  tmp=ff;
+	  ff=hh.v;
+	  hh.v=tmp;
+	  
 	  printpol(o2v(w));
 	  printf(" w=========\n");
 	  printpol(o2v(hh.v));
 	  printf(" beta=========\n");
 	  printf ("誤りロケータができませんでした。\n");
-	  //scanf ("%d", &n);
+	  scanf ("%d", &n);
 	  //exit(1);
 	  goto label;
 	}
 
-
-      pattarson (w, f);
-
-      //break;
-      k++;
-      if (k > 1)
+      n=0;
+      hh=xgcd2(w,f);
+      if(deg(o2v(hh.d))>0){
+	printf("wとfが互いに素ではありません。");
+	scanf("%d",&n);
 	goto label;
+      }	
+      if(deg(o2v(hh.d))==0)
+	pattarson (w, f);
+
+      printpol(o2v(w));
+      printf(" success?==========\n");
+      break;
+      //k++;
+      //if (k > 1)
+      //goto label;
     }
 
 
