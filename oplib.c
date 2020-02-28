@@ -67,12 +67,6 @@ typedef union{ //test(SIMD)
 } SU;
 
 
-//特に意味がない
-OP ss = { 0 };
-OP hh = { 0 };
-OP qq = { 0 };
-OP p0 = { 0 };
-
 
 //ランダム多項式の生成
 static void ginit (void){
@@ -81,21 +75,18 @@ static void ginit (void){
   //unsigned short g[K+1]={0};
 
   printf ("in ginit\n");
-  //   g[128]=g[126]=g[124]=g[120]=g[118]=g[117]=g[116]=g[115]=g[114]=g[113]=g[112]=g[110]=g[108]=g[106]=g[105]=g[104]=g[102]=g[101]=g[99]=g[98]=g[97]=g[94]=g[93]=g[89]=g[88]=g[85]=g[82]=g[81]=g[78]=g[77]=g[76]=g[74]=g[72]=g[69]=g[68]=g[66]=g[62]=g[61]=g[60]=g[57]=g[56]=g[54]=g[52]=g[51]=g[49]=g[48]=g[47]=g[46]=g[41]=g[40]=g[36]=g[35]=g[32]=g[30]=g[28]=g[27]=g[26]=g[24]=g[19]=g[17]=g[13]=g[10]=g[8]=g[6]=g[4]=g[3]=g[2]=g[1]=g[0]=1;
-  // g[256]=g[254]=g[253]=g[249]=g[244]=g[242]=g[239]=g[238]=g[236]=g[235]=g[233]=g[232]=g[228]=g[222]=g[221]=g[220]=g[219]=g[217]=g[214]=g[213]=g[212]=g[206]=g[205]=g[203]=g[202]=g[201]=g[199]=g[195]=g[194]=g[193]=g[192]=g[191]=g[186]=g[183]=g[180]=g[179]=g[178]=g[177]=g[173]=g[170]=g[167]=g[166]=g[165]=g[162]=g[160]=g[157]=g[156]=g[154]=g[151]=g[147]=g[143]=g[142]=g[141]=g[140]=g[139]=g[137]=g[136]=g[135]=g[133]=g[132]=g[131]=g[128]=g[125]=g[122]=g[118]=g[117]=g[115]=g[112]=g[108]=g[107]=g[106]=g[104]=g[103]=g[102]=g[100]=g[97]=g[95]=g[94]=g[90]=g[89]=g[87]=g[85]=g[84]=g[83]=g[81]=g[80]=g[75]=g[70]=g[69]=g[67]=g[66]=g[65]=g[64]=g[63]=g[62]=g[61]=g[60]=g[59]=g[58]=g[57]=g[54]=g[51]=g[49]=g[48]=g[46]=g[45]=g[44]=g[43]=g[42]=g[41]=g[39]=g[36]=g[31]=g[30]=g[26]=g[23]=g[22]=g[21]=g[16]=g[14]=g[13]=g[10]=g[8]=g[7]=g[6]=g[5]=g[3]=g[1]=g[0]=1;
 
-  // g[256]=g[247]=g[246]=g[245]=g[244]=g[242]=g[235]=g[233]=g[232]=g[231]=g[228]=g[227]=g[225]=g[224]=g[223]=g[222]=g[221]=g[218]=g[215]=g[212]=g[211]=g[210]=g[206]=g[201]=g[199]=g[198]=g[197]=g[196]=g[191]=g[190]=g[189]=g[188]=g[186]=g[185]=g[183]=g[182]=g[181]=g[178]=g[177]=g[176]=g[174]=g[172]=g[171]=g[170]=g[169]=g[168]=g[167]=g[165]=g[164]=g[157]=g[156]=g[152]=g[149]=g[148]=g[147]=g[146]=g[145]=g[144]=g[143]=g[142]=g[141]=g[139]=g[137]=g[136]=g[135]=g[132]=g[127]=g[126]=g[123]=g[122]=g[119]=g[117]=g[116]=g[111]=g[106]=g[105]=g[104]=g[102]=g[101]=g[100]=g[99]=g[97]=g[96]=g[94]=g[93]=g[90]=g[87]=g[84]=g[80]=g[79]=g[77]=g[72]=g[71]=g[69]=g[68]=g[63]=g[59]=g[53]=g[52]=g[51]=g[50]=g[49]=g[48]=g[47]=g[46]=g[45]=g[44]=g[43]=g[42]=g[41]=g[38]=g[31]=g[29]=g[28]=g[26]=g[24]=g[23]=g[21]=g[20]=g[17]=g[15]=g[11]=g[9]=g[7]=g[6]=g[5]=g[4]=g[1]=g[0]=1;
-
-
+  
+  
   g[K] = 1;
-  g[0] = 1;
+  g[0] = xor128()%D;
   while (count < ((K / 2) - 1))
     {
       printf ("@\n");
       j = xor128 () % (K - 1);
       if (j < K && j > 0 && g[j] == 0)
 	{
-	  g[j] = 1;
+	  g[j] = xor128()%D;
 	  count++;
 	}
     }
@@ -105,7 +96,7 @@ static void ginit (void){
     gg[i] = g[K - i];
   for (i = 0; i < K + 1; i++)
     g[i] = gg[i];
-
+  
 
 }
 
@@ -1212,7 +1203,7 @@ OP vx (OP f, OP g){
 	  printf ("vv==");
 	  printpol (o2v (vv));
 	  printf ("\n");
-	  ss = h;
+	  //ss = h;
 	  // printpol(o2v(h));
 	  printf (" ll========\n");
 	  //    return vv;
@@ -1397,9 +1388,8 @@ EX xgcd (OP f, OP g){
 
 
   k = 0;
-  //i=1;
-  for (i = 0; i < T; i++)
-    {
+  i=0;
+   while(1){
       if (LT (g).a == 0)
 	break;
       h = omod (f, g);
@@ -1410,8 +1400,10 @@ EX xgcd (OP f, OP g){
       printf ("i+1=%d\n", i + 1);
       f = g;
       g = h;
-
-    }
+      if(deg(o2v(v[i]))==T-1)
+	break;
+      i++;
+   }
 
   //v[i]=odiv(v[i],h);
   //u[i]=odiv(u[i],h);
@@ -1769,7 +1761,7 @@ void det (unsigned short g[]){
 
       OP ww = { 0 };
 
-      memset (ss.t, 0, sizeof (ss.t));
+      // memset (ss.t, 0, sizeof (ss.t));
       ww = odiv (f, h);
 
       b = oinv (a);
@@ -2187,46 +2179,29 @@ int pattarson (OP w, OP f){
     }
   //exit(1);
   hh = xgcd (w, g1);
-
+  flg=0;
+ aa:
   ff = omod (omul (hh.v, g1), w);
   printpol (o2v (ff));
   printf (" beta!=========\n");
   if (deg (o2v (ff)) != K / 2)
     {
+      flg=1;
       printpol(o2v(w));
       printf (" locater function failed!! error\n");
-      if (LT (hh.v).n == K/2)
-	{
-	  tmp=ff;
-	  ff=hh.v;
-	  hh.v=tmp;
-	  // hh.v = osqrt (hh.v, w);
-	  //ff = omod (omul (hh.v, g1), w);
-	  printpol (o2v (ff));
-	  printf (" beta re culc error========\n");
-	  scanf("%d",&n);
-	  //exit(1);
-	}
-      else if (LT (ff).n % 2 == 1 && deg(o2v(ff)) == K-1)
-	{
-	  tmp=ff;
-	  ff=hh.v;
-	  hh.v=tmp;
-	  printpol (o2v (ff));
-	  printf (" degree baka error=============\n");
-	  scanf("",&d);
-	  //  exit (1);
-	} else {
 	printf("cannot correct(bad key) error============\n");
 	scanf("%d",&n);
-	return -1;
-      }
+	//return -1;
     }
+
   
   printpol (o2v (hh.v));
   printf (" alpha!=========\n");
   //exit(1);
-  ll = oadd (omul (ff, ff), omul (tt, omul (hh.v, hh.v)));
+  if(deg(o2v(ff))==K/2)
+    ll = oadd (omul (ff, ff), omul (tt, omul (hh.v, hh.v)));
+  if(deg(o2v(hh.v))==K/2)
+    ll = oadd (omul (hh.v, hh.v), omul (tt, omul (ff, ff)));
   if (deg (o2v (ll)) == 0)
     {
       printf (" locater degree is 0\n");
@@ -2260,42 +2235,72 @@ int pattarson (OP w, OP f){
   
 }
 
+int getkey()
+{
+    FILE *pipe = popen("sage irr.sage", "r");
+
+    if (pipe == NULL) {
+        fprintf(stderr, "popen failed.\n");
+        return 1;
+    }
+
+    char str[100];
+    while (fgets(str, 100, pipe) != NULL) {
+        printf("%s", str);
+    }
+    pclose(pipe);
+
+    return 0;
+}
+
 
 //言わずもがな
 int main (int argc, char **argv){
-  int i, j, k, l, c;
+  int i, j, k, l, c,ii=0;
   unsigned long a, x, count = 0;
   //  unsigned short cc[K]={0};
   unsigned short m[K], mm[T] = { 0 }, dd[K * D] = { 0 };
   time_t timer;
   FILE *fp, *fq;
   unsigned short jj[T * 2] = { 0 };
-  unsigned short zz[D] = { 0 };
+  unsigned short zz[D] = { 0 },ufu[K+1]={0};
   int y, flg, o1 = 0;
-  OP f = { 0 }, h = { 0 }, r = { 0 }, w = { 0 }, aa[8] = { 0 }, tt = { 0 }, ff = { 0 };
-  EX hh = { 0 };
+  OP f = { 0 }, h = { 0 }, r = { 0 }, w = { 0 }, aa[2*T] = { 0 }, tt = { 0 }, ff = { 0 };
+  EX hh = { 0 },ee={0},bb={0};
   vec v;
   unsigned short d = 0;
   time_t t;
   unsigned short gg[K + 1] = { 0 };
   oterm rr = { 0 };
   OP r1 = { 0 }, r2 = { 0 }, t1 = { 0 }, t2 = { 0 }, a1 = { 0 }, b1 = { 0 }, a2 = { 0 }, b2 = { 0 };
-  OP g1 = { 0 },tmp={0};
-
+  OP g1 = { 0 },tmp={0},ll={0};
+  
 
 
   srand (clock () + time (&t));
   printf ("@");
+  //getkey();
+  //  exit(1);
+  
 label:
-
+  
   for (i = 0; i < K + 1; i++)
     g[i] = 0;
-  ginit ();
-
-
+  //ginit ();
+    
+  fp=fopen("sk.key","rb");
+  fread(g,2,K+1,fp);
+  fclose(fp);
+  for(i=0;i<K+1;i++)
+    gg[K-i]=g[i];
+  for(i=0;i<K+1;i++)
+    g[i]=gg[i];
+  
+  
   w = setpol (g, K + 1);
   oprintpol (w);
-
+  //exit(1);
+  
 #pragma omp parallel for
   for (i = 0; i < D; i++)
     {
@@ -2417,9 +2422,9 @@ label:
     }
 
 
+ belal:
   k = 0;
-  while (1)
-    {
+  //  while (1) {
 
 
       count = 0;
@@ -2526,14 +2531,14 @@ label:
 
       //  exit(1);
 
-      printf
-	("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
+      printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
       //scanf("%d",&n);
 
-
-
-
-      //    while(1){
+      
+      //fp=fopen("sk.key","wb");
+      
+      flg=0;
+   while(1){
 
       for (i = 0; i < D; i++)
 	zz[i] = 0;
@@ -2585,7 +2590,7 @@ label:
       hh=xgcd2(w,f);
       if(deg(o2v(hh.d))>0){
 	printf(" s,wは互いに素じゃありません。\n");
-	scanf("%d",&n);
+	//scanf("%d",&n);
 	goto label;
       }
 	
@@ -2593,48 +2598,40 @@ label:
       tt.t[0].n = 1;
       tt.t[0].a = 1;
 
-
+      
       ff = inv (f, w);
-      h=omod(omul(ff,f),w);
-      if(LT(h).n>0){
+      tmp=omod(omul(ff,f),w);
+      if(deg(o2v(tmp))>0){
+	printpol(o2v(tmp));
+	printf(" inv(h+x)============\n");
 	printpol(o2v(w));
-	printf(" w===========\n");
-	printpol(o2v(f));
-	printf(" f===========\n");
-	printf(" 逆元を計算できません。\n");	
-	scanf("%d",&n);
-	//exit(1);
+	printf(" w============\n");
+	printf("この多項式では逆元計算ができません。");
+	printf("count=%d\n",k);
+	//scanf("%d",&n);
 	goto label;
-      }
-      printpol (o2v (ff));
-      printf ("locater==========\n");
-      //exit(1);
+      } 
       r2 = oadd (ff, tt);
       printpol (o2v (r2));
       printf (" h+x==============\n");
       //  exit(1);
-      r1=inv(r2,w);
-      tmp=omod(omul(r1,r2),w);
-      if(deg(o2v(tmp))>0){
-	printpol(o2v(r2));
-	printf(" r2============\n");
-	printpol(o2v(w));
-	printf(" w============\n");
-	printf("この多項式では逆元計算ができません。");
-	scanf("%d",&n);
-	goto label;
-      }
       g1 = osqrt (r2, w);
       printpol (o2v (g1));
       printf (" g1!=========\n");
-      r1 = omod(omul(r2,r2),w);
-      if(deg(o2v(g1))!=deg(o2v(r1)) && deg(o2v(g1))>0){
+      r1 = omod(omul(g1,g1),w);
+      printpol(o2v(r1));
+      printf(" g1^2 mod w===========\n");
+      printpol(o2v(r2));
+      printf(" r2===========same?\n");
+      //scanf("%d",&n);
+      if(deg(o2v(r1))!=deg(o2v(r2)) && deg(o2v(g1))>0){
 	printpol(o2v(w));
 	printf(" w===========\n");
 	printpol(o2v(r2));
 	printf(" r2===========\n");
 	printf("平方根の計算に失敗しました。\n");
-	scanf("%d",&n);
+	printf("count=%d\n",k);
+	//scanf("%d",&n);
 	goto label;
 	//exit(1);
       }
@@ -2645,6 +2642,7 @@ label:
 	  printpol (o2v (w));
 	  printf (" badkey=========\n");
 	  printf ("平方根が０になりました。\n");
+	  printf("count=%d\n",k);
 	  //scanf ("%d", &n);
 	  //exit(1);
 	  goto label;
@@ -2657,25 +2655,83 @@ label:
       printf (" beta!=========\n");
       if (deg (o2v (ff)) != K / 2)
 	{
-	  tmp=ff;
-	  ff=hh.v;
-	  hh.v=tmp;
+	  for(l=0;l<D;l++){
+	    if(zz[l]>0){
+	      printf("zz=%d,%d\n",zz[l],l);
+	    }
+	  }
+	  for(l=0;l<D;l++){
+	    if(zz[l]>0){
+	    aa[ii].t[1].n=1;
+	    aa[ii].t[1].a=1;
+	    aa[ii].t[0].n=0;
+	    aa[ii++].t[0].a=l;
+	    }
+	  }
+	  a1=aa[0];
+	  for(l=1;l<ii;l++)
+	    a1=omul(a1,aa[l]);
+	  a2=omod(omul(f,a1),w);
+	  b1=osqrt(a2,w);
+	  b2=omod(omul(r2,a2),w);
+	  t1=osqrt(b2,w);
+	  t2=omul(tt,a2);
+	  tmp=omul(t1,t1);
+	  tmp=oadd(tmp,t2);
+	  ee=xgcd(w,a2);
+	  bb=xgcd(w,r2);
 	  
+	  printpol(o2v(ff));
+	  printf(" ff=========\n");
 	  printpol(o2v(w));
 	  printf(" w=========\n");
+	  printpol(o2v(hh.u));
+	  printf(" hh.u=========\n");
+	  printpol(o2v(hh.d));
+	  printf(" hh.d=========\n");
 	  printpol(o2v(hh.v));
-	  printf(" beta=========\n");
-	  printf ("誤りロケータができませんでした。\n");
-	  scanf ("%d", &n);
+	  printf(" hh.v=========\n");
+	  printf ("誤りロケータができませんでした。\n");	  
+	  printpol(o2v(a1));
+	  printf(" locater==========\n");
+	  printpol(o2v(tmp));
+	  printf(" locater?==========\n");
+	  
+	  printpol(o2v(a2));
+	  printf(" beta^2===========\n");
+	  printpol(o2v(b1));
+	  printf(" beta===========\n");
+	  printpol(o2v(b2));
+	  printf(" alpha^2============\n");
+	  printpol(o2v(t1));
+	  printf(" alpha=========\n");
+	  printpol(o2v(ee.v));
+	  printf(" b^2?=========\n");
+	  printpol(o2v(ee.u));
+	  printf(" a^2?=========\n");
+	  printpol(o2v(bb.v));
+	  printf(" bb^2?=========\n");
+	  printpol(o2v(bb.u));
+	  printf(" aa^2?=========\n");
+	  
+	  //goto aa;
+	  /*
+	  for(l=0;l<D;l++)
+	    printf("%d,",zz[l]);
+	  printf("\n");
+	  */
+	  printf("count=%d\n",k);
+	  scanf ("%d", &n);  
 	  //exit(1);
-	  goto label;
+	  //goto label;
 	}
 
       n=0;
       hh=xgcd2(w,f);
       if(deg(o2v(hh.d))>0){
 	printf("wとfが互いに素ではありません。");
-	scanf("%d",&n);
+	printf("count=%d\n",k);
+	//scanf("%d",&n);
 	goto label;
       }	
       if(deg(o2v(hh.d))==0)
@@ -2683,11 +2739,23 @@ label:
 
       printpol(o2v(w));
       printf(" success?==========\n");
-      break;
-      //k++;
-      //if (k > 1)
-      //goto label;
-    }
+      
+      //break;
+      k++;
+      if (k > 200){
+	printpol(o2v(w));
+	printf(" (・∀・)ｲｲ!!\n");
+	k=0;
+	//for(l=0;l<K+1;l++)
+	//  ufu[l]=w.t[l].a;
+	//fwrite(ufu,2,K+1,fp);
+	//scanf("%d",&n);
+	//fclose(fp);
+	break;
+	//goto label;
+      }
+      //break;
+   }
 
 
   return 0;
