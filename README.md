@@ -138,5 +138,6 @@ https://digitalcommons.csbsju.edu/cgi/viewcontent.cgi?article=1019&context=honor
 
 https://github.com/davidhoo1988/Code_Based_Cryptography_Python
 
-こういうのがあったんだけど古くて動かない。
+こういうのがあったんだけど古くて動かない。GF2で既約な多項式を見つけるのは早いけど、拡大体上で既約な多項式を見つけるのは
+とても遅い。なので、やはりランダムに取ってきて使える鍵だけを使うほうが早い気がする。正攻法より効率的かも。
 
