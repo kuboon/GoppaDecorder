@@ -1023,6 +1023,7 @@ OP inv (OP a, OP n){
 }
 
 
+//error locater for decode
 OP vx(OP f,OP g){
   OP h={0},ww={0};
   OP v[K]={0},vv={0};
@@ -1082,73 +1083,6 @@ OP vx(OP f,OP g){
 }
 
 
-/*
-//decode用の誤り位置関数の計算
-OP vx (OP f, OP g){
-  OP h = { 0 } , ww = { 0 };
-  OP v[K] = { 0 } , vv = { 0 };
-  oterm a, b;
-  int i, j;
-
-  
-  v[0].t[0].a = 0;
-  v[0].t[1].n = 0;
-  v[1].t[0].a = 1;
-  v[1].t[1].n = 0;
-
-  //printf("in vx\n");
-  //  exit(1);
-
-  for (i = 0; i < T; i++)
-    {
-      // memset(ss.t,0,DEG*sizeof(ss));
-      if (deg(o2v(f)) >= deg(o2v(g)) && deg(o2v(g)) > 0)
-	{
-	  
-	  h = omod (f, g);
-	  printpol (o2v (h));
-	  printf (" modh vx==============\n");
-	  ww = odiv (f, g);
-	}
-      
-      printf ("ww======= ");
-      printpol (o2v (ww));
-      printf ("\n");
-      v[i + 2] = oadd (v[i], omul (ww, v[i + 1]));
-      printf ("-------");
-      memset (f.t, 0, sizeof (f.t));
-      f = g;
-      //memcpy(f.t,g.t,sizeof(g.t));
-      memset (g.t, 0, sizeof (g.t));
-      g = h;
-
-      if (deg (o2v (v[i + 2])) <= T)
-	{
-	  vv = v[i + 2];
-	  printf ("vv==");
-	  printpol (o2v (vv));
-	  printf ("\n");
-	  ss = h;
-	  // printpol(o2v(h));
-	  printf (" ll========\n");
-	  //    return vv;
-
-	}
-      else
-	{
-
-	  printf ("-------");
-	  break;
-	}
-    }
-  printpol (o2v (vv));
-  printf (" vv============\n");
-  //exit(1);
-
-  return vv;
-}
-*/
-
 
 
 //整数のべき乗
@@ -1184,7 +1118,7 @@ unsigned char chk (OP f){
 }
 
 
-//多項式の最大公約数
+//decode用の多項式の最大公約数
 OP ogcd (OP f, OP g){
   OP h = { 0 } , ww = { 0 };
   oterm a, b;
@@ -2510,16 +2444,18 @@ label:
       scanf("%d",&n);
 
       //break;
+      /*
       k++;
-      if (k > 200){
+      if (k > 2){
 	printpol(o2v(w));
 	printf(" (・∀・)ｲｲ!!\n");
 	k=0;
 	break;
 	//goto label;
       }
+      */
       //break;
-   }
+    }
 
 
   return 0;
