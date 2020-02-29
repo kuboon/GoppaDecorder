@@ -150,3 +150,7 @@ https://github.com/davidhoo1988/Code_Based_Cryptography_Python
 
 https://www.hyperelliptic.org/tanja/students/m_marcus/whitepaper.pdf
 
+20200229
+
+バグが取れた。
+
