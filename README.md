@@ -154,3 +154,7 @@ https://www.hyperelliptic.org/tanja/students/m_marcus/whitepaper.pdf
 
 バグが取れた。基本計算は完成したので、これから電子署名と暗号通貨を作ります。
 
+https://classic.mceliece.org/
+
+
+
