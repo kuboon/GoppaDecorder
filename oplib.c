@@ -1,5 +1,5 @@
-//date 20200222 : pattarson algorithm implementation ver 1.0
-// xgcd & osqrtを追加した   
+//date 20200229 : pattarson algorithm implementation ver 1.0
+// xgcd & osqrtを追加した
 //date      :  20160310,20191218,20191220,20191221,20191223,20191224,20191225,20191229,20191230
 //auther    : the queer who thinking about cryptographic future
 //code name :  一変数多項式演算ライブラリのつもり
@@ -1118,16 +1118,11 @@ OP ogcd (OP f, OP g){
   //  exit(1);
 
   for (i = 0; i < T; i++)
-    {				// && deg(o2v(f))>=deg(o2v(g))){
-      //while(deg(o2v(g))<T){
-      //    memset(ss.t,0,DEG);
+    {
       h = omod (f, g);
       ww = odiv (f, g);
       f = g;
       g = h;
-      //  i++;
-      //   if(deg(o2v(g))<T)
-      // break;
     }
   // exit(1);
 
@@ -1208,8 +1203,8 @@ EX xgcd (OP f, OP g){
 }
 
 
-//拡張ユークリッドアルゴリズム
-EX xgcd2 (OP f, OP g){
+//拡張ユークリッドアルゴリズム(Tで止まらない)
+EX gcd (OP f, OP g){
   OP h = { 0 } , ww = { 0 } , *v, *u;
   oterm a, b;
   int i = 0, j, k;
@@ -2341,7 +2336,8 @@ label:
       printpol (o2v (f));
       printf (" syn=============\n");
       //exit(1);
-      hh=xgcd2(w,f);
+      
+      hh=gcd(w,f);
       if(deg(o2v(hh.d))>0){
 	printf(" s,wは互いに素じゃありません。\n");
 	//scanf("%d",&n);
@@ -2415,7 +2411,7 @@ label:
 	}
 
       n=0;
-      hh=xgcd2(w,f);
+      hh=gcd(w,f);
       if(deg(o2v(hh.d))>0){
 	printf("wとfが互いに素ではありません。");
 	printf("count=%d\n",k);
@@ -2425,24 +2421,12 @@ label:
       if(deg(o2v(hh.d))==0)
 	pattarson (w, f);
 
-      //printpol(o2v(w));
-      printf(" success?==========\n");
       scanf("%d",&n);
 
-      //break;
-      /*
-      k++;
-      if (k > 2){
-	printpol(o2v(w));
-	printf(" (・∀・)ｲｲ!!\n");
-	k=0;
-	break;
-	//goto label;
-      }
-      */
       //break;
     }
 
 
   return 0;
     }
+
