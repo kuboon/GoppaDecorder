@@ -37,13 +37,13 @@ unsigned short inv_P[D] = { 0 };
 
 unsigned short uu;
 
-
+//monomial
 typedef struct{
   unsigned short n; //単項式の次数
   unsigned short a; //単項式の係数
 } oterm;
 
-
+//polynomial
 typedef struct{
   oterm t[DEG]; //単項式の配列として多項式を表現する
 } OP;
@@ -53,7 +53,7 @@ typedef struct{
   unsigned int x[DEG]; //配列の添字を次数に、配列の値を係数に持つ多項式の表現
 } vec;
 
-
+//extra gcd
 typedef struct{
   OP u; //inverse of polynomial?
   OP v; //error locater
@@ -1037,43 +1037,31 @@ OP vx(OP f,OP g){
 
   //printf("in vx\n");
   //  exit(1);
-  
-  for(i=0;i<T;i++){
-    // memset(ss.t,0,DEG*sizeof(ss));
-    if(deg(o2v(f))>=deg(o2v(g)) && deg(o2v(g))>0){
-          
-      h=omod(f,g);
-      printpol(o2v(h));
-      printf(" modh vx==============\n");
-      ww=odiv(f,g);
-    }
+  i=0;
+
+  while(1){
+    
+    h=omod(f,g);
+    printpol(o2v(h));
+    printf(" modh vx==============\n");
+    ww=odiv(f,g);
     
     printf("ww======= ");
     printpol(o2v(ww));
     printf("\n");
     v[i+2]=oadd(v[i],omul(ww,v[i+1]));
     printf("-------");
-    memset(f.t,0,sizeof(f.t));
     f=g;
-    //memcpy(f.t,g.t,sizeof(g.t));
-    memset(g.t,0,sizeof(g.t));
     g=h;
     
-    if(deg(o2v(v[i+2]))<=T){
-      vv=v[i+2];
-      printf("vv==");
-      printpol(o2v(vv));
-      printf("\n");
-      //ss=h;
-      // printpol(o2v(h));
-      printf(" ll========\n");
-      //    return vv;
-      
-    } else {
-      
-      printf("-------");
+    vv=v[i+2];
+    printf("vv==");
+    printpol(o2v(vv));
+    printf(" ll========\n");
+    
+    if(deg(o2v(vv))==T)
       break;
-    }
+    i++;
   }
   printpol(o2v(vv));
   printf(" vv============\n");
@@ -1211,7 +1199,7 @@ EX xgcd (OP f, OP g){
   printf (" h=============\n");
   //exit(1);
 
-  e.d = h;
+  e.d = f;
   e.v = v[i];
   e.u = u[i];
 
@@ -1440,7 +1428,7 @@ OP decode (OP f, OP s){
   printf ("@@@@@@@@@\n");
 //exit(1);
 
-  h = ogcd (f, s);
+  hh = xgcd (f, s);
   printpol (o2v (hh.d));
 
   //  exit(1);
@@ -1466,14 +1454,14 @@ OP decode (OP f, OP s){
   for (i = 0; i < deg (x) + 1; i++)
     {
       //  if(x.x[i]>0){
-      e.t[i].a = gf[mlt (fg[trace (h, x.x[i])], oinv (trace (l, x.x[i])))];
+      e.t[i].a = gf[mlt (fg[trace (hh.d, x.x[i])], oinv (trace (l, x.x[i])))];
       e.t[i].n = x.x[i];
 
 // }
     }
 
   for (i = 0; i < T; i++)
-    if (gf[trace (h, x.x[i])] == 0)
+    if (gf[trace (hh.d, x.x[i])] == 0)
       printf ("h=0");
   //printf("\n");
   for (i = 0; i < T; i++)
@@ -1993,8 +1981,6 @@ int pattarson (OP w, OP f){
   //exit(1);
   if(deg(o2v(ff))==K/2)
     ll = oadd (omul (ff, ff), omul (tt, omul (hh.v, hh.v)));
-  if(deg(o2v(hh.v))==K/2)
-    ll = oadd (omul (hh.v, hh.v), omul (tt, omul (ff, ff)));
   if (deg (o2v (ll)) == 0)
     {
       printf (" locater degree is 0\n");
