@@ -1,10 +1,10 @@
-
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "8192.h"
+
+//#include "8192.h"
 //#include "4096.h"
 //#include "1024.h"
 
@@ -65,15 +65,13 @@ void seed(void){
     char str[str_length + 1];
     time_t t;
     int i, j, k, rnd;
-    char confirm[2];
+    
     
     /*
     * 乱数の初期化
     */
     srand(clock()+time(&t));
-  i=0;
-  while(i<1000)
-    i++;
+
     /*
     * 乱数生成とパスワードの生成
     */
@@ -201,7 +199,7 @@ void SHA512_process(unsigned long long H[],unsigned long long W[])
     unsigned long *Buf=(unsigned long *)W;
     int t;
     for (t=0 ;t<16 ;t++) //little-endianをbig-endianに変換　big-endianの機種では不要
-        W[t]=(unsigned long long)(Buf[t*2]<<24 | Buf[t*2]<<8 & 0xFF0000 | Buf[t*2]>>8 & 0xFF00 | Buf[t*2]>>24)<<32
+      W[t]=(unsigned long long)(Buf[t*2]<<24 | (Buf[t*2]<<8 & 0xFF0000) | (Buf[t*2]>>8 & 0xFF00) | Buf[t*2]>>24)<<32
             |(unsigned long long)(Buf[t*2+1]<<24 | Buf[t*2+1]<<8 & 0xFF0000 | Buf[t*2+1]>>8 & 0xFF00 | Buf[t*2+1]>>24);
     for (t=16 ;t<80 ; t++) W[t] = s512_1(W[t-2]) + W[t-7] + s512_0(W[t-15]) + W[t-16];
     SHA512_transform(H,W);
