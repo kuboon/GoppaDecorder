@@ -10,17 +10,26 @@
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.1)
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "8192.h"
 
-#include "chash.cpp"
+#include "chash.c"
 #include "lu.c"
 
 
 
+#define N 8192
+#define M 8192
+#define F 128*13 //2040
 #define K (128*2)
 #define DEG (2*K)
 #define T (K/2)
 #define E (13)
 #define D (6688)
+
+
 
 unsigned char tmp[E * K][D] = { 0 };
 unsigned char pub[E * K][D] = { 0 };
@@ -34,8 +43,8 @@ unsigned short syn[K] = { 0 };
 unsigned char A[D][D] = { 0 };
 unsigned short P[D] = { 0 };
 unsigned short inv_P[D] = { 0 };
-
 unsigned short uu;
+unsigned char cl[F][F]={0};
 
 //monomial
 typedef struct{
@@ -65,6 +74,16 @@ typedef union{ //test(SIMD)
   unsigned long long int u[4];
   unsigned short s[16];
 } SU;
+
+
+unsigned long xor128(void)
+{
+  unsigned int a=0;
+  static unsigned long x=123456789,y=362436069,z=521288629,w=88675123;
+    unsigned long t;
+    a=rand();
+    t=(a^(a<<11));a=y;y=z;z=w; return( w=(w^(w>>19))^(t^(t>>8)) );
+}
 
 
 
@@ -423,7 +442,7 @@ OP sort (OP f){
 
 //リーディングタームを抽出(OP型）
 oterm oLT (OP f){
-  int i, k;
+  int i, k,j;
   oterm t = { 0 }, s =  { 0 };
 
   
@@ -1120,7 +1139,6 @@ OP ogcd (OP f, OP g){
   for (i = 0; i < T; i++)
     {
       h = omod (f, g);
-      ww = odiv (f, g);
       f = g;
       g = h;
     }
@@ -1495,11 +1513,9 @@ OP setpol (unsigned short *f, int n){
 //パリティチェック行列を生成する
 void det (unsigned short g[]){
   OP f, h = { 0 }, w, u;
-  unsigned short cc[K + 1] = { 0 }, d[2] =
-  {
-  0};
+  unsigned short cc[K + 1] = { 0 }, d[2] = {0};
   unsigned short **HH;
-  int i, j, a, b;
+  int i, j, a, b ,k;
   oterm t = { 0 };
   vec e;
 
@@ -1679,6 +1695,7 @@ void Pgen (){
 void key2 (unsigned short g[]){
   FILE *fp;
   unsigned short dd[K] = { 0 };
+  int i,j,k;
 
   printf ("鍵を生成中です。４分程かかります。\n");
   fp = fopen ("H.key", "wb");
@@ -1891,9 +1908,9 @@ OP osqrt(OP f,OP w){
 //パターソンアルゴリズムでバイナリGoppa符号を復号する
 int pattarson (OP w, OP f){
   OP g1 = { 0 }, ll = { 0 }, s = { 0 }, tmp={ 0 };
-  int i, j, k, l, c;
+  int i, j, k, l, c,n;
   unsigned long a, x, count = 0;
-  unsigned short m[K], mm[T] = { 0 }, dd[K * D] = { 0 };
+  unsigned short m[K], dd[K * D] = { 0 };
   time_t timer;
   FILE *fp, *fq;
   unsigned short jj[T * 2] = { 0 };
@@ -2030,10 +2047,10 @@ int getkey()
 
 //言わずもがな
 int main (int argc, char **argv){
-  int i, j, k, l, c,ii=0;
+  int i, j, k, l, c,ii=0,n;
   unsigned long a, x, count = 0;
   //  unsigned short cc[K]={0};
-  unsigned short m[K], mm[T] = { 0 }, dd[K * D] = { 0 };
+  unsigned short m[K], dd[K * D] = { 0 };
   time_t timer;
   FILE *fp, *fq;
   unsigned short jj[T * 2] = { 0 };
@@ -2239,7 +2256,6 @@ label:
   
   
   for(i=0;i<T;i++){
-    mm[i]=r.t[i].a;
     if(i==0){
      printf("e=%d %d %s\n",r.t[i].a,r.t[i].n,"う");
     }else if(r.t[i].a==r.t[i].n){
