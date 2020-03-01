@@ -6,29 +6,18 @@
 #include <time.h>
 
 //#define D 4096
-#define F 256*13 //2040
+#define F 128*13 //2040
 
 unsigned char a[F][F]={0};
 unsigned char cc[F][F]={0};
 unsigned char bb[F][F]={0};
-unsigned char cl[F][F]={0};
+extern unsigned char cl[F][F];
   
   //{{0,1,0,1},{1,0,0,1},{0,0,1,0},{0,0,1,1}};
 //{{0,1,1,1},{1,0,1,1},{0,0,1,1},{1,0,0,1}}; //{{1,2,0,-1},{-1,1,2,0},{2,0,1,1},{1,-2,-1,1}}; //入力用の配列
-unsigned char inv_a[F][F]; //ここに逆行列が入る
-unsigned char buf; //一時的なデータを蓄える
-int i,j,k; //カウンタ
-int n=F;  //配列の次数
 
-unsigned long xor128(void)
-{
-  unsigned int a=0;
-  static unsigned long x=123456789,y=362436069,z=521288629,w=88675123;
-    unsigned long t;
-    a=rand();
-    t=(a^(a<<11));a=y;y=z;z=w; return( w=(w^(w>>19))^(t^(t>>8)) );
-}
-
+extern unsigned long xor128();
+extern void makeS();
 
 void g2(){
   int i,j,k;
@@ -66,6 +55,7 @@ void g2(){
 }
 
 
+
 void makeS(){
   int i,j,k,l,ii;
   unsigned char **b;
@@ -73,6 +63,9 @@ void makeS(){
   unsigned int flg=0,count=0;
   time_t t;
   FILE *fq;
+  unsigned char inv_a[F][F]; //ここに逆行列が入る
+  unsigned char buf; //一時的なデータを蓄える
+  int n=F;  //配列の次数
 
 
   b=malloc(F*sizeof(unsigned char *));
