@@ -1704,8 +1704,8 @@ static void byte_to_hex(uint8_t b, char s[23]) {
     }
 }
 
-
-void encrypt (unsigned char buf[],unsigned short sk[])
+//512bitの秘密鍵を暗号化
+void encrypt (unsigned char buf[],unsigned char sk[])
 {
   const uint8_t *hash;
   sha3_context c;
@@ -1728,19 +1728,13 @@ void encrypt (unsigned char buf[],unsigned short sk[])
   j=0;
   for(i=0; i<image_size/8; i++) {
     printf("%d", hash[i]);
-    for(k=0;k<2;k++)
-      dd=(dd<<8)^hash[i];
-    while(j<K+1){
       char s[3];
       //byte_to_hex(hash[i],s);
       
-      sk[j++]^=dd;
-    }
+      sk[i]^=hash[i];
   }
-  for(i=0;i<K+1;i++)
-    d[i]=g[i];
   
-    fwrite(d,2,K+1,fp);
+    fwrite(sk,1,9,fp);
     fclose(fp);
     printf("\n");
 
