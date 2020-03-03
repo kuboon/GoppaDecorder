@@ -156,5 +156,7 @@ https://www.hyperelliptic.org/tanja/students/m_marcus/whitepaper.pdf
 
 https://classic.mceliece.org/
 
+20200303
 
-
+今日は暗号化関数の前処理としてハッシュ関数の他の人が書いた使えそうなリポジトリを探してコピーして改ざんした。
+SHA3を使う予定。OAEP処理するため。
