@@ -32,10 +32,11 @@ int main(){
   const uint8_t *hash;
   sha3_context c;
   int image_size=512,i;
+  char buf[8192];
 
-  
+  scanf("%s",buf);
   sha3_Init256(&c);
-  sha3_Update(&c, "123", 3);
+  sha3_Update(&c, buf, strlen(buf));
   hash = sha3_Finalize(&c);
   for(i=0; i<image_size/8; i++) {
     char s[3];
