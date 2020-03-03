@@ -1705,26 +1705,43 @@ static void byte_to_hex(uint8_t b, char s[23]) {
 }
 
 
-void encrypt (unsigned char buf[])
+void encrypt (unsigned char buf[],unsigned short sk[])
 {
   const uint8_t *hash;
   sha3_context c;
-  int image_size=512,i;
-  //  char buf[8192];
+  int image_size=512,i,j,k;
+  FILE *fp;
+  unsigned short d[K+1]={0},dd=0;
 
-  puts(buf);
-  printf("\n");
+  
+  fp=fopen("enc.sk","wb");
+
+  //  puts(buf);
+  //printf("\n");
   //exit(1);
   
   //scanf("%s",buf);
   sha3_Init256(&c);
   sha3_Update(&c, (char *)buf, strlen(buf));
   hash = sha3_Finalize(&c);
+
+  j=0;
   for(i=0; i<image_size/8; i++) {
-    char s[3];
-    //byte_to_hex(hash[i],s);
     printf("%d", hash[i]);
+    for(k=0;k<2;k++)
+      dd=(dd<<8)^hash[i];
+    while(j<K+1){
+      char s[3];
+      //byte_to_hex(hash[i],s);
+      
+      sk[j++]^=dd;
+    }
   }
+  for(i=0;i<K+1;i++)
+    d[i]=g[i];
+  
+    fwrite(d,2,K+1,fp);
+    fclose(fp);
     printf("\n");
 
 
@@ -2311,15 +2328,16 @@ label:
 	    }
 	}
 
-      char buf[8192],buf1[10];
+      char buf[8192]={0},buf1[10]={0},sk[K+1];
       for(i=0;i<D;i++){
 	//buf1=(char*)zz[i];
 	snprintf(buf1, 10, "%d",zz[i] );
-	puts(buf1);
 	//printf("%c,",buf1);
 	strcat(buf,buf1);
       }
-      encrypt(buf);
+      puts(buf);
+      printf("vector=%d\n",strlen(buf));
+      encrypt(buf,sk);
       exit(1);
 
 
