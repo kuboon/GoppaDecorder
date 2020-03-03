@@ -1713,8 +1713,8 @@ void encrypt (unsigned char buf[])
   hash = sha3_Finalize(&c);
   for(i=0; i<image_size/8; i++) {
     char s[3];
-    byte_to_hex(hash[i],s);
-    printf("%s", s);
+    //byte_to_hex(hash[i],s);
+    printf("%d", hash[i]);
   }
     printf("\n");
 
