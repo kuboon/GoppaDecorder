@@ -13,15 +13,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <time.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+
 
 #include "8192.h"
-
 #include "global.h"
 #include "struct.h"
+#include "sha3.h"
 
-#include "sha3.c"
+
 
 extern unsigned long xor128(void);
 extern int mlt(int x,int y);
