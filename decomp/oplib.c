@@ -1857,7 +1857,7 @@ OP osqrt(OP f,OP w){
     printpol (o2v (ww));
     printf (" ww==============\n");
     printf(" wwが０になりました。error\n");
-    //scanf("%d",&n);
+    scanf("%d",&n);
     return ww;;
     // exit(1);
   }
@@ -2051,6 +2051,36 @@ int getkey()
 }
 
 
+OP synd(unsigned short zz[]){
+  unsigned short syn[K]={0};
+  int i,j;
+  OP f={0};
+
+  
+  for(i=0;i<K;i++){
+    syn[i]=0;
+    //#pragma omp parallel for
+    for(j=0;j<N;j++){
+      //   printf("%u,",zz[jj[j]]);
+      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
+    }
+       printf("syn%d,",syn[i]);
+  }
+  printf("\n");
+  //    exit(1);  
+  for(i=0;i<K;i++)
+    printf("mat[%d][1]=%d\n",i,mat[i][1]);
+  printf("\n");
+  //    exit(1);
+  
+  f=setpol(syn,K);
+  printpol(o2v(f));
+  printf(" syn=============\n");
+  //   exit(1);
+
+  return f;
+}
+
 //言わずもがな
 int main (void){
   int i, j, k, l, c,ii=0,n;
@@ -2236,28 +2266,8 @@ label:
       j++;
     }
   }
-    
-  
-  for(i=0;i<K;i++){
-    syn[i]=0;
-    //#pragma omp parallel for
-    for(j=0;j<N;j++){
-      //   printf("%u,",zz[jj[j]]);
-      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
-    }
-       printf("syn%d,",syn[i]);
-  }
-  printf("\n");
-  //    exit(1);  
-  for(i=0;i<K;i++)
-    printf("mat[%d][1]=%d\n",i,mat[i][1]);
-  printf("\n");
-  //    exit(1);
-  
-  f=setpol(syn,K);
-  printpol(o2v(f));
-  printf(" syn=============\n");
-  //   exit(1);
+
+  f=synd(zz);
   
   r=decode(w,f);
   
@@ -2344,30 +2354,16 @@ label:
 	printf ("%d,", zz[i]);
       printf ("\n");
       //    exit(1);
-      //  
-      for (i = 0; i < K; i++)
-	{
-	  syn[i] = 0;
-	  //#pragma omp parallel for
-	  for (j = 0; j < N; j++)
-	    {
-	      //   printf("%u,",zz[jj[j]]);
-	      syn[i] ^= gf[mlt (fg[zz[j]], fg[mat[i][j]])];
-	    }
-	  printf ("syn%d,", syn[i]);
-	}
-      printf ("\n");
-      //    exit(1);  
-      for (i = 0; i < K; i++)
-	printf ("mat[%d][1]=%d\n", i, mat[i][1]);
-      printf ("\n");
-      //    exit(1);
+      //
 
-      encrypt(buf,sk,syn);
+
+      f=synd(zz);
+      v=o2v(f);
+      encrypt(buf,sk,v.x);
       exit(1);
 
 
-      f = setpol (syn, K);
+      //      f = setpol (syn, K);
       printpol (o2v (f));
       printf (" syn=============\n");
       //exit(1);
