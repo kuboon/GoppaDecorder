@@ -2002,8 +2002,9 @@ void encrypt (unsigned char buf[],unsigned char sk[])
 
   
   fp=fopen("enc.sk","wb");
-  printf("in enc sk=");
-  for(i=0;i<9;i++)
+
+  printf("plain text=");
+  for(i=0;i<64;i++)
     printf("%d,",sk[i]);
   printf("\n");
   //  puts(buf);
@@ -2025,12 +2026,12 @@ void encrypt (unsigned char buf[],unsigned char sk[])
       sk[i]^=hash[i];
 
   }
-  printf("\nenc sk=");
-  for(i=0;i<9;i++)
+  printf("\nencrypt sk=");
+  for(i=0;i<64;i++)
     printf("%d,",sk[i]);
   printf("\n");
   fwrite(sy,2,K,fp);
-  fwrite(sk,1,9,fp);
+  fwrite(sk,1,64,fp);
   fclose(fp);
   //  printf("in enc2 sk=\n");
   // for(i=0;i<9;i++)
@@ -2044,7 +2045,7 @@ void decrypt (OP w)
 {
   FILE *fp;
   int i,j;
-  unsigned char sk[9]={0},sk2[9]={0},err[N]={0};
+  unsigned char sk[64]={0},sk2[64]={0},err[N]={0};
   unsigned short buf[K]={0},tmp[K]={0};
   OP f={0},h={0};
   vec v={0};
@@ -2057,7 +2058,7 @@ void decrypt (OP w)
   fp=fopen("enc.sk","rb");
 
   fread(tmp,2,K,fp);
-  fread(sk,1,9,fp);
+  fread(sk,1,64,fp);
 
   
   for(i=0;i<K;i++)
@@ -2091,8 +2092,8 @@ void decrypt (OP w)
   puts(buf0);
   printf("vector=%d\n",strlen(buf0));
   //exit(1);
-  printf("in dec sk2=");
-  for(i=0;i<9;i++)
+  printf("cipher sk2=");
+  for(i=0;i<64;i++)
     printf("%d,",sk[i]);
   printf("\n");
   
@@ -2110,7 +2111,7 @@ void decrypt (OP w)
       sk[i]^=hash[i];
   }
   printf("\ndecript sk=");
-  for(i=0;i<9;i++)
+  for(i=0;i<64;i++)
   printf("%u,",sk[i]);
   printf("\n");
   //  exit(1);
@@ -2430,9 +2431,11 @@ label:
 
       
       char buf[8192]={0},buf1[10]={0};
-      unsigned char sk[9]={1,2,3,4,5,6,7,8,9};
+      unsigned char sk[64]={0};
       unsigned short s[K]={0};
-
+      for(i=0;i<64;i++)
+	sk[i]=i+1;
+      
       for(i=0;i<D;i++){
 	snprintf(buf1, 10, "%d",zz[i] );
 	strcat(buf,buf1);
@@ -2444,7 +2447,7 @@ label:
       //    exit(1);
       //
       printf("sk0=");
-      for(i=0;i<9;i++)
+      for(i=0;i<64;i++)
 	printf("%u,",sk[i]);
       printf("\n");
       //exit(1);
