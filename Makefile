@@ -1,13 +1,5 @@
-CC = gcc
-CFLAGS = -g -O2
 
-TARGET = oplib
-OBJS = oplib.o
-
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
-	$(CC) -o $(TARGET) $(OBJS)
-
+all:
+	gcc -Wall -O2 -g oplib.c chash.c lu.c sha3.c
 clean:
-	$(RM) $(TARGET) $(OBJS)
+	rm -f a.out

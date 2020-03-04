@@ -4,7 +4,11 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "8192.h"
+//#include "4096.h"
+//#include "1024.h"
 
+//#define N 8192
 #define M 8192
 
 typedef union {
@@ -149,7 +153,7 @@ return 1;
 
 void SHA512_transform(unsigned long long H[],unsigned long long W[])
 {
-    static const unsigned long long KK[80]=
+    static const unsigned long long K[80]=
     {
     0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL, 0xb5c0fbcfec4d3b2fULL, 0xe9b5dba58189dbbcULL,
     0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL, 0x923f82a4af194f9bULL, 0xab1c5ed5da6d8118ULL,
@@ -178,7 +182,7 @@ void SHA512_transform(unsigned long long H[],unsigned long long W[])
     int t;
     memcpy(x, H, 64);
 #define ROUND(n,a,b,c,d,e,f,g,h)\
-        T1=x[h]+S512_1(x[e])+Ch(x[e],x[f],x[g])+KK[t+n]+W[t+n];\
+        T1=x[h]+S512_1(x[e])+Ch(x[e],x[f],x[g])+K[t+n]+W[t+n];\
         T2=S512_0(x[a])+Maj(x[a],x[b],x[c]);\
         x[d]=x[d]+T1;\
         x[h]=T1+T2

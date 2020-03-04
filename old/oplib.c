@@ -13,32 +13,70 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <sys/mman.h>
+//#include "8192.h"
+
+#include "chash.c"
+#include "lu.c"
 
 
-#include "8192.h"
-#include "global.h"
-#include "struct.h"
-#include "sha3.h"
+//符号のパラーメータの指定。通常[N,K,T]として、
+//Nは符号の長さ、Kが符号の次元、Tは訂正エラー数
+//を表す。ここではDは符号長にしている。
+#define N 6688 // (^^;)?
+#define M 8192 //有限体の元の数
+#define K (128*2) //符号の次元
+#define DEG (2*K) //多項式の次数
+#define T (K/2) //エラーの数
+#define E (13) //拡大体のビット数
+#define D (6688) //符号長（短縮符号）
 
 
 
-extern unsigned long xor128(void);
-extern int mlt(int x,int y);
-extern int mltn(int n,int a);
-extern void makeS();
+unsigned char tmp[E * K][N] = { 0 };
+unsigned char pub[E * K][N] = { 0 };
+unsigned char BH[E * K][N] = { 0 };
+unsigned short c[2 * K + 1] = { 0 };
+unsigned short mat[K][N] = { 0 };
+unsigned short m2[K][N] = { 0 };
+
+static unsigned short g[K + 1] = { 0 };
+unsigned short syn[K] = { 0 };
+unsigned char A[N][N] = { 0 };
+unsigned short P[N] = { 0 };
+unsigned short inv_P[N] = { 0 };
+unsigned short uu;
+unsigned char cl[F][F]={0};
+
+//monomial
+typedef struct{
+  unsigned short n; //単項式の次数
+  unsigned short a; //単項式の係数
+} oterm;
+
+//polynomial
+typedef struct{
+  oterm t[DEG]; //単項式の配列として多項式を表現する
+} OP;
 
 
-static unsigned short g[K+1]={0};
+typedef struct{
+  unsigned int x[DEG]; //配列の添字を次数に、配列の値を係数に持つ多項式の表現
+} vec;
+
+//extra gcd
+typedef struct{
+  OP u; //inverse of polynomial?
+  OP v; //error locater
+  OP d; //gcd
+} EX;
+
+
+typedef union{ //test(SIMN)
+  unsigned long long int u[4];
+  unsigned short s[16];
+} SU;
+
+
 
 
 //ランダム多項式の生成
@@ -1688,62 +1726,10 @@ void keygen (unsigned short *g){
 }
 
 
-static void byte_to_hex(uint8_t b, char s[23]) {
-    unsigned i=1;
-    s[0] = s[1] = '0';
-    s[2] = '\0';
-    while(b) {
-        unsigned t = b & 0x0f;
-        if( t < 10 ) {
-            s[i] = '0' + t;
-        } else {
-            s[i] = 'a' + t - 10;
-        }
-        i--;
-        b >>= 4;
-    }
-}
-
-//512bitの秘密鍵を暗号化
-void encrypt (unsigned char buf[],unsigned char sk[],unsigned short syn[])
+void
+encrypt ()
 {
-  const uint8_t *hash;
-  sha3_context c;
-  int image_size=512,i,j,k;
-  FILE *fp;
-  unsigned short d[K+9]={0},dd=0;
 
-  
-  fp=fopen("enc.sk","wb");
-
-  for(i=0;i<K;i++)
-    d[i]=syn[i];
-  
-  //  puts(buf);
-  //printf("\n");
-  //exit(1);
-  
-  //scanf("%s",buf);
-  sha3_Init256(&c);
-  sha3_Update(&c, (char *)buf, strlen(buf));
-  hash = sha3_Finalize(&c);
-
-  j=0;
-  for(i=0; i<image_size/8; i++) {
-    printf("%d", hash[i]);
-      char s[3];
-      //byte_to_hex(hash[i],s);
-      
-      sk[i]^=hash[i];
-  }
-  for(i=0;i<image_size/8;i++)
-    d[K+i]=sk[i];
-
-  fwrite(syn,2,K,fp);
-  fwrite(sk,1,9,fp);
-  fclose(fp);
-  printf("\n");
-  
 
 }
 
@@ -1754,15 +1740,6 @@ decrypt ()
 
 
 
-}
-
-
-void wait(void)
-{
-    int n;                    // 読み込む変数はローカルに取るべし
-    printf(" (hit return) "); // 何か表示させたほうが良いだろう
-    fflush(stdout);           // just in case
-    scanf("%d", &n);          // fgets(line, LINESIZE, stdin); という手も
 }
 
 
@@ -1866,7 +1843,7 @@ OP osqrt(OP f,OP w){
     printpol (o2v (ww));
     printf (" ww==============\n");
     printf(" wwが０になりました。error\n");
-    scanf("%d",&n);
+    //scanf("%d",&n);
     return ww;;
     // exit(1);
   }
@@ -2060,36 +2037,6 @@ int getkey()
 }
 
 
-OP synd(unsigned short zz[]){
-  unsigned short syn[K]={0};
-  int i,j;
-  OP f={0};
-
-  
-  for(i=0;i<K;i++){
-    syn[i]=0;
-    //#pragma omp parallel for
-    for(j=0;j<N;j++){
-      //   printf("%u,",zz[jj[j]]);
-      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
-    }
-       printf("syn%d,",syn[i]);
-  }
-  printf("\n");
-  //    exit(1);  
-  for(i=0;i<K;i++)
-    printf("mat[%d][1]=%d\n",i,mat[i][1]);
-  printf("\n");
-  //    exit(1);
-  
-  f=setpol(syn,K);
-  printpol(o2v(f));
-  printf(" syn=============\n");
-  //   exit(1);
-
-  return f;
-}
-
 //言わずもがな
 int main (void){
   int i, j, k, l, c,ii=0,n;
@@ -2275,8 +2222,28 @@ label:
       j++;
     }
   }
-
-  f=synd(zz);
+    
+  
+  for(i=0;i<K;i++){
+    syn[i]=0;
+    //#pragma omp parallel for
+    for(j=0;j<N;j++){
+      //   printf("%u,",zz[jj[j]]);
+      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
+    }
+       printf("syn%d,",syn[i]);
+  }
+  printf("\n");
+  //    exit(1);  
+  for(i=0;i<K;i++)
+    printf("mat[%d][1]=%d\n",i,mat[i][1]);
+  printf("\n");
+  //    exit(1);
+  
+  f=setpol(syn,K);
+  printpol(o2v(f));
+  printf(" syn=============\n");
+  //   exit(1);
   
   r=decode(w,f);
   
@@ -2323,8 +2290,8 @@ label:
   //  exit(1);
 
       printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
-       wait();
-
+       scanf("%d",&n);
+      //system("PAUSE");
       
       //fp=fopen("sk.key","wb");
       
@@ -2347,15 +2314,6 @@ label:
 	    }
 	}
 
-      
-      char buf[8192]={0},buf1[10]={0},sk[K+1];
-
-      for(i=0;i<D;i++){
-	snprintf(buf1, 10, "%d",zz[i] );
-	strcat(buf,buf1);
-      }
-      puts(buf);
-      printf("vector=%d\n",strlen(buf));
 
 
       printf ("zz=");
@@ -2363,16 +2321,27 @@ label:
 	printf ("%d,", zz[i]);
       printf ("\n");
       //    exit(1);
-      //
+      //  
+      for (i = 0; i < K; i++)
+	{
+	  syn[i] = 0;
+	  //#pragma omp parallel for
+	  for (j = 0; j < N; j++)
+	    {
+	      //   printf("%u,",zz[jj[j]]);
+	      syn[i] ^= gf[mlt (fg[zz[j]], fg[mat[i][j]])];
+	    }
+	  printf ("syn%d,", syn[i]);
+	}
+      printf ("\n");
+      //    exit(1);  
+      for (i = 0; i < K; i++)
+	printf ("mat[%d][1]=%d\n", i, mat[i][1]);
+      printf ("\n");
+      //    exit(1);
 
 
-      f=synd(zz);
-      v=o2v(f);
-      encrypt(buf,sk,v.x);
-      // exit(1);
-
-
-      //      f = setpol (syn, K);
+      f = setpol (syn, K);
       printpol (o2v (f));
       printf (" syn=============\n");
       //exit(1);
@@ -2438,7 +2407,6 @@ label:
 	  goto label;
 	}
 
-
       hh = xgcd (w, g1);
 
       ff = omod (omul (hh.v, g1), w);
@@ -2458,14 +2426,15 @@ label:
 	printf("count=%d\n",k);
 	//scanf("%d",&n);
 	goto label;
-      }
-      
-      pattarson (w, f);
-      wait();
-      
+      }	
+      if(deg(o2v(hh.d))==0)
+	pattarson (w, f);
+
+      scanf("%d",&n);
+
       //break;
     }
-    
 
-    return 0;
-}
+
+  return 0;
+    }

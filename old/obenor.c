@@ -2,12 +2,9 @@
 //auther    : the queer who thinking about cryptographic future
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.8)
-// 既約多項式生成モジュールだが、おそすぎて使い物にならない。
-//なので本ソフトではランダムにGF(2^13)を係数に持つ多項式を取ってくるものとする。
-//codeの分割コンパイルはまだよ、焦っちゃだめｗ
+// gcdの停止条件を修正した。vxの停止条件を修正した。
 
-
-#include "chash.c"
+#include "chash.cpp"
 #include "lu.c"
 #include <stdint.h>
 
@@ -350,7 +347,7 @@ n2=terms(g);
 
 
 oterm LT(OP f){
-  int i,k,j;
+  int i,k;
   oterm t={0},s={0};
 
   k=terms(f);
@@ -901,7 +898,7 @@ OP benor(int ww,int nn){
   OP v={0};
   oterm o={0};
 
-
+  
   //  while(1){
   printf("ww=%d\n",ww);
  label:
@@ -1182,7 +1179,7 @@ int main(int argc,char **argv){
     printf(" gcd=======\n");
     printf("terms=%d\n",terms(ff));
     printf("LT(h)=%d\n",LT(ff).n);
-    // exit(1);
+    exit(1);
   }
   
   /*
@@ -1218,8 +1215,8 @@ int main(int argc,char **argv){
   //     exit(1);
    
 
-  while(odeg(ff)<40){
-      ff=benor(7,40);
+  while(odeg(ff)<16){
+      ff=benor(7,32);
   }
     oprintpol(ff);
     printf(" irr?=============\n");

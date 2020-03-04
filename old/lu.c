@@ -5,8 +5,19 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "lu.h"
+//#define D 4096
+#define F 256*13 //2040
 
+unsigned char a[F][F]={0};
+unsigned char cc[F][F]={0};
+unsigned char bb[F][F]={0};
+unsigned char cl[F][F];
+  
+  //{{0,1,0,1},{1,0,0,1},{0,0,1,0},{0,0,1,1}};
+//{{0,1,1,1},{1,0,1,1},{0,0,1,1},{1,0,0,1}}; //{{1,2,0,-1},{-1,1,2,0},{2,0,1,1},{1,-2,-1,1}}; //入力用の配列
+
+//extern unsigned long xor128();
+//extern void makeS();
 
 
 void g2(){
