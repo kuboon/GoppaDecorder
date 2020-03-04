@@ -1705,17 +1705,20 @@ static void byte_to_hex(uint8_t b, char s[23]) {
 }
 
 //512bitの秘密鍵を暗号化
-void encrypt (unsigned char buf[],unsigned char sk[])
+void encrypt (unsigned char buf[],unsigned char sk[],unsigned short syn[])
 {
   const uint8_t *hash;
   sha3_context c;
   int image_size=512,i,j,k;
   FILE *fp;
-  unsigned short d[K+1]={0},dd=0;
+  unsigned short d[K+9]={0},dd=0;
 
   
   fp=fopen("enc.sk","wb");
 
+  for(i=0;i<K;i++)
+    d[i]=syn[i];
+  
   //  puts(buf);
   //printf("\n");
   //exit(1);
@@ -1733,11 +1736,14 @@ void encrypt (unsigned char buf[],unsigned char sk[])
       
       sk[i]^=hash[i];
   }
-  
-    fwrite(sk,1,9,fp);
-    fclose(fp);
-    printf("\n");
+  for(i=0;i<image_size/8;i++)
+    d[K+i]=sk[i];
 
+  fwrite(syn,2,K,fp);
+  fwrite(sk,1,9,fp);
+  fclose(fp);
+  printf("\n");
+  
 
 }
 
@@ -2321,7 +2327,7 @@ label:
 	      j++;
 	    }
 	}
-
+      
       char buf[8192]={0},buf1[10]={0},sk[K+1];
       for(i=0;i<D;i++){
 	//buf1=(char*)zz[i];
@@ -2331,8 +2337,6 @@ label:
       }
       puts(buf);
       printf("vector=%d\n",strlen(buf));
-      encrypt(buf,sk);
-      exit(1);
 
 
       printf ("zz=");
@@ -2358,6 +2362,9 @@ label:
 	printf ("mat[%d][1]=%d\n", i, mat[i][1]);
       printf ("\n");
       //    exit(1);
+
+      encrypt(buf,sk,syn);
+      exit(1);
 
 
       f = setpol (syn, K);
