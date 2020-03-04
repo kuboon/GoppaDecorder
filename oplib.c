@@ -38,6 +38,7 @@ extern int mltn(int n,int a);
 extern void makeS();
 
 
+unsigned short sy[K]={0};
 static unsigned short g[K+1]={0};
 
 
@@ -1704,57 +1705,6 @@ static void byte_to_hex(uint8_t b, char s[23]) {
     }
 }
 
-//512bitの秘密鍵を暗号化
-void encrypt (unsigned char buf[],unsigned char sk[],unsigned short syn[])
-{
-  const uint8_t *hash;
-  sha3_context c;
-  int image_size=512,i,j,k;
-  FILE *fp;
-  unsigned short d[K+9]={0},dd=0;
-
-  
-  fp=fopen("enc.sk","wb");
-
-  for(i=0;i<K;i++)
-    d[i]=syn[i];
-  
-  //  puts(buf);
-  //printf("\n");
-  //exit(1);
-  
-  //scanf("%s",buf);
-  sha3_Init256(&c);
-  sha3_Update(&c, (char *)buf, strlen(buf));
-  hash = sha3_Finalize(&c);
-
-  j=0;
-  for(i=0; i<image_size/8; i++) {
-    printf("%d", hash[i]);
-      char s[3];
-      //byte_to_hex(hash[i],s);
-      
-      sk[i]^=hash[i];
-  }
-  for(i=0;i<image_size/8;i++)
-    d[K+i]=sk[i];
-
-  fwrite(syn,2,K,fp);
-  fwrite(sk,1,9,fp);
-  fclose(fp);
-  printf("\n");
-  
-
-}
-
-
-void
-decrypt ()
-{
-
-
-
-}
 
 
 void wait(void)
@@ -1922,7 +1872,7 @@ OP osqrt(OP f,OP w){
 
 
 //パターソンアルゴリズムでバイナリGoppa符号を復号する
-int pattarson (OP w, OP f){
+vec pattarson (OP w, OP f){
   OP g1 = { 0 }, ll = { 0 }, s = { 0 }, tmp={ 0 };
   int i, j, k, l, c,n;
   unsigned long a, x, count = 0;
@@ -1953,7 +1903,7 @@ int pattarson (OP w, OP f){
   if(deg(o2v(b2))>0){
     printf("逆元が計算できません。error\n");
     scanf("%d",&n);
-    return -1;
+    exit(1);
   }
   printf ("locater==========\n");
   //exit(1);
@@ -1973,7 +1923,7 @@ int pattarson (OP w, OP f){
     printf(" g1============\n");
     printf(" g1は平方ではありません。error");
     scanf("%d",&n);
-    return -1;
+    exit(1);
   }  
   printf (" g1!=========\n");
   if (LT (g1).n == 0 && LT (g1).a == 0)
@@ -1984,7 +1934,7 @@ int pattarson (OP w, OP f){
       printf(" g1============\n");
       printf("平方が０になりました。 error\n");
       scanf("%d",&n);
-      return -1;
+      exit(1);
     }
   //exit(1);
   hh = xgcd (w, g1);
@@ -2033,11 +1983,139 @@ int pattarson (OP w, OP f){
     printpol(o2v(f));
     printf(" f================\n");
     scanf("%d",&n);
-    return -1;
+    exit(1);
   }
 
  
-  return 0; 
+  return v; 
+}
+
+
+//512bitの秘密鍵を暗号化
+void encrypt (unsigned char buf[],unsigned char sk[])
+{
+  const uint8_t *hash;
+  sha3_context c;
+  int image_size=512,i,j,k;
+  FILE *fp;
+  unsigned short d[K]={0},dd=0;
+
+  
+  fp=fopen("enc.sk","wb");
+  printf("in enc sk=");
+  for(i=0;i<9;i++)
+    printf("%d,",sk[i]);
+  printf("\n");
+  //  puts(buf);
+  //printf("\n");
+  //exit(1);
+  
+  //scanf("%s",buf);
+  sha3_Init256(&c);
+  sha3_Update(&c, (char *)buf, strlen(buf));
+  hash = sha3_Finalize(&c);
+
+  j=0;
+
+  for(i=0; i<image_size/8; i++) {
+    printf("%d", hash[i]);
+      char s[3];
+      //byte_to_hex(hash[i],s);
+      
+      sk[i]^=hash[i];
+
+  }
+  printf("\nenc sk=");
+  for(i=0;i<9;i++)
+    printf("%d,",sk[i]);
+  printf("\n");
+  fwrite(sy,2,K,fp);
+  fwrite(sk,1,9,fp);
+  fclose(fp);
+  //  printf("in enc2 sk=\n");
+  // for(i=0;i<9;i++)
+  //printf("%d,",sk[i]);
+  //printf("\n");
+  // exit(1);
+}
+
+
+void decrypt (OP w)
+{
+  FILE *fp;
+  int i,j;
+  unsigned char sk[9]={0},sk2[9]={0},err[N]={0};
+  unsigned short buf[K]={0},tmp[K]={0};
+  OP f={0},h={0};
+  vec v={0};
+  const uint8_t *hash;
+  sha3_context c;
+  int image_size=512;
+
+  
+
+  fp=fopen("enc.sk","rb");
+
+  fread(tmp,2,K,fp);
+  fread(sk,1,9,fp);
+
+  
+  for(i=0;i<K;i++)
+    buf[i]=tmp[K-i-1];
+
+  f=setpol(buf,K);
+  v=pattarson(w,f);
+  //v=o2v(h);
+  //  exit(1);
+  printf("in decrypt\n");
+  
+  j=0;
+  if(v.x[1]>0 && v.x[0]==0){
+    err[0]=1;
+    j++;
+  }
+  printf("j=%d\n",j);
+  printf("after j\n");
+  for(i=j;i<2*T;i++){
+    if(v.x[i]>0){
+      err[v.x[i]]=1;
+    }
+  }
+  
+  char buf0[8192]={0},buf1[10]={0};
+  
+  for(i=0;i<D;i++){
+    snprintf(buf1, 10, "%d",err[i] );
+    strcat(buf0,buf1);
+  }
+  puts(buf0);
+  printf("vector=%d\n",strlen(buf0));
+  //exit(1);
+  printf("in dec sk2=");
+  for(i=0;i<9;i++)
+    printf("%d,",sk[i]);
+  printf("\n");
+  
+  sha3_Init256(&c);
+  sha3_Update(&c, (char *)buf0, strlen(buf0));
+  hash = sha3_Finalize(&c);
+
+  j=0;
+  printf("hash=");
+  for(i=0; i<image_size/8; i++) {
+    printf("%d", hash[i]);
+      char s[3];
+      //byte_to_hex(hash[i],s);
+      
+      sk[i]^=hash[i];
+  }
+  printf("\ndecript sk=");
+  for(i=0;i<9;i++)
+  printf("%u,",sk[i]);
+  printf("\n");
+  //  exit(1);
+  
+  return;
 }
 
 
@@ -2092,7 +2170,7 @@ OP synd(unsigned short zz[]){
 
 //言わずもがな
 int main (void){
-  int i, j, k, l, c,ii=0,n;
+  int i, j, k, l,ii=0,n;
   unsigned long a, x, count = 0;
   //  unsigned short cc[K]={0};
   unsigned short m[K], dd[K * N] = { 0 };
@@ -2110,6 +2188,9 @@ int main (void){
   oterm rr = { 0 };
   OP r1 = { 0 }, r2 = { 0 }, t1 = { 0 }, t2 = { 0 }, a1 = { 0 }, b1 = { 0 }, a2 = { 0 }, b2 = { 0 };
   OP g1 = { 0 },tmp={0},ll={0};
+  const uint8_t *hash;
+  sha3_context c;
+  int image_size=512;
   
 
 
@@ -2348,7 +2429,9 @@ label:
 	}
 
       
-      char buf[8192]={0},buf1[10]={0},sk[K+1];
+      char buf[8192]={0},buf1[10]={0};
+      unsigned char sk[9]={1,2,3,4,5,6,7,8,9};
+      unsigned short s[K]={0};
 
       for(i=0;i<D;i++){
 	snprintf(buf1, 10, "%d",zz[i] );
@@ -2356,20 +2439,45 @@ label:
       }
       puts(buf);
       printf("vector=%d\n",strlen(buf));
+      //exit(1);
 
-
-      printf ("zz=");
-      for (i = 0; i < N; i++)
-	printf ("%d,", zz[i]);
-      printf ("\n");
       //    exit(1);
       //
-
+      printf("sk0=");
+      for(i=0;i<9;i++)
+	printf("%u,",sk[i]);
+      printf("\n");
+      //exit(1);
 
       f=synd(zz);
       v=o2v(f);
-      encrypt(buf,sk,v.x);
-      // exit(1);
+      //printf("v=");
+      for(i=0;i<K;i++){
+	sy[i]=v.x[i];
+	printf("%d,",sy[i]);
+      }
+      printf("\n");
+      //exit(1);
+      
+      encrypt(buf,sk);
+      decrypt(w);
+      //exit(1);
+      
+  
+      sha3_Init256(&c);
+      sha3_Update(&c, (char *)buf, strlen(buf));
+      hash = sha3_Finalize(&c);
+
+  j=0;
+  for(i=0; i<image_size/8; i++) {
+    printf("%d", hash[i]);
+      char s[3];
+      //byte_to_hex(hash[i],s);
+      
+      //sk[i]^=hash[i];
+  }
+
+      exit(1);
 
 
       //      f = setpol (syn, K);
