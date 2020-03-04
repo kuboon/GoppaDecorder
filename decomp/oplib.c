@@ -2314,8 +2314,8 @@ label:
   //  exit(1);
 
       printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
-       scanf("%d",&n);
-      //system("PAUSE");
+       wait();
+
       
       //fp=fopen("sk.key","wb");
       
@@ -2337,12 +2337,12 @@ label:
 	      j++;
 	    }
 	}
+
       
       char buf[8192]={0},buf1[10]={0},sk[K+1];
+
       for(i=0;i<D;i++){
-	//buf1=(char*)zz[i];
 	snprintf(buf1, 10, "%d",zz[i] );
-	//printf("%c,",buf1);
 	strcat(buf,buf1);
       }
       puts(buf);
@@ -2360,7 +2360,7 @@ label:
       f=synd(zz);
       v=o2v(f);
       encrypt(buf,sk,v.x);
-      exit(1);
+      // exit(1);
 
 
       //      f = setpol (syn, K);
@@ -2429,6 +2429,7 @@ label:
 	  goto label;
 	}
 
+
       hh = xgcd (w, g1);
 
       ff = omod (omul (hh.v, g1), w);
@@ -2448,15 +2449,14 @@ label:
 	printf("count=%d\n",k);
 	//scanf("%d",&n);
 	goto label;
-      }	
-      if(deg(o2v(hh.d))==0)
-	pattarson (w, f);
-
-      scanf("%d",&n);
-
+      }
+      
+      pattarson (w, f);
+      wait();
+      
       //break;
     }
+    
 
-
-  return 0;
-    }
+    return 0;
+}
