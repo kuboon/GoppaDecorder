@@ -1757,6 +1757,15 @@ decrypt ()
 }
 
 
+void wait(void)
+{
+    int n;                    // 読み込む変数はローカルに取るべし
+    printf(" (hit return) "); // 何か表示させたほうが良いだろう
+    fflush(stdout);           // just in case
+    scanf("%d", &n);          // fgets(line, LINESIZE, stdin); という手も
+}
+
+
 //有限体の元の平方を計算する
 int isqrt (unsigned short u){
   int i, j, k;
