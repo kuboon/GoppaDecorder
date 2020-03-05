@@ -2156,6 +2156,7 @@ OP synd(unsigned short zz[]){
       //   printf("%u,",zz[jj[j]]);
       syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
     }
+    sy[i]=syn[i];
        printf("syn%d,",syn[i]);
   }
   printf("\n");
@@ -2212,16 +2213,17 @@ int fileenc(int argc,char **argv[]){
   printf("%s\n",argv[2]);
   //exit(1);
   
-  f=synd(zz);
-  v=o2v(f);
+  f=synd(zet);
+  // v=o2v(f);
     //
-  for(i=0;i<K;i++)
-    sy[i]=v.x[i];
+  //for(i=0;i<K;i++)
+  // sy[i]=v.x[i];
        
   fwrite(sy,2,K,fq);
-  
+  fclose(fq);
   printf("in file\n");
-
+  return 0;
+  
   
   char buf[1000000],buf1[10]={0};
   
@@ -2277,6 +2279,91 @@ int fileenc(int argc,char **argv[]){
   
   
   return 0;
+}
+
+
+int filedec(OP w,int argc,char **argv[]){
+  int i,j,b,k;
+  FILE *fp,*fq;
+  unsigned char buf[10000],msg[64],err[N];
+  unsigned short s[K]={0},tmp[K]={0};
+  OP f;
+  vec v;
+  uint8_t *hash;
+  sha3_context c;
+  int image_size=512;
+
+  
+  fp=fopen(argv[2],"rb");
+  fq=fopen(argv[3],"wb");
+
+  fread(tmp,2,K,fp);
+  for(i=0;i<K;i++){
+    s[i]=tmp[K-i-1];
+    printf("%d,",s[i]);
+  }
+  printf("\n");
+  f=setpol(tmp,K);
+  v=pattarson(w,f);
+  exit(1);
+
+  j=0;
+  if(v.x[1]>0 && v.x[0]==0){
+    err[0]=1;
+    j++;
+  }
+  printf("j=%d\n",j);
+  printf("after j\n");
+  for(i=j;i<2*T;i++){
+    if(v.x[i]>0){
+      err[v.x[i]]=1;
+    }
+  }
+  
+  char buf0[10000]={0},buf1[10]={0};
+  
+  for(i=0;i<D;i++){
+    snprintf(buf1, 10, "%d",err[i] );
+    strcat(buf0,buf1);
+  }
+  puts(buf0);
+  printf("vector=%d\n",strlen(buf0));
+  //exit(1);
+
+  k=0;
+  while((b=fread(buf,1,64,fp))>0){
+    printf("cipher sk2=");
+    for(i=0;i<64;i++)
+      printf("%u,",buf[i]);
+    printf("\n");
+    
+    sha3_Init256(&c);
+    sha3_Update(&c, (char *)buf0, strlen(buf0));
+    hash = sha3_Finalize(&c);
+    
+    j=0;
+    printf("hash=");
+    for(i=0; i<image_size/8; i++) {
+      printf("%d", hash[i]);
+      char s[3];
+      //byte_to_hex(hash[i],s);
+      
+      buf[i]^=hash[i];
+
+      hash[i]^=k;
+      k++;
+      if(k==255)
+	k=0;
+    }
+    fwrite(buf,1,b,fq);
+
+  }
+    printf("\ndecript sk=");
+    for(i=0;i<64;i++)
+      printf("%u,",buf[i]);
+    printf("\n");
+    fclose(fp);
+    fclose(fq);
 }
 
 
@@ -2346,8 +2433,9 @@ label:
   //key2 (g);
   det(g);
 
-  //fileenc(argc,argv);
-  //exit(1);
+  fileenc(argc,argv);
+  filedec(w,argc,argv);
+  exit(1);
 
   /*
   fq = fopen ("H.key", "rb");
@@ -2703,3 +2791,4 @@ label:
 
     return 0;
 }
+
