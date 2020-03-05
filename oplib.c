@@ -2154,7 +2154,7 @@ OP synd(unsigned short zz[]){
     //#pragma omp parallel for
     for(j=0;j<N;j++){
       //   printf("%u,",zz[jj[j]]);
-      syn[i]^=gf[mlt(fg[zet[j]],fg[mat[i][j]])];
+      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
     }
        printf("syn%d,",syn[i]);
   }
@@ -2473,7 +2473,7 @@ label:
   }
 
   f=synd(zz);
-  //exit(1);
+  //  exit(1);
   r=decode(w,f);
   
   
