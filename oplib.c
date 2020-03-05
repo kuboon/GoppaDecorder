@@ -38,6 +38,7 @@ extern int mltn(int n,int a);
 extern void makeS();
 
 
+unsigned short zet[N]={0};
 unsigned short sy[K]={0};
 static unsigned short g[K+1]={0};
 
@@ -2005,7 +2006,7 @@ void encrypt (unsigned char buf[],unsigned char sk[])
 
   printf("plain text=");
   for(i=0;i<64;i++)
-    printf("%d,",sk[i]);
+    printf("%u,",sk[i]);
   printf("\n");
   //  puts(buf);
   //printf("\n");
@@ -2094,7 +2095,7 @@ void decrypt (OP w)
   //exit(1);
   printf("cipher sk2=");
   for(i=0;i<64;i++)
-    printf("%d,",sk[i]);
+    printf("%u,",sk[i]);
   printf("\n");
   
   sha3_Init256(&c);
@@ -2144,13 +2145,16 @@ OP synd(unsigned short zz[]){
   int i,j;
   OP f={0};
 
+
+  printf("in synd\n");
+  //exit(1);
   
   for(i=0;i<K;i++){
     syn[i]=0;
     //#pragma omp parallel for
     for(j=0;j<N;j++){
       //   printf("%u,",zz[jj[j]]);
-      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
+      syn[i]^=gf[mlt(fg[zet[j]],fg[mat[i][j]])];
     }
        printf("syn%d,",syn[i]);
   }
@@ -2169,8 +2173,115 @@ OP synd(unsigned short zz[]){
   return f;
 }
 
+
+int fileenc(int argc,char **argv[]){
+  int i,j,k,b,l;
+  FILE *fp,*fq;
+  unsigned char msg[64]={0};
+  unsigned char zz[N]={0};
+  uint8_t *hash;
+  sha3_context c;
+  int image_size=512;
+  vec v;
+  OP f={0};
+
+  
+  for (i = 0; i < N; i++)
+    zz[i] = 0;
+  
+  j = 0;
+  while (j < T * 2)
+    {
+      l = xor128 () % N;
+      printf ("l=%d\n", l);
+      if (0 == zz[l])
+	{
+	  zz[l] = 1;
+	  j++;
+	}
+    }
+  for(i=0;i<N;i++)
+    zet[i]=zz[i];
+  //printf("%d",zz[i]);
+  //printf("\n");
+  //exit(1);
+  
+  fp=fopen(argv[1],"rb");
+  fq=fopen(argv[2],"wb");
+  printf("%s\n",argv[1]);
+  printf("%s\n",argv[2]);
+  //exit(1);
+  
+  f=synd(zz);
+  v=o2v(f);
+    //
+  for(i=0;i<K;i++)
+    sy[i]=v.x[i];
+       
+  fwrite(sy,2,K,fq);
+  
+  printf("in file\n");
+
+  
+  char buf[1000000],buf1[10]={0};
+  
+  for(i=0;i<D;i++){
+    snprintf(buf1, 10, "%d",zz[i] );
+    strcat(buf,buf1);
+  }
+
+  puts(buf);
+  printf("vector=%d\n",strlen(buf));
+  
+  sha3_Init256(&c);
+  sha3_Update(&c, (char *)buf, strlen(buf));
+  hash = sha3_Finalize(&c);
+  
+  
+  k=0;
+  while((b=fread(msg,1,64,fp))>0){
+    //    memset(msg,0,sizeof(msg));
+
+    for(i=0;i<64;i++){
+      snprintf(buf1, 10, "%d",hash[i] );
+      strcat(buf,buf1);
+    }
+    strncpy( buf, buf, 8192 );
+    buf[8193]='\0';
+    
+    sha3_Init256(&c);
+    sha3_Update(&c, (char *)buf, strlen(buf));
+    hash = sha3_Finalize(&c);
+    
+    j=0;
+    for(i=0; i<image_size/8; i++) {
+      // printf("%d", hash[i]);
+      char s[3];
+      //byte_to_hex(hash[i],s);
+      
+      msg[i]^=hash[i];
+    
+      hash[i]^=k;
+      k++;
+      if(k>254)
+	k=0;
+    }
+    fwrite(msg,1,b,fq);
+    memset(msg,0,sizeof(msg));
+
+  }
+  //    exit(1);       
+  fclose(fp);
+  fclose(fq);
+  printf("len=%d\n",strlen(buf));
+  
+  
+  return 0;
+}
+
+
 //言わずもがな
-int main (void){
+int main (int argc,char **argv[]){
   int i, j, k, l,ii=0,n;
   unsigned long a, x, count = 0;
   //  unsigned short cc[K]={0};
@@ -2234,6 +2345,9 @@ label:
   //keygen(g);
   //key2 (g);
   det(g);
+
+  //fileenc(argc,argv);
+  //exit(1);
 
   /*
   fq = fopen ("H.key", "rb");
@@ -2359,7 +2473,7 @@ label:
   }
 
   f=synd(zz);
-  
+  //exit(1);
   r=decode(w,f);
   
   
@@ -2429,7 +2543,16 @@ label:
 	    }
 	}
 
-      
+      static char base64[] = {
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+	'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+	'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+	'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+	'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+	'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+	'w', 'x', 'y', 'z', '0', '1', '2', '3',
+	'4', '5', '6', '7', '8', '9', '+', '/',
+};
       char buf[8192]={0},buf1[10]={0};
       unsigned char sk[64]={0};
       unsigned short s[K]={0};
@@ -2480,8 +2603,8 @@ label:
       //sk[i]^=hash[i];
   }
 
-      exit(1);
-
+  // exit(1);
+  wait();
 
       //      f = setpol (syn, K);
       printpol (o2v (f));
