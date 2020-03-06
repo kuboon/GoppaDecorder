@@ -2225,7 +2225,7 @@ int fileenc(int argc,char **argv[]){
   // return 0;
   
   
-  char buf[1000000],buf1[10]={0};
+  unsigned char buf[1000000],buf1[10]={0};
   
   for(i=0;i<N;i++){
     snprintf(buf1, 10, "%d",zz[i] );
@@ -2295,8 +2295,8 @@ int fileenc(int argc,char **argv[]){
 int filedec(OP w,int argc,char **argv[]){
   int i,j,b,k;
   FILE *fp,*fq;
-  unsigned char msg[64],err[N]={0};
-  unsigned short s[K]={0},tmp[K]={0};
+  unsigned char msg[64];
+    unsigned short s[K]={0},tmp[K]={0},err[N]={0};
   OP f;
   vec v;
   uint8_t *hash;
@@ -2330,7 +2330,7 @@ int filedec(OP w,int argc,char **argv[]){
     }
   }
   
-  char buf[1000000],buf1[10]={0};
+  unsigned char buf[1000000],buf1[10]={0};
   
   for(i=0;i<N;i++){
     snprintf(buf1, 10, "%d",err[i] );
@@ -2394,6 +2394,7 @@ int filedec(OP w,int argc,char **argv[]){
 }
 
 
+//64バイト秘密鍵の暗号化と復号のテスト
 void test(OP w,unsigned short zz[]){
   int i,j;
   vec v={0};
