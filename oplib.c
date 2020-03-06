@@ -2377,6 +2377,79 @@ int filedec(OP w,int argc,char **argv[]){
 }
 
 
+void test(OP w,unsigned short zz[]){
+  int i,j;
+  vec v={0};
+  const uint8_t *hash;
+  sha3_context c;
+  int image_size=512;
+  OP f={0};
+
+  
+      static char base64[] = {
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+	'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+	'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+	'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+	'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+	'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+	'w', 'x', 'y', 'z', '0', '1', '2', '3',
+	'4', '5', '6', '7', '8', '9', '+', '/',
+      };
+      char buf[8192]={0},buf1[10]={0};
+      unsigned char sk[64]={0};
+      unsigned short s[K]={0};
+      for(i=0;i<64;i++)
+	sk[i]=i+1;
+      
+      for(i=0;i<D;i++){
+	snprintf(buf1, 10, "%d",zz[i] );
+	strcat(buf,buf1);
+      }
+      puts(buf);
+      printf("vector=%d\n",strlen(buf));
+      //exit(1);
+
+      //    exit(1);
+      //
+      printf("sk0=");
+      for(i=0;i<64;i++)
+	printf("%u,",sk[i]);
+      printf("\n");
+      //exit(1);
+
+      f=synd(zz);
+      v=o2v(f);
+      //printf("v=");
+      for(i=0;i<K;i++){
+	sy[i]=v.x[i];
+	printf("%d,",sy[i]);
+      }
+      printf("\n");
+      //exit(1);
+      
+      encrypt(buf,sk);
+      decrypt(w);
+      //exit(1);
+      
+  
+      sha3_Init256(&c);
+      sha3_Update(&c, (char *)buf, strlen(buf));
+      hash = sha3_Finalize(&c);
+
+  j=0;
+  for(i=0; i<image_size/8; i++) {
+    printf("%d", hash[i]);
+      char s[3];
+      //byte_to_hex(hash[i],s);
+      
+      //sk[i]^=hash[i];
+  }
+
+  // exit(1);
+}
+
+
 //言わずもがな
 int main (int argc,char **argv[]){
   int i, j, k, l,ii=0,n;
@@ -2644,68 +2717,10 @@ label:
 	    }
 	}
 
-      static char base64[] = {
-	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-	'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-	'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-	'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-	'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-	'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-	'w', 'x', 'y', 'z', '0', '1', '2', '3',
-	'4', '5', '6', '7', '8', '9', '+', '/',
-};
-      char buf[8192]={0},buf1[10]={0};
-      unsigned char sk[64]={0};
-      unsigned short s[K]={0};
-      for(i=0;i<64;i++)
-	sk[i]=i+1;
-      
-      for(i=0;i<D;i++){
-	snprintf(buf1, 10, "%d",zz[i] );
-	strcat(buf,buf1);
-      }
-      puts(buf);
-      printf("vector=%d\n",strlen(buf));
-      //exit(1);
-
-      //    exit(1);
-      //
-      printf("sk0=");
-      for(i=0;i<64;i++)
-	printf("%u,",sk[i]);
-      printf("\n");
-      //exit(1);
+      test(w,zz);
+      wait();
 
       f=synd(zz);
-      v=o2v(f);
-      //printf("v=");
-      for(i=0;i<K;i++){
-	sy[i]=v.x[i];
-	printf("%d,",sy[i]);
-      }
-      printf("\n");
-      //exit(1);
-      
-      encrypt(buf,sk);
-      decrypt(w);
-      //exit(1);
-      
-  
-      sha3_Init256(&c);
-      sha3_Update(&c, (char *)buf, strlen(buf));
-      hash = sha3_Finalize(&c);
-
-  j=0;
-  for(i=0; i<image_size/8; i++) {
-    printf("%d", hash[i]);
-      char s[3];
-      //byte_to_hex(hash[i],s);
-      
-      //sk[i]^=hash[i];
-  }
-
-  // exit(1);
-  wait();
 
       //      f = setpol (syn, K);
       printpol (o2v (f));
