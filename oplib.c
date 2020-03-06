@@ -2169,7 +2169,7 @@ OP synd(unsigned short zz[]){
   f=setpol(syn,K);
   printpol(o2v(f));
   printf(" syn=============\n");
-  //   exit(1);
+  //  exit(1);
 
   return f;
 }
@@ -2663,6 +2663,9 @@ label:
   }
 
   f=synd(zz);
+  printpol(o2v(f));
+  printf("\n");
+  wait();
   //  exit(1);
   r=decode(w,f);
   
