@@ -2244,33 +2244,42 @@ int fileenc(int argc,char **argv[]){
   while((b=fread(msg,1,64,fp))>0){
     //    memset(msg,0,sizeof(msg));
 
-    for(i=0;i<64;i++){
-      snprintf(buf1, 10, "%d",hash[i] );
-      strcat(buf,buf1);
-    }
     strncpy( buf, buf, 8192 );
     buf[8193]='\0';
     
     sha3_Init256(&c);
     sha3_Update(&c, (char *)buf, strlen(buf));
     hash = sha3_Finalize(&c);
+
+    //puts(buf);
+    //printf("srt=%d\n",strlen(buf));
+    //wait();
+
     
     j=0;
     for(i=0; i<image_size/8; i++) {
-      // printf("%d", hash[i]);
+      printf("%d", hash[i]);
       char s[3];
       //byte_to_hex(hash[i],s);
       
       msg[i]^=hash[i];
     
-      hash[i]^=k;
+      //hash[i]^=k;
       k++;
       if(k==255)
 	k=0;
     }
+
+    memset(buf, '\0', sizeof(buf));
+    for(i=0;i<64;i++){
+      snprintf(buf1, 10, "%d",hash[i] );
+      strcat(buf,buf1);
+    }
+    printf("\nlen=%d\n",strlen(buf));
+    puts(buf);
     fwrite(msg,1,b,fq);
     memset(msg,0,sizeof(msg));
-
+    
   }
   //    exit(1);       
   fclose(fp);
@@ -2328,7 +2337,7 @@ int filedec(OP w,int argc,char **argv[]){
     strcat(buf,buf1);
   }
 
-  puts(buf);
+  //puts(buf);
   printf("vector=%d\n",strlen(buf));
   
   sha3_Init256(&c);
@@ -2340,30 +2349,39 @@ int filedec(OP w,int argc,char **argv[]){
   while((b=fread(msg,1,64,fp))>0){
     //    memset(msg,0,sizeof(msg));
 
-    for(i=0;i<64;i++){
-      snprintf(buf1, 10, "%d",hash[i] );
-      strcat(buf,buf1);
-    }
     strncpy( buf, buf, 8192 );
     buf[8193]='\0';
-    
+
     sha3_Init256(&c);
     sha3_Update(&c, (char *)buf, strlen(buf));
     hash = sha3_Finalize(&c);
     
+    puts(buf);
+    printf("srt=%d\n",strlen(buf));
+    //wait();
+    
+    
     j=0;
     for(i=0; i<image_size/8; i++) {
-      // printf("%d", hash[i]);
+       printf("%d", hash[i]);
       char s[3];
       //byte_to_hex(hash[i],s);
       
       msg[i]^=hash[i];
     
-      hash[i]^=k;
+      //hash[i]^=k;
       k++;
       if(k==255)
 	k=0;
     }
+    printf("\n");
+    memset(buf, '\0', sizeof(buf));
+    for(i=0;i<64;i++){
+      snprintf(buf1, 10, "%d",hash[i] );
+      strcat(buf,buf1);
+    }
+    printf("\nlen=%d\n",strlen(buf));
+    puts(buf);
     fwrite(msg,1,b,fq);
     memset(msg,0,sizeof(msg));
 
