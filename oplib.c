@@ -2225,7 +2225,7 @@ int fileenc(int argc,char **argv[]){
   // return 0;
   
   
-  unsigned char buf[1000000],buf1[10]={0};
+  unsigned char buf[1000000],buf1[10]={0},tmp[64]={0};
   
   for(i=0;i<N;i++){
     snprintf(buf1, 10, "%d",zz[i] );
@@ -2243,7 +2243,6 @@ int fileenc(int argc,char **argv[]){
   k=0;
   while((b=fread(msg,1,64,fp))>0){
     //    memset(msg,0,sizeof(msg));
-
     strncpy( buf, buf, 8192 );
     buf[8193]='\0';
     
@@ -2258,7 +2257,7 @@ int fileenc(int argc,char **argv[]){
     
     j=0;
     for(i=0; i<image_size/8; i++) {
-      printf("%d", hash[i]);
+      //printf("%d", hash[i]);
       char s[3];
       //byte_to_hex(hash[i],s);
       
@@ -2275,8 +2274,8 @@ int fileenc(int argc,char **argv[]){
       snprintf(buf1, 10, "%d",hash[i] );
       strcat(buf,buf1);
     }
-    printf("\nlen=%d\n",strlen(buf));
-    puts(buf);
+    // printf("\nlen=%d\n",strlen(buf));
+    //puts(buf);
     fwrite(msg,1,b,fq);
     memset(msg,0,sizeof(msg));
     
@@ -2356,14 +2355,14 @@ int filedec(OP w,int argc,char **argv[]){
     sha3_Update(&c, (char *)buf, strlen(buf));
     hash = sha3_Finalize(&c);
     
-    puts(buf);
-    printf("srt=%d\n",strlen(buf));
+    //puts(buf);
+    //printf("srt=%d\n",strlen(buf));
     //wait();
     
     
     j=0;
     for(i=0; i<image_size/8; i++) {
-       printf("%d", hash[i]);
+      // printf("%d", hash[i]);
       char s[3];
       //byte_to_hex(hash[i],s);
       
@@ -2457,7 +2456,7 @@ void test(OP w,unsigned short zz[]){
 
   j=0;
   for(i=0; i<image_size/8; i++) {
-    printf("%d", hash[i]);
+    //printf("%d", hash[i]);
       char s[3];
       //byte_to_hex(hash[i],s);
       
@@ -2534,12 +2533,6 @@ label:
   //key2 (g);
   det(g);
 
-  //おまけ：ファイルの暗号化
-  //fileenc(argc,argv);
-  //wait();
-  //filedec(w,argc,argv);
-  //wait();
-  //exit(1);
 
   /*
   fq = fopen ("H.key", "rb");
