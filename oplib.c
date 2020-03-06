@@ -2175,6 +2175,7 @@ OP synd(unsigned short zz[]){
 }
 
 
+//ファイルの暗号化
 int fileenc(int argc,char **argv[]){
   int i,j,k,b,l;
   FILE *fp,*fq;
@@ -2220,14 +2221,14 @@ int fileenc(int argc,char **argv[]){
   // sy[i]=v.x[i];
        
   fwrite(sy,2,K,fq);
-  fclose(fq);
+  //fclose(fq);
   printf("in file\n");
-  return 0;
+  // return 0;
   
   
   char buf[1000000],buf1[10]={0};
   
-  for(i=0;i<D;i++){
+  for(i=0;i<N;i++){
     snprintf(buf1, 10, "%d",zz[i] );
     strcat(buf,buf1);
   }
@@ -2265,7 +2266,7 @@ int fileenc(int argc,char **argv[]){
     
       hash[i]^=k;
       k++;
-      if(k>254)
+      if(k==255)
 	k=0;
     }
     fwrite(msg,1,b,fq);
@@ -2282,10 +2283,11 @@ int fileenc(int argc,char **argv[]){
 }
 
 
+//ファイルの復号
 int filedec(OP w,int argc,char **argv[]){
   int i,j,b,k;
   FILE *fp,*fq;
-  unsigned char buf[10000],msg[64],err[N];
+  unsigned char msg[64],err[N]={0};
   unsigned short s[K]={0},tmp[K]={0};
   OP f;
   vec v;
@@ -2305,7 +2307,7 @@ int filedec(OP w,int argc,char **argv[]){
   printf("\n");
   f=setpol(tmp,K);
   v=pattarson(w,f);
-  exit(1);
+  //exit(1);
 
   j=0;
   if(v.x[1]>0 && v.x[0]==0){
@@ -2320,50 +2322,58 @@ int filedec(OP w,int argc,char **argv[]){
     }
   }
   
-  char buf0[10000]={0},buf1[10]={0};
+  char buf[1000000],buf1[10]={0};
   
-  for(i=0;i<D;i++){
+  for(i=0;i<N;i++){
     snprintf(buf1, 10, "%d",err[i] );
-    strcat(buf0,buf1);
+    strcat(buf,buf1);
   }
-  puts(buf0);
-  printf("vector=%d\n",strlen(buf0));
-  //exit(1);
 
+  puts(buf);
+  printf("vector=%d\n",strlen(buf));
+  
+  sha3_Init256(&c);
+  sha3_Update(&c, (char *)buf, strlen(buf));
+  hash = sha3_Finalize(&c);
+  
+  
   k=0;
-  while((b=fread(buf,1,64,fp))>0){
-    printf("cipher sk2=");
-    for(i=0;i<64;i++)
-      printf("%u,",buf[i]);
-    printf("\n");
+  while((b=fread(msg,1,64,fp))>0){
+    //    memset(msg,0,sizeof(msg));
+
+    for(i=0;i<64;i++){
+      snprintf(buf1, 10, "%d",hash[i] );
+      strcat(buf,buf1);
+    }
+    strncpy( buf, buf, 8192 );
+    buf[8193]='\0';
     
     sha3_Init256(&c);
-    sha3_Update(&c, (char *)buf0, strlen(buf0));
+    sha3_Update(&c, (char *)buf, strlen(buf));
     hash = sha3_Finalize(&c);
     
     j=0;
-    printf("hash=");
     for(i=0; i<image_size/8; i++) {
-      printf("%d", hash[i]);
+      // printf("%d", hash[i]);
       char s[3];
       //byte_to_hex(hash[i],s);
       
-      buf[i]^=hash[i];
-
+      msg[i]^=hash[i];
+    
       hash[i]^=k;
       k++;
       if(k==255)
 	k=0;
     }
-    fwrite(buf,1,b,fq);
+    fwrite(msg,1,b,fq);
+    memset(msg,0,sizeof(msg));
 
   }
-    printf("\ndecript sk=");
-    for(i=0;i<64;i++)
-      printf("%u,",buf[i]);
-    printf("\n");
-    fclose(fp);
-    fclose(fq);
+  //    exit(1);       
+  fclose(fp);
+  fclose(fq);
+  printf("len=%d\n",strlen(buf));
+
 }
 
 
@@ -2433,9 +2443,12 @@ label:
   //key2 (g);
   det(g);
 
-  fileenc(argc,argv);
-  filedec(w,argc,argv);
-  exit(1);
+  //おまけ：ファイルの暗号化
+  //fileenc(argc,argv);
+  //wait();
+  //filedec(w,argc,argv);
+  //wait();
+  //exit(1);
 
   /*
   fq = fopen ("H.key", "rb");
