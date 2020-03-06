@@ -2175,7 +2175,7 @@ OP synd(unsigned short zz[]){
 }
 
 
-//ファイルの暗号化
+//ファイルの暗号化(too slow)
 int fileenc(int argc,char **argv[]){
   int i,j,k,b,l;
   FILE *fp,*fq;
@@ -2225,7 +2225,7 @@ int fileenc(int argc,char **argv[]){
   // return 0;
   
   
-  unsigned char buf[1000000],buf1[10]={0},tmp[64]={0};
+  unsigned char buf[10000],buf1[10]={0},tmp[64]={0};
   
   for(i=0;i<N;i++){
     snprintf(buf1, 10, "%d",zz[i] );
@@ -2290,7 +2290,7 @@ int fileenc(int argc,char **argv[]){
 }
 
 
-//ファイルの復号
+//ファイルの復号(don't start,too late)
 int filedec(OP w,int argc,char **argv[]){
   int i,j,b,k;
   FILE *fp,*fq;
@@ -2329,7 +2329,7 @@ int filedec(OP w,int argc,char **argv[]){
     }
   }
   
-  unsigned char buf[1000000],buf1[10]={0};
+  unsigned char buf[10000],buf1[10]={0};
   
   for(i=0;i<N;i++){
     snprintf(buf1, 10, "%d",err[i] );
@@ -2361,6 +2361,7 @@ int filedec(OP w,int argc,char **argv[]){
     
     
     j=0;
+#pragma omp parallel for
     for(i=0; i<image_size/8; i++) {
       // printf("%d", hash[i]);
       char s[3];
@@ -2517,7 +2518,7 @@ label:
   oprintpol (w);
   //exit(1);
   
-#pragma omp parallel for
+  //#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
       a = trace (w, i);
@@ -2533,7 +2534,11 @@ label:
   //key2 (g);
   det(g);
 
-
+  //fileenc(argc,argv);
+  //wait();
+  //filedec(w,argc,argv);
+  //exit(1);
+  
   /*
   fq = fopen ("H.key", "rb");
   fread (dd, 2, K * N, fq);
