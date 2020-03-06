@@ -2180,7 +2180,7 @@ int fileenc(int argc,char **argv[]){
   int i,j,k,b,l;
   FILE *fp,*fq;
   unsigned char msg[64]={0};
-  unsigned char zz[N]={0};
+  unsigned short zz[N]={0};
   uint8_t *hash;
   sha3_context c;
   int image_size=512;
@@ -2202,8 +2202,7 @@ int fileenc(int argc,char **argv[]){
 	  j++;
 	}
     }
-  for(i=0;i<N;i++)
-    zet[i]=zz[i];
+  
   //printf("%d",zz[i]);
   //printf("\n");
   //exit(1);
@@ -2214,7 +2213,7 @@ int fileenc(int argc,char **argv[]){
   printf("%s\n",argv[2]);
   //exit(1);
   
-  f=synd(zet);
+  f=synd(zz);
   // v=o2v(f);
     //
   //for(i=0;i<K;i++)
