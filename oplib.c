@@ -126,6 +126,8 @@ unsigned short b2B (unsigned short b[E]){
 unsigned short oinv (unsigned short a){
   int i;
 
+  
+
   for (i = 0; i < M; i++)
     {
       if (gf[mlt (fg[a], i)] == 1)
@@ -138,6 +140,7 @@ unsigned short oinv (unsigned short a){
 //aに何をかけたらbになるか
 unsigned short equ (unsigned short a, unsigned short b){
   int i;
+
 
   for (i = 0; i < M; i++)
     {
@@ -194,7 +197,7 @@ int odeg (OP f){
 int deg (vec a){
   int i, n = 0;
 
-#pragma omp parallel for
+  //#pragma omp parallel for
   for (i = 0; i < DEG; i++)
     {
       if (a.x[i] > 0)
@@ -571,6 +574,7 @@ oterm LT (OP f){
   int i, k;
   oterm t = { 0 };
 
+
   k = deg (o2v (f));
   for (i = 0; i < k + 1; i++)
     {
@@ -634,7 +638,9 @@ OP coeff (OP f, unsigned short d){
   int i, j, k;
   vec a, b;
 
-  for (i = 0; i < deg (o2v (f)) + 1; i++)
+  
+  k=deg(o2v(f))+1;
+  for (i = 0; i < k; i++)
     f.t[i].a = gf[mlt (fg[f.t[i].a], oinv (d))];
 
 
@@ -857,6 +863,7 @@ unsigned short trace (OP f, unsigned short x){
 
   
   d = deg(o2v(f));
+  //#pragma omp parallel for reduction (^:u)
   for (i = 0; i < d + 1; i++)
     {
       u ^= gf[mlt (fg[f.t[i].a], mltn (f.t[i].n, fg[x]))];
@@ -1310,9 +1317,11 @@ vec chen (OP f){
 //  e=o2v(f);
   n = deg (o2v (f));
 //exit(1);
+//  #pragma omp parallel for
   for (x = 0; x < N; x++)
     {
       z = 0;
+    #pragma omp parallel for reduction (^:z)
       for (i = 0; i < n + 1; i++)
 	{
 	  if (f.t[i].a > 0)
@@ -1417,10 +1426,12 @@ OP decode (OP f, OP s){
       printpol (o2v (w));
     }
   l = oterml (w, t2);
-  printf ("%d\n", deg (x) + 1);
+
+  j=deg(x)+1;
+  printf ("%d\n", j);
 
   //    exit(1);
-  for (i = 0; i < deg (x) + 1; i++)
+  for (i = 0; i < j; i++)
     {
       //  if(x.x[i]>0){
       e.t[i].a = gf[mlt (fg[trace (hh.d, x.x[i])], oinv (trace (l, x.x[i])))];
@@ -1468,18 +1479,20 @@ OP setpol (unsigned short *f, int n){
 
 //パリティチェック行列を生成する
 void det (unsigned short g[]){
-  OP f, h = { 0 }, w, u;
+  OP f, h = { 0 }, w,u;
   unsigned short cc[K + 1] = { 0 }, d[2] = {0};
   unsigned short **HH;
   int i, j, a, b ,k;
   oterm t = { 0 };
   vec e;
 
+  /*
   HH = malloc (N * sizeof (unsigned short *));
   for (i = 0; i < 2 * K + 1; i++)
     {
       HH[i] = malloc (sizeof (unsigned short) * N);
     }
+  */
   //    memcpy(cc,g,sizeof(g));
   for (i = 0; i < K + 1; i++)
     {
@@ -1492,7 +1505,12 @@ void det (unsigned short g[]){
   k = cc[K];
   w = setpol (g, K + 1);
 
-  //#pragma omp parallel for       
+  //  
+  //#pragma omp for private(j)
+    // #pragma omp parallel for reduction (^:mat[i][j])
+  // #pragma omp for
+  //#pragma omp parallel for num_threads(8)
+  //#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
 
@@ -1519,25 +1537,26 @@ void det (unsigned short g[]){
       u = oterml (ww, t);
       e = o2v (u);
 
-#pragma omp parallel for
+      //#pragma omp parallel for
       for (j = 0; j < K; j++)
-	HH[j][i] = e.x[K - 1 - j];
+	  mat[j][i]= e.x[K - 1 - j];
 
     }
-
-
+  
+  /*
   //#pragma omp parallel for    
   for (i = 0; i < K; i++)
     {
       //#pragma omp parallel for
       for (j = 0; j < N; j++)
 	{
-	  m2[i][j] = mat[i][j] = HH[i][j];
+	  mat[i][j] = HH[i][j];
 	  printf ("%d,", mat[i][j]);
 	}
       printf ("\n");
     }
   // exit(1);
+  */
 }
 
 
@@ -1556,7 +1575,7 @@ void bdet (){
       for (j = 0; j < K; j++)
 	{
 	  l = mat[j][i];
-	  //#pragma omp parallel for 
+	  #pragma omp parallel for 
 	  for (k = 0; k < E; k++)
 	    {
 	      BH[j * E + k][i] = l % 2;
@@ -1566,7 +1585,7 @@ void bdet (){
     }
   for (i = 0; i < N; i++)
     {
-      //#pragma omp parallel for 
+      #pragma omp parallel for 
       for (j = 0; j < E * K; j++)
 	{
 	  //  printf("%d,",BH[j][i]);
@@ -1591,7 +1610,7 @@ void pubkeygen (){
     {
       for (j = 0; j < N; j++)
 	{
-	  //#pragma omp parallel for 
+	  #pragma omp parallel for 
 	  for (k = 0; k < E * K; k++)
 	    {
 	      tmp[i][j] ^= cl[i][k] & BH[k][j];
@@ -1603,14 +1622,14 @@ void pubkeygen (){
   for (i = 0; i < E * K; i++)
     {
       //  for(j=0;j<N;j++){
-      //#pragma omp parallel for 
+      #pragma omp parallel for 
       for (k = 0; k < N; k++)
 	pub[i][k] = tmp[i][P[k]];	//&A[k][j];
       //    }
     }
   for (i = 0; i < N; i++)
     {
-      //#pragma omp parallel for 
+      #pragma omp parallel for 
       for (j = 0; j < E * K; j++)
 	{
 	  dd[j] = pub[j][i];
@@ -1722,6 +1741,7 @@ int isqrt (unsigned short u){
   int i, j, k;
 
   
+
   for (i = 0; i < M; i++)
     {
       if (gf[mlt (i, i)] == u)
@@ -1979,11 +1999,11 @@ vec pattarson (OP w, OP f){
   printf ("err=%dっ!! \n", count);
   if(count<2*T-1){
     printf(" decode failed error===========\n");
-    printpol(o2v(w));
-    printf(" w================\n");
-    printpol(o2v(f));
-    printf(" f================\n");
-    scanf("%d",&n);
+    // printpol(o2v(w));
+    //printf(" w================\n");
+    //printpol(o2v(f));
+    //printf(" f================\n");
+    //wait();
     exit(1);
   }
 
@@ -2085,7 +2105,8 @@ void decrypt (OP w)
   }
   
   char buf0[8192]={0},buf1[10]={0};
-  
+
+#pragma omp parallel for
   for(i=0;i<D;i++){
     snprintf(buf1, 10, "%d",err[i] );
     strcat(buf0,buf1);
@@ -2141,7 +2162,7 @@ int getkey()
 
 
 OP synd(unsigned short zz[]){
-  unsigned short syn[K]={0};
+  unsigned short syn[K]={0},s=0;
   int i,j;
   OP f={0};
 
@@ -2149,14 +2170,16 @@ OP synd(unsigned short zz[]){
   printf("in synd\n");
   //exit(1);
   
+  //#pragma omp parallel for
   for(i=0;i<K;i++){
     syn[i]=0;
-    //#pragma omp parallel for
+    s=0;
+#pragma omp parallel for reduction(^:s)
     for(j=0;j<N;j++){
       //   printf("%u,",zz[jj[j]]);
-      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
+      s^=gf[mlt(fg[zz[j]],fg[mat[i][j]])];
     }
-    sy[i]=syn[i];
+    sy[i]=syn[i]=s;
        printf("syn%d,",syn[i]);
   }
   printf("\n");
@@ -2361,7 +2384,7 @@ int filedec(OP w,int argc,char **argv[]){
     
     
     j=0;
-#pragma omp parallel for
+    //#pragma omp parallel for
     for(i=0; i<image_size/8; i++) {
       // printf("%d", hash[i]);
       char s[3];
@@ -2396,13 +2419,16 @@ int filedec(OP w,int argc,char **argv[]){
 
 //64バイト秘密鍵の暗号化と復号のテスト
 void test(OP w,unsigned short zz[]){
-  int i,j;
+  int i,j,b;
   vec v={0};
   const uint8_t *hash;
   sha3_context c;
   int image_size=512;
   OP f={0};
+  FILE *fp;
+  
 
+  fp=fopen("aes.key","rb");
   
       static char base64[] = {
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -2417,8 +2443,9 @@ void test(OP w,unsigned short zz[]){
       char buf[8192]={0},buf1[10]={0};
       unsigned char sk[64]={0};
       unsigned short s[K]={0};
+      //fread(sk,1,32,fp);
       for(i=0;i<64;i++)
-	sk[i]=i+1;
+      sk[i]=i+1;
       
       for(i=0;i<D;i++){
 	snprintf(buf1, 10, "%d",zz[i] );
@@ -2455,21 +2482,12 @@ void test(OP w,unsigned short zz[]){
       sha3_Update(&c, (char *)buf, strlen(buf));
       hash = sha3_Finalize(&c);
 
-  j=0;
-  for(i=0; i<image_size/8; i++) {
-    //printf("%d", hash[i]);
-      char s[3];
-      //byte_to_hex(hash[i],s);
-      
-      //sk[i]^=hash[i];
-  }
-
   // exit(1);
 }
 
 
 //言わずもがな
-int main (int argc,char **argv[]){
+int main (void){
   int i, j, k, l,ii=0,n;
   unsigned long a, x, count = 0;
   //  unsigned short cc[K]={0};
@@ -2533,7 +2551,7 @@ label:
   //keygen(g);
   //key2 (g);
   det(g);
-
+  //exit(1);
   //fileenc(argc,argv);
   //wait();
   //filedec(w,argc,argv);
@@ -2596,7 +2614,7 @@ label:
   printf ("すげ、オレもうイキそ・・・\n");
 
   uu=0;
-  #pragma omp parallel for
+  //#pragma omp parallel for
   for(i=0;i<N;i++){
   a=trace(w,i);
   if(a==0){
@@ -2665,7 +2683,7 @@ label:
   f=synd(zz);
   printpol(o2v(f));
   printf("\n");
-  wait();
+  //wait();
   //  exit(1);
   r=decode(w,f);
   
@@ -2703,7 +2721,7 @@ label:
     }
   }
     for(i=0;i<N;i++){
-    if(zz[i]>0)
+      if(zz[i]>0 || (zz[1]>0 && zz[0]==0))
       o1++;
   }
   printf("err=%dっ！！\n",o1);
@@ -2712,7 +2730,7 @@ label:
   //  exit(1);
 
       printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
-       wait();
+      //wait();
 
       
       //fp=fopen("sk.key","wb");
@@ -2737,7 +2755,7 @@ label:
 	}
 
       test(w,zz);
-      wait();
+      //wait();
 
       f=synd(zz);
 
@@ -2830,9 +2848,9 @@ label:
       }
       
       pattarson (w, f);
-      wait();
+      //wait();
       
-      //break;
+      break;
     }
     
 
