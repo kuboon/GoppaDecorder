@@ -1177,6 +1177,12 @@ EX xgcd (OP f, OP g){
   printf (" h=============\n");
   //exit(1);
 
+  h=v[i];
+  ww=u[i];
+
+  free(v);
+  free(u);
+  
   e.d = f;
   e.v = v[i];
   e.u = u[i];
