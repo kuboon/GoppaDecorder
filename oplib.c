@@ -1122,10 +1122,10 @@ EX xgcd (OP f, OP g){
   EX e = { 0 };
 
 
-  v = malloc (sizeof (OP) * (K * 2));
-  u = malloc (sizeof (OP) * (K * 2));
-  memset (v, 0, sizeof (v));
-  memset (u, 0, sizeof (u));
+  v = (OP*)malloc (sizeof (OP) * (K * 2));
+  u = (OP*)malloc (sizeof (OP) * (K * 2));
+  memset (v, 0, sizeof (OP)*2*K);
+  memset (u, 0, sizeof (OP)*2*K);
 
 
   u[0].t[0].a = 1;
@@ -2683,6 +2683,8 @@ label:
   printf("\n");
   //wait();
   //  exit(1);
+
+  /*
   r=decode(w,f);
 
 
@@ -2726,7 +2728,7 @@ label:
 
   goto label;
   //  exit(1);
-
+  */
       printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
       //wait();
 
@@ -2783,7 +2785,7 @@ label:
 	printf(" w============\n");
 	printf("この多項式では逆元計算ができません。");
 	printf("count=%d\n",k);
-	//scanf("%d",&n);
+	scanf("%d",&n);
 	goto label;
       }
       r2 = oadd (ff, tt);
@@ -2806,7 +2808,7 @@ label:
 	printf(" r2===========\n");
 	printf("平方根の計算に失敗しました。\n");
 	printf("count=%d\n",k);
-	//scanf("%d",&n);
+	scanf("%d",&n);
 	goto label;
 	//exit(1);
       }
@@ -2818,7 +2820,7 @@ label:
 	  printf (" badkey=========\n");
 	  printf ("平方根が０になりました。\n");
 	  printf("count=%d\n",k);
-	  //scanf ("%d", &n);
+	  scanf ("%d", &n);
 	  //exit(1);
 	  goto label;
 	}
@@ -2841,7 +2843,7 @@ label:
       if(deg(o2v(hh.d))>0){
 	printf("wとfが互いに素ではありません。");
 	printf("count=%d\n",k);
-	//scanf("%d",&n);
+	scanf("%d",&n);
 	goto label;
       }
 
@@ -2850,7 +2852,8 @@ label:
 
       break;
     }
-
+    goto label;
+    
 
     return 0;
 }
