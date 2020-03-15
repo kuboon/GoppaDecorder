@@ -1184,8 +1184,8 @@ EX xgcd (OP f, OP g){
   free(u);
   
   e.d = f;
-  e.v = v[i];
-  e.u = u[i];
+  e.v = h;
+  e.u = ww;
 
 
   return e;
