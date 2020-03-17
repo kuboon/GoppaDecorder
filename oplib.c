@@ -2589,32 +2589,7 @@ label:
 
   // exit(1);
 
-  /*
-     //-------------２乗するとき外す
-     w=setpol(g,K/2+1);
-     printpol(o2v(w));
-     printf("\n");
-     //   exit(1);
-     w=omul(w,w);
-     printpol(o2v(w));
-     printf("\n");
-     //exit(1);
-     v=o2v(w);
-     for(i=0;i<K+1;i++){
-     printf("%d,",v.x[K-i]);
-     gg[K-i]=v.x[i];
-     }
-     printf("\n");
-     //w=setpol(gg,K+1);
-     //printpol(o2v(w));
-     //printf("\n");
-     //   exit(1);
-     //--------------
-   */
-
-  //  w=keyfinder();
-
-
+  
   printf ("すげ、オレもうイキそ・・・\n");
 
   uu=0;
@@ -2690,7 +2665,7 @@ label:
   //wait();
   //  exit(1);
 
-  /*
+  
   r=decode(w,f);
 
 
@@ -2732,9 +2707,10 @@ label:
   }
   printf("err=%dっ！！\n",o1);
 
-  goto label;
+  //goto label;
   //  exit(1);
-  */
+  
+
       printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
       //wait();
 
@@ -2858,7 +2834,7 @@ label:
 
       break;
     }
-    goto label;
+    //goto label;
     
 
     return 0;
