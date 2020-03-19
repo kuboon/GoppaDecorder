@@ -11,7 +11,7 @@
 #define N 6688 // (^^;)?
 #define M 8192 //有限体の元の数
 #define K (128*2) //符号の次元
-#define DEG (2*K) //多項式の次数
+#define DEG (K*2)
 #define T (K/2) //エラーの数
 #define E (13) //拡大体のビット数
 #define D (6688) //符号長（短縮符号）
@@ -22,9 +22,8 @@
 unsigned char tmp[E * K][N]={0};
 unsigned char pub[E * K][N]={0};
 unsigned char BH[E * K][N]={0};
-unsigned short c[2 * K + 1]={0};
-unsigned short mat[K][N]={0};
-unsigned short m2[K][N]={0};
+static unsigned short c[2 * K + 1]={0};
+unsigned short **mat;
 
 
 
@@ -34,7 +33,7 @@ unsigned char bb[F][F]={0};
 unsigned char cl[F][F]={0};
 
 
-unsigned short syn[K]={0};
+//unsigned short syn[K]={0};
 unsigned char A[N][N]={0};
 unsigned short P[N]={0};
 unsigned short inv_P[N]={0};
