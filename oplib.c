@@ -2748,7 +2748,7 @@ label:
 
 
       //バグトラップのためのコード（冗長）
-      /*
+      
       hh=gcd(w,f);
       if(deg(o2v(hh.d))>0){
 	printf(" s,wは互いに素じゃありません。\n");
@@ -2831,7 +2831,7 @@ label:
 	wait();
 	goto label;
       }
-      */
+      //バグトラップ（ここまで）
       
       //復号化の本体
       pattarson (w, f);
