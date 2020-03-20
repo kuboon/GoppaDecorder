@@ -1266,6 +1266,19 @@ EX gcd (OP f, OP g){
   return e;
 }
 
+OP init_pol (OP f)
+{
+  int i;
+
+  for (i = 0; i < DEG; i++)
+    {
+      f.t[i].a = 0;
+      f.t[i].n = 0;
+    }
+
+  return f;
+}
+
 
 //多項式の形式的微分
 OP bibun (vec a){
@@ -1283,6 +1296,7 @@ OP bibun (vec a){
       //  exit(1);
     }
 
+#pragma omp parallel for
   for (i = 0; i < T; i++)
     {
       w[i].t[0].a = a.x[i];
@@ -1293,16 +1307,19 @@ OP bibun (vec a){
     }
   //  exit(1);
 
+  //
   for (i = 0; i < T; i++)
     {
       tmp.x[0] = 1;
       t = v2o (tmp);
+      //#pragma omp parallel for
       for (j = 0; j < T; j++)
 	{
 	  if (i != j)
 	    t = omul (t, w[j]);
 	}
       //printpol(o2v(t));
+
       if (deg (o2v (t)) == 0)
 	{
 	  printf ("baka9\n");
@@ -1413,6 +1430,7 @@ OP decode (OP f, OP s){
   //   exit(1);
 
   w = bibun (x);
+  //exit(1);
   //  w=oterml(w,d1);
   //printpol(o2v(w));
   printf ("@@@@@@@@@\n");
@@ -1502,9 +1520,11 @@ void det (unsigned short g[]){
   base=malloc(sizeof(unsigned short)*K*N);
   //#pragma omp parallel for
   for(i=0;i<N;i++){
+  //連続したメモリ空間にデータを配置
   //mat[i]=base+i*K;
   //memset(mat[i],0,K);
-    
+
+  //何でもいいので２次元配列を確保
   mat[i]=malloc(sizeof(unsigned short)*DEG);
   memset(mat[i],0,DEG);
     
@@ -1523,10 +1543,14 @@ void det (unsigned short g[]){
   //    cc[i]=g[i];
   k = cc[K];
   w = setpol (g, K + 1);
-  
+
   OP ww = { 0 };
 
-
+  h.t[0].n = 0;
+  h.t[1].a = 1;
+  h.t[1].n = 1;
+  t.n = 0;
+  
   //#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
@@ -1538,14 +1562,12 @@ void det (unsigned short g[]){
       f = setpol (cc, K + 1);
 
       h.t[0].a = i;
-      h.t[0].n = 0;
-      h.t[1].a = 1;
-      h.t[1].n = 1;
+
       ww = odiv (f, h);
 
       b = oinv (a);
       t.a = gf[b];
-      t.n = 0;
+
 
       u = oterml (ww, t);
       e = o2v (u);
@@ -2622,8 +2644,8 @@ label:
 
     //  exit(1);
 
-  for(i=0;i<N;i++)
-    zz[i]=0;
+    //  for(i=0;i<N;i++)
+    memset(zz,0,2*N);
 
   j=0;
   while(j<T){
@@ -2643,7 +2665,7 @@ label:
 
   
   r=decode(w,f);
-
+  //  exit(1);
 
   for(i=0;i<T;i++){
     if(i==0){
@@ -2694,11 +2716,12 @@ label:
 
       //fp=fopen("sk.key","wb");
 
-      flg=0;
+      //flg=0;
       //  while(1){
 
-for (i = 0; i < N; i++)
-	zz[i] = 0;
+      //for (i = 0; i < N; i++)
+  memset(zz,0,2*N);
+//	zz[i] = 0;
 
 
       j = 0;
@@ -2723,6 +2746,9 @@ for (i = 0; i < N; i++)
       printf (" syn=============\n");
       //exit(1);
 
+
+      //バグトラップのためのコード（冗長）
+      /*
       hh=gcd(w,f);
       if(deg(o2v(hh.d))>0){
 	printf(" s,wは互いに素じゃありません。\n");
@@ -2805,7 +2831,9 @@ for (i = 0; i < N; i++)
 	wait();
 	goto label;
       }
-
+      */
+      
+      //復号化の本体
       pattarson (w, f);
       //wait();
 
