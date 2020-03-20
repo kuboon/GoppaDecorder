@@ -28,8 +28,10 @@
 #include "8192.h"
 #include "global.h"
 #include "struct.h"
-#include "sha3.h"
 
+#include "chash.c"
+#include "lu.c"
+#include "sha3.c"
 
 
 extern unsigned long xor128(void);
@@ -154,12 +156,12 @@ unsigned short equ (unsigned short a, unsigned short b){
 
 //最終の項までの距離
 int distance (OP f){
-  int i, j, k;
+  int i, j=0;
 
   for (i = 0; i < DEG; i++)
     {
       if (f.t[i].a > 0)
-	j = i;
+	      j = i;
     }
 
   return j;
@@ -1086,6 +1088,7 @@ unsigned char chk (OP f){
   if (flg == 0)
     return 0;
 
+exit(1);
 }
 
 
@@ -1465,7 +1468,7 @@ OP decode (OP f, OP s){
 
 
 //配列の値を係数として多項式に設定する
-OP setpol (unsigned short *f, int n){
+OP setpol (unsigned short f[], int n){
   OP g;
   vec a;
   int i;
@@ -1474,7 +1477,7 @@ OP setpol (unsigned short *f, int n){
   memset (c, 0, sizeof (c));
   // for(i=0;i<K+1;i++)
   // c[i]=0;
-  memcpy (c, f, sizeof (c));
+  memcpy (c, f, 2*n);
   //  for(i=0;i<n;i++)
   //  c[i]=f[i];
   a = Setvec (n);
@@ -1496,13 +1499,14 @@ void det (unsigned short g[]){
   vec e;
   
   mat = malloc (N * sizeof (unsigned short *));
-  base=malloc(sizeof(unsigned short)*DEG*N);
+  base=malloc(sizeof(unsigned short)*K*N);
+  //#pragma omp parallel for
   for(i=0;i<N;i++){
-  //  mat[i]=base+i*K; //
-  //  memset(mat[i],0,K);
+  //mat[i]=base+i*K;
+  //memset(mat[i],0,K);
     
-    mat[i]=malloc(sizeof(unsigned short)*DEG);
-    memset(mat[i],0,DEG);
+  mat[i]=malloc(sizeof(unsigned short)*DEG);
+  memset(mat[i],0,DEG);
     
   }
 
@@ -1746,6 +1750,7 @@ int isqrt (unsigned short u){
     }
 
 printf("来ちゃいけないところに来ました\n");
+exit(1);
 }
 
 
@@ -2006,9 +2011,9 @@ void encrypt (unsigned char buf[],unsigned char sk[])
 {
   const uint8_t *hash;
   sha3_context c;
-  int image_size=512,i,j,k;
+  int image_size=512,i;
   FILE *fp;
-  unsigned short d[K]={0},dd=0;
+//  unsigned short dd=0;
 
 
   fp=fopen("enc.sk","wb");
@@ -2026,11 +2031,11 @@ void encrypt (unsigned char buf[],unsigned char sk[])
   sha3_Update(&c, (char *)buf, strlen(buf));
   hash = sha3_Finalize(&c);
 
-  j=0;
+  //j=0;
 
   for(i=0; i<image_size/8; i++) {
     printf("%d", hash[i]);
-      char s[3];
+      //char s[3];
       //byte_to_hex(hash[i],s);
 
       sk[i]^=hash[i];
@@ -2055,9 +2060,9 @@ void decrypt (OP w)
 {
   FILE *fp;
   int i,j;
-  unsigned char sk[64]={0},sk2[64]={0},err[N]={0};
+  unsigned char sk[64]={0},err[N]={0};
   unsigned short buf[K]={0},tmp[K]={0};
-  OP f={0},h={0};
+  OP f={0};
   vec v={0};
   const uint8_t *hash;
   sha3_context c;
@@ -2116,7 +2121,7 @@ void decrypt (OP w)
   printf("hash=");
   for(i=0; i<image_size/8; i++) {
     printf("%d", hash[i]);
-      char s[3];
+      //char s[3];
       //byte_to_hex(hash[i],s);
 
       sk[i]^=hash[i];
@@ -2174,9 +2179,9 @@ OP synd(unsigned short zz[]){
   return f;
 }
 
-
+/*
 //ファイルの暗号化(too slow)
-int fileenc(int argc,char **argv[]){
+void fileenc(int argc,char **argv[]){
   int i,j,k,b,l;
   FILE *fp,*fq;
   unsigned char msg[64]={0};
@@ -2258,7 +2263,7 @@ int fileenc(int argc,char **argv[]){
     j=0;
     for(i=0; i<image_size/8; i++) {
       //printf("%d", hash[i]);
-      char s[3];
+      //char s[3];
       //byte_to_hex(hash[i],s);
 
       msg[i]^=hash[i];
@@ -2286,12 +2291,12 @@ int fileenc(int argc,char **argv[]){
   printf("len=%d\n",strlen(buf));
 
 
-  return 0;
+//  return 0;
 }
 
 
 //ファイルの復号(don't start,too late)
-int filedec(OP w,int argc,char **argv[]){
+void filedec(OP w,int argc,char **argv[]){
   int i,j,b,k;
   FILE *fp,*fq;
   unsigned char msg[64];
@@ -2364,7 +2369,7 @@ int filedec(OP w,int argc,char **argv[]){
     //#pragma omp parallel for
     for(i=0; i<image_size/8; i++) {
       // printf("%d", hash[i]);
-      char s[3];
+      //char s[3];
       //byte_to_hex(hash[i],s);
 
       msg[i]^=hash[i];
@@ -2392,8 +2397,8 @@ int filedec(OP w,int argc,char **argv[]){
   printf("len=%d\n",strlen(buf));
 
 }
-
-
+*/
+/*
 //64バイト秘密鍵の暗号化と復号のテスト
 void test(OP w,unsigned short zz[]){
   int i,j,b;
@@ -2461,28 +2466,27 @@ void test(OP w,unsigned short zz[]){
 
   // exit(1);
 }
-
+*/
 
 //言わずもがな
 int main (void){
-  int i, j, k, l,ii=0,n;
-  unsigned long a, x, count = 0;
+  int i, j, k, l,n;
+  unsigned long a, count = 0;
   //  unsigned short cc[K]={0};
-  unsigned short m[K], dd[K * N] = { 0 };
-  time_t timer;
+//  unsigned short m[K], dd[K * N] = { 0 };
+  //time_t timer;
   FILE *fp, *fq;
   unsigned short jj[T * 2] = { 0 };
   unsigned short zz[N] = { 0 };
-  int y, flg, o1 = 0;
+  int flg, o1 = 0;
   OP f = { 0 }, r = { 0 }, w = { 0 },ff={0},tt={0};
-  EX hh = { 0 },bb={0};
-  vec v;
-  unsigned short d = 0;
+  EX hh = { 0 };
+  //vec v;
+  //unsigned short d = 0;
   time_t t;
-  OP r1 = { 0 }, r2 = { 0 }, a1 = { 0 }, b1 = { 0 }, a2 = { 0 }, b2 = { 0 };
-  OP g1 = { 0 },tmp={0},ll={0};
-  const uint8_t *hash;
-  sha3_context c;
+  OP r1 = { 0 }, r2 = { 0 };
+  OP g1 = { 0 },tmp={0};
+//  sha3_context c;
 //  int image_size=512;
 
 
@@ -2808,8 +2812,8 @@ for (i = 0; i < N; i++)
       break;
   }
     //goto label;
-    for(i=0;i<K;i++)
-    free(mat[i]);
+   for(i=0;i<N;i++)
+   free(mat[i]);
     free(base);
     free(mat);
     
