@@ -531,12 +531,11 @@ OP oterml (OP f, oterm t){
   k = distance (f);
   for (i = 0; i < k + 1; i++)
     {
-
       h.t[i].n = f.t[i].n + t.n;
       h.t[i].a = gf[mlt (fg[f.t[i].a], fg[t.a])];
-
     }
 
+  
   return h;
 }
 
@@ -1282,7 +1281,7 @@ OP init_pol (OP f)
 
 //多項式の形式的微分
 OP bibun (vec a){
-  OP w[T * 2] = { 0 };
+  OP w[T * 2] = { 0 },tt={0};
   OP l = { 0 } , t = { 0 };
   int i, j, k, n;
   vec tmp = { 0 };
@@ -1296,7 +1295,8 @@ OP bibun (vec a){
       //  exit(1);
     }
 
-#pragma omp parallel for
+  //
+  //  #pragma omp parallel for
   for (i = 0; i < T; i++)
     {
       w[i].t[0].a = a.x[i];
@@ -1307,17 +1307,27 @@ OP bibun (vec a){
     }
   //  exit(1);
 
-  //
+  
+  //#pragma omp parallel for
   for (i = 0; i < T; i++)
     {
       tmp.x[0] = 1;
       t = v2o (tmp);
-      //#pragma omp parallel for
+      //
       for (j = 0; j < T; j++)
 	{
 	  if (i != j)
 	    t = omul (t, w[j]);
+	  /*
+	  if(i !=j+1)
+	    t=omul(t,w[j+1]);
+	  if(i !=j+2)
+	    t=omul(t,w[j+2]);
+	  if(i !=j+3)
+	    t=omul(t,w[j+3]);
+	  */
 	}
+	
       //printpol(o2v(t));
 
       if (deg (o2v (t)) == 0)
@@ -1346,7 +1356,7 @@ vec chen (OP f){
 //  e=o2v(f);
   n = deg (o2v (f));
 //exit(1);
-//  #pragma omp parallel for
+  //#pragma omp parallel for
   for (x = 0; x < N; x++)
     {
       z = 0;
@@ -1530,7 +1540,7 @@ void det (unsigned short g[]){
     
   }
 
-      memcpy(cc,g,sizeof(cc));
+  memcpy(cc,g,sizeof(cc));
   /*
   for (i = 0; i < K + 1; i++)
     {
@@ -1550,6 +1560,7 @@ void det (unsigned short g[]){
   h.t[1].a = 1;
   h.t[1].n = 1;
   t.n = 0;
+  t1=2*T;
   
   //#pragma omp parallel for
   for (i = 0; i < N; i++)
@@ -1576,7 +1587,7 @@ void det (unsigned short g[]){
   //for (j = 0; j < K; j++)
     //mat[i][j]= e.x[K - 1 - j];
 
-  memcpy(mat[i],e.x,sizeof(e));      //
+      memcpy(mat[i],e.x,sizeof(e));      //
 
     }
 }
@@ -2351,11 +2362,12 @@ label:
     }
   fclose (fq);
   */
-
-
+  /*
+  #pragma omp parallel for
   for (j = 0; j < N; j++)
     {
       flg = 0;
+      #pragma omp parallel for
       for (i = 0; i < K; i++)
 	{
 	  //printf("%d,",mat[i][j]);
@@ -2366,12 +2378,12 @@ label:
       if (flg == 0)
 	printf ("0 is %d\n", j);
     }
-
+  */
   // exit(1);
 
 
   printf ("すげ、オレもうイキそ・・・\n");
-
+  /*
   uu=0;
   //#pragma omp parallel for
   for(i=0;i<N;i++){
@@ -2381,6 +2393,7 @@ label:
        exit(1);
   }
   }
+  */
   //printpol(o2v(w));
   //    exit(1);
 
@@ -2404,7 +2417,7 @@ label:
   */
 
 //decode bigin
-
+/*
   for(j=0;j<N;j++){
     flg=0;
     for(i=0;i<K;i++){
@@ -2416,7 +2429,7 @@ label:
     if(flg==0)
       printf("0 is %d\n",j);
   }
-
+*/
 
     k=0;
     while(1){
