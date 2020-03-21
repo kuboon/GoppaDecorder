@@ -49,9 +49,9 @@ https://classic.mceliece.org/
 特に変わってませんが、おすすめのコンパイラオプションを見つけたので書いておきます。
 オリジナルのMakefileは汎用的なものですが、AMDのZENアーキテクチャに特化したバイナリコードを生成するためのオプションは次のようになります。
 
-gcc -O3 -mtune=znver2 -march=znver2  -fopenmp oplib.c
+gcc -O3 -mtune=znver2 -march=znver2 -ffast-math -funroll-loops  -fopenmp oplib.c
 
-これでバグトラップ有りで２９秒台がコンスタントに出ました。
+これでバグトラップ有りで２６秒台がコンスタントに出ました。
 
 最適化オプションを全くつけないと、１分２５秒でした。
 
