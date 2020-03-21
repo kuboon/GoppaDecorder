@@ -52,6 +52,7 @@ https://classic.mceliece.org/
 gcc -O3 -mtune=znver2 -march=znver2 -ffast-math -funroll-loops  -fopenmp oplib.c
 
 これでバグトラップ有りで２６秒台がコンスタントに出ました。
+gccもオプション次第でAMD純正コンパイラと遜色ない性能を出せることがわかりました。（ver 9.2）
 
 最適化オプションを全くつけないと、１分２５秒でした。
 素人の分際で最適化なんておこがましいと言われそうですが、何もしないよりマシだと思ったので、そのへんはコンパイラ任せにしようという感じですｗ．
