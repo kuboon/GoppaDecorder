@@ -47,7 +47,7 @@ unsigned short sy[K]={0};
 //Goppa多項式
 static unsigned short g[K+1]={0};
 unsigned short tr[N]={0};
-unsigned short ta[N]={0};
+
 
 //ランダム多項式の生成
 static void ginit (void){
@@ -1267,6 +1267,18 @@ EX gcd (OP f, OP g){
   return e;
 }
 
+OP init_pol (OP f)
+{
+  int i;
+
+  for (i = 0; i < DEG; i++)
+    {
+      f.t[i].a = 0;
+      f.t[i].n = 0;
+    }
+
+  return f;
+}
 
 
 //多項式の形式的微分
@@ -1498,36 +1510,16 @@ OP setpol (unsigned short f[], int n){
 }
 
 
-OP init_pol (OP f)
-{
-  int i;
-
-  for (i = 0; i < DEG; i++)
-    {
-      f.t[i].a = 0;
-      f.t[i].n = 0;
-    }
-
-  return f;
-}
-
-
 unsigned short *base;
 
 //パリティチェック行列を生成する
 void det (unsigned short g[]){
-  OP f={0}, h={0}, w={0},u={0};
+  OP f, h = { 0 }, w,u;
   unsigned short cc[K + 1] = { 0 }, d[2] = {0};
   int i, j, a, b ,k,t1,l=0;
   oterm t = { 0 };
-  vec e={0};
-
-  /*
-  f=malloc(N*sizeof(OP));
-  memset(f,0,sizeof(OP)*N);
-  h=malloc(N*sizeof(OP));
-  memset(h,0,sizeof(OP)*N);
-  */
+  vec e;
+  
   mat = malloc (N * sizeof (unsigned short *));
   base=malloc(sizeof(unsigned short)*K*N);
   #pragma omp parallel for
@@ -1558,24 +1550,18 @@ void det (unsigned short g[]){
 
   OP ww = { 0 };
 
+  h.t[0].n = 0;
+  h.t[1].a = 1;
+  h.t[1].n = 1;
   t.n = 0;
   t1=2*T;
 #pragma omp parallel for
   for(i=0;i<N;i++){
-    tr[i] = trace (w, i);
-    if(tr[i]==0)
-      exit(1);
-    ta[i] = oinv (tr[i]);
-    
+    a = trace (w, i);
+    tr[i] = oinv (a);    
   }
-  h.t[0].n = 0;
-
-  h.t[1].a = 1;
-  h.t[1].n = 1;
-
   //
   f= setpol (cc, K + 1);
-  //#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
 
@@ -1587,13 +1573,12 @@ void det (unsigned short g[]){
       //f= setpol (cc, K + 1);
 
       f.t[0].a=k^(*tr+i); //cc[K];
-      //h.t[0].a = i;
       h.t[0].a = i;
-      
+
       ww = odiv (f, h);
 
       //b = oinv (a);
-      t.a = gf[ta[i]];
+      t.a = gf[tr[i]];
 
 
       u = oterml (ww, t);
@@ -1727,7 +1712,7 @@ void key2 (unsigned short g[]){
   printf ("鍵を生成中です。４分程かかります。\n");
     fp = fopen ("H.key", "wb");
   det (g);
-  // exit(1);
+  //exit(1);
   for (i = 0; i < N; i++)
     {
       for (j = 0; j < K; j++)
@@ -2304,7 +2289,7 @@ int main (void){
   int i, j, k, l,n;
   unsigned long a, count = 0;
   //  unsigned short cc[K]={0};
-  unsigned short m[K], dd[K * N] = { 0 };
+ unsigned short m[K], dd[K * N] = { 0 };
   //time_t timer;
   FILE *fp, *fq;
   unsigned short jj[T * 2] = { 0 };
@@ -2332,6 +2317,7 @@ label:
   for (i = 0; i < K + 1; i++)
     g[i] = 0;
   ginit ();
+  
   
   /*
   fp=fopen("sk.key","rb");
@@ -2566,8 +2552,8 @@ label:
       }
 
 
-      //tt.t[0].n = 1;
-      //tt.t[0].a = 1;
+      tt.t[0].n = 1;
+      tt.t[0].a = 1;
 
 
       ff = inv (f, w);
@@ -2582,7 +2568,7 @@ label:
 	wait();
 	goto label;
       }
-      /*
+      
       r2 = oadd (ff, tt);
       printpol (o2v (r2));
       printf (" h+x==============\n");
@@ -2619,9 +2605,9 @@ label:
 	  //exit(1);
 	  goto label;
 	}
-      */
+      
 
-      /*
+      
       hh = xgcd (w, g1);
       ff = omod (omul (hh.v, g1), w);
       printpol (o2v (ff));
@@ -2632,7 +2618,7 @@ label:
 	  exit(1);
 	  //goto label;
 	}
-      */
+      
       //バグトラップ（ここまで）
       
       //復号化の本体
@@ -2650,4 +2636,5 @@ label:
     
     return 0;
 }
+
 
