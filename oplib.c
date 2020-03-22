@@ -1197,17 +1197,17 @@ EX xgcd (OP f, OP g){
 
 //拡張ユークリッドアルゴリズム(Tで止まらない)
 EX gcd (OP f, OP g){
-  OP h = { 0 } , ww = { 0 } , v[3]={0}, u[3]={0};
+  OP h = { 0 } , ww = { 0 } , *v, *u;
   oterm a, b;
   int i = 0, j, k;
   EX e = { 0 };
 
-  /*
+  
   v = malloc (sizeof (OP) * (DEG));
   u = malloc (sizeof (OP) * (DEG));
   memset (v, 0, sizeof (OP)*DEG);
   memset (u, 0, sizeof (OP)*DEG);
-  */
+  
 
   u[0].t[0].a = 1;
   u[0].t[0].n = 0;
@@ -1236,12 +1236,12 @@ EX gcd (OP f, OP g){
       h = omod (f, g);
       ww = odiv (f, g);
 
-      v[2] = oadd (v[0], omul (ww, v[1]));
-      u[2] = oadd (u[0], omul (ww, u[1]));
+      v[i+2] = oadd (v[i], omul (ww, v[i+1]));
+      u[i+2] = oadd (u[i], omul (ww, u[i+1]));
       printf ("i+1=%d\n", i + 1);
       f = g;
       g = h;
-
+      i++;
     }
 
   //v[i]=odiv(v[i],h);
@@ -1258,11 +1258,11 @@ EX gcd (OP f, OP g){
   //exit(1);
 
   e.d = h;
-  e.v = v[1];
-  e.u = u[1];
+  e.v = v[i+1];
+  e.u = u[i+1];
 
-  //free(u);
-  //free(v);
+  free(u);
+  free(v);
 
   return e;
 }
@@ -1555,14 +1555,18 @@ void det (unsigned short g[]){
   h.t[1].n = 1;
   t.n = 0;
   t1=2*T;
-#pragma omp parallel for
+  ///#pragma omp parallel for
   for(i=0;i<N;i++){
     a = trace (w, i);
+    if(a==0){
+      printf("baka!\n");
+      exit(1);
+    }
     tr[i] = oinv (a);    
   }
   //
   f= setpol (cc, K + 1);
-  #pragma omp parallel for
+  //  #pragma omp parallel for
   for (i = 0; i < N; i++)
     {
 
@@ -1572,8 +1576,8 @@ void det (unsigned short g[]){
       //cc[K] = k^(*tr+i);
       //tr[i];
       //f= setpol (cc, K + 1);
-
-      f.t[0].a=k^(*tr+i); //cc[K];
+      
+      f.t[0].a=k^tr[i]; //cc[K];
       h.t[0].a = i;
 
       ww = odiv (f, h);
@@ -2004,7 +2008,7 @@ vec pattarson (OP w, OP f){
     }
 
 
-  //printpol (o2v (hh.v));
+  printpol (o2v (hh.v));
   printf (" alpha!=========\n");
   //exit(1);
   if(deg(o2v(ff))==K/2)
@@ -2028,11 +2032,11 @@ vec pattarson (OP w, OP f){
   printf ("err=%dっ!! \n", count);
   if(count<2*T-1){
     printf(" decode failed error===========\n");
-    // printpol(o2v(w));
-    //printf(" w================\n");
-    //printpol(o2v(f));
-    //printf(" f================\n");
-    //wait();
+     printpol(o2v(w));
+    printf(" w================\n");
+    printpol(o2v(f));
+    printf(" f================\n");
+    wait();
     exit(1);
   }
 
@@ -2313,7 +2317,7 @@ int main (void){
   //getkey();
   //  exit(1);
 
-label:
+  label:
 
   for (i = 0; i < K + 1; i++)
     g[i] = 0;
@@ -2335,8 +2339,8 @@ label:
   //#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
-      tr[i] = trace (w, i);
-      if (tr[i] == 0)
+      a = trace (w, i);
+      if (a == 0)
 	{
 	  printf ("trace 0 @ %d\n", i);
 	  goto label;
@@ -2364,12 +2368,12 @@ label:
     }
   fclose (fq);
   */
-  /*
-  #pragma omp parallel for
+  
+  //  #pragma omp parallel for
   for (j = 0; j < N; j++)
     {
       flg = 0;
-      #pragma omp parallel for
+      //  #pragma omp parallel for
       for (i = 0; i < K; i++)
 	{
 	  //printf("%d,",mat[i][j]);
@@ -2377,10 +2381,13 @@ label:
 	    flg = 1;
 	  //      printf("\n");
 	}
-      if (flg == 0)
+      if (flg == 0){
 	printf ("0 is %d\n", j);
+	wait();
+	goto label;
+      }
     }
-  */
+  
   // exit(1);
 
 
@@ -2432,7 +2439,7 @@ label:
       printf("0 is %d\n",j);
   }
 */
-
+//label:
     k=0;
     while(1){
       o1=0;
@@ -2570,7 +2577,7 @@ label:
 	wait();
 	goto label;
       }
-      /*
+      
       r2 = oadd (ff, tt);
       printpol (o2v (r2));
       printf (" h+x==============\n");
@@ -2607,9 +2614,9 @@ label:
 	  //exit(1);
 	  goto label;
 	}
-      */
+      
 
-      /*
+      
       hh = xgcd (w, g1);
 
       ff = omod (omul (hh.v, g1), w);
@@ -2621,20 +2628,21 @@ label:
 	  exit(1);
 	  //goto label;
 	}
-      */
+     
       //バグトラップ（ここまで）
       
       //復号化の本体
       pattarson (w, f);
       //wait();
 
-      break;
+      //break;
   }
-    //goto label;
    for(i=0;i<N;i++)
    free(mat[i]);
     free(base);
     free(mat);
+
+    goto label;
     
     
     return 0;
