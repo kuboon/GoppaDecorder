@@ -2533,7 +2533,7 @@ label:
 	    }
 	}
 
-      //test(w,zz);
+      test(w,zz);
       //wait();
 
       f=synd(zz);
