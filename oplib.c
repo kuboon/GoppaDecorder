@@ -28,6 +28,8 @@
 #include "8192.h"
 #include "global.h"
 #include "struct.h"
+//#include "sha3.h"
+
 
 #include "chash.c"
 #include "lu.c"
@@ -44,11 +46,12 @@ extern void makeS();
 unsigned short sy[K]={0};
 //Goppa多項式
 static unsigned short g[K+1]={0};
+unsigned short tr[N]={0};
 
 
 //ランダム多項式の生成
 static void ginit (void){
-  int i, j, count = 0;
+  int j, count = 0;
   unsigned short gg[K + 1] = { 0 };
   //unsigned short g[K+1]={0};
 
@@ -56,7 +59,7 @@ static void ginit (void){
 
 
 
-  g[K] = 1;
+  g[K] = 1; //xor128();
   g[0] = xor128()%N;
   while (count < ((K / 2) - 1))
     {
@@ -69,12 +72,12 @@ static void ginit (void){
 	}
     }
 
+  
+  for (j = 0; j < K + 1; j++)
+  gg[j] = g[K - j];
 
-  for (i = 0; i < K + 1; i++)
-    gg[i] = g[K - i];
-  for (i = 0; i < K + 1; i++)
-    g[i] = gg[i];
-
+  memcpy(g,gg,sizeof(g));
+  
 
 }
 
@@ -83,6 +86,7 @@ static void ginit (void){
 //ランダム置換の生成（Niederreoter 暗号における置換）
 void random_permutation (unsigned short *a){
   int i, j, x;
+
   for (i = 0; i < N; i++)
     {
       a[i] = i;
@@ -107,7 +111,7 @@ void random_permutation (unsigned short *a){
 
 //配列から置換行列への変換
 void P2Mat (unsigned short P[N]){
-  int i, j;
+  int i;
 
   for (i = 0; i < N; i++)
     A[i][P[i]] = 1;
@@ -115,7 +119,7 @@ void P2Mat (unsigned short P[N]){
 
 
 unsigned short b2B (unsigned short b[E]){
-  int i, j, k;
+  int i;
   unsigned short a = 0;
 
   for (i = E-1; i > -1 ; i--)
@@ -128,7 +132,6 @@ unsigned short b2B (unsigned short b[E]){
 //有限体の元の逆数
 unsigned short oinv (unsigned short a){
   int i;
-
 
 
   for (i = 0; i < M; i++)
@@ -215,7 +218,7 @@ int deg (vec a){
 //OP型からベクトル型への変換
 vec o2v (OP f){
   vec a = { 0 };
-  int i, count = 0;
+  int i;
 
   for (i = 0; i < DEG; i++)
     {
@@ -230,7 +233,7 @@ vec o2v (OP f){
 
 //ベクトル型からOP型への変換
 OP v2o (vec a){
-  int i, count = 0;
+  int i;
   OP f = { 0 };
 
 
@@ -283,7 +286,7 @@ unsigned int v2i (vec v){
 
 //配列からベクトル表現の多項式へ変換する
 vec Setvec (int n){
-  int i, a, b;
+  int i;
   vec v = { 0 };
 
 
@@ -299,7 +302,7 @@ vec Setvec (int n){
 
 //多項式を表示する（OP型）
 void oprintpol (OP f){
-  int i, j, k, n;
+  int i, n;
 
   n = distance (f);
   printf ("n=%d\n", n);
@@ -336,9 +339,9 @@ void printpol (vec a){
       if (a.x[i] > 0)
 	{
 	  printf ("%u", a.x[i]);
-	  if (i > 0)
+	  //if (i > 0)
 	    printf ("x^%d", i);
-	  if (i > 0)
+	    //if (i > 0)
 	    printf ("+");
 	}
     }
@@ -404,7 +407,7 @@ OP sort (OP f){
 //リーディングタームを抽出(OP型）
 oterm oLT (OP f){
   int i, k,j;
-  oterm t = { 0 }, s =  { 0 };
+  oterm  s =  { 0 };
 
 
   k = terms (f);
@@ -441,10 +444,9 @@ oterm oLT (OP f){
 //多項式を足し算する（OP型）
 OP add (OP f, OP g){
 //  vec a={0},b={0},c={0};
-  unsigned long long int i, k, j, n1 = 0, n2 = 0, tmp, m1 = 0, m2, flg =
-    0, count = 0;
-  OP h = { 0 }, a = { 0 }, b = { 0 };
-  oterm o1 = { 0 }, o2 = { 0 }, oo = { 0 };
+  unsigned long long int i, j, n1 = 0, n2 = 0, m1 = 0, count = 0;
+  OP h = { 0 };
+  oterm o1 = { 0 }, o2 = { 0 };
 
 
   n1 = terms (f);
@@ -897,10 +899,10 @@ OP inv (OP a, OP n){
 
   tt=n;
   printf ("n=============\n");
-  printpol (o2v (n));
+  //printpol (o2v (n));
   printf ("\n");
   printf ("a=============\n");
-  printpol (o2v (a));
+  //printpol (o2v (a));
   printf ("\n");
   //  exit(1);
 
@@ -918,7 +920,7 @@ OP inv (OP a, OP n){
       d = a;
       a = r;
       t = oadd (x, omul (q, s));
-      printpol (o2v (a));
+      //printpol (o2v (a));
       printf ("\nin roop a==================%d\n", deg (o2v (a)));
       printf ("\n");
 
@@ -929,19 +931,19 @@ OP inv (OP a, OP n){
   //  if(LT(a).a>0){
   d = a;
   a = r;
-  printpol (o2v (a));
+  //printpol (o2v (a));
   printf ("\nin roop a|==================%d\n", deg (o2v (a)));
   printf ("\n");
 
   x = s;
   s = t;
 
-  printpol (o2v (d));
+  //printpol (o2v (d));
   printf ("\nout1================\n");
   gcd = d;			// $\gcd(a, n)$
-  printpol (o2v (gcd));
+  //printpol (o2v (gcd));
   printf ("\n");
-  printpol (o2v (n));
+  //printpol (o2v (n));
   printf ("\n");
   printf ("out2===============\n");
 
@@ -949,11 +951,11 @@ OP inv (OP a, OP n){
   //w=tt;
 
   b = LT (w);
-  printpol (o2v (w));
+  //printpol (o2v (w));
   printf ("\nw=======%d %d\n", b.a, b.n);
   //w=tt;
   v = oadd (x, n);
-  printpol (o2v (v));
+  //printpol (o2v (v));
   printf ("\n");
   if (LT (v).a == 0)
     {
@@ -963,7 +965,7 @@ OP inv (OP a, OP n){
   printf ("d==============\n");
   //  } //end of a>0
   w = tt;
-  printpol (o2v (v));
+  //printpol (o2v (v));
   printf ("\n");
   printf ("ss==============\n");
   //       exit(1);
@@ -994,7 +996,7 @@ OP inv (OP a, OP n){
       // exit(1);
     }
   //u=coeff(u,d.t[0].a);
-  printpol (o2v (u));
+  //printpol (o2v (u));
   printf ("\nu==================\n");
   if (LT (u).a == 0)
     {
@@ -1072,7 +1074,7 @@ unsigned int ipow (unsigned int q, unsigned int u){
 
 //０多項式かどうかのチェック
 unsigned char chk (OP f){
-  int i, j, flg = 0;
+  int i, flg = 0;
   vec x = { 0 };
 
   x = o2v (f);
@@ -1093,8 +1095,8 @@ exit(1);
 
 //decode用の多項式の最大公約数
 OP ogcd (OP f, OP g){
-  OP h, ww;
-  oterm a, b;
+  OP h;
+  //oterm a, b;
   int i = 0;
 
 
@@ -1155,8 +1157,8 @@ EX xgcd (OP f, OP g){
       h = omod (f, g);
       ww = odiv (f, g);
 
-      v[i + 2] = oadd (v[i], omul (ww, v[i + 1]));
-      u[i + 2] = oadd (u[i], omul (ww, u[i + 1]));
+      v[i+2] = oadd (v[i], omul (ww, v[i+1]));
+      u[i+2] = oadd (u[i], omul (ww, u[i+1]));
       printf ("i+1=%d\n", i + 1);
       f = g;
       g = h;
@@ -1195,17 +1197,17 @@ EX xgcd (OP f, OP g){
 
 //拡張ユークリッドアルゴリズム(Tで止まらない)
 EX gcd (OP f, OP g){
-  OP h = { 0 } , ww = { 0 } , *v, *u;
+  OP h = { 0 } , ww = { 0 } , v[3]={0}, u[3]={0};
   oterm a, b;
   int i = 0, j, k;
   EX e = { 0 };
 
-
+  /*
   v = malloc (sizeof (OP) * (DEG));
   u = malloc (sizeof (OP) * (DEG));
   memset (v, 0, sizeof (OP)*DEG);
   memset (u, 0, sizeof (OP)*DEG);
-
+  */
 
   u[0].t[0].a = 1;
   u[0].t[0].n = 0;
@@ -1234,8 +1236,8 @@ EX gcd (OP f, OP g){
       h = omod (f, g);
       ww = odiv (f, g);
 
-      v[i + 2] = oadd (v[i], omul (ww, v[i + 1]));
-      u[i + 2] = oadd (u[i], omul (ww, u[i + 1]));
+      v[2] = oadd (v[0], omul (ww, v[1]));
+      u[2] = oadd (u[0], omul (ww, u[1]));
       printf ("i+1=%d\n", i + 1);
       f = g;
       g = h;
@@ -1256,11 +1258,11 @@ EX gcd (OP f, OP g){
   //exit(1);
 
   e.d = h;
-  e.v = v[i];
-  e.u = u[i];
+  e.v = v[1];
+  e.u = u[1];
 
-  free(u);
-  free(v);
+  //free(u);
+  //free(v);
 
   return e;
 }
@@ -1281,9 +1283,9 @@ OP init_pol (OP f)
 
 //多項式の形式的微分
 OP bibun (vec a){
-  OP w[T * 2] = { 0 },tt={0};
+  OP w[T * 2] = { 0 };
   OP l = { 0 } , t = { 0 };
-  int i, j, k, n;
+  int i, j,  n;
   vec tmp = { 0 };
 
 
@@ -1307,25 +1309,16 @@ OP bibun (vec a){
     }
   //  exit(1);
 
-  
+  tmp.x[0] = 1;  
   //#pragma omp parallel for
   for (i = 0; i < T; i++)
     {
-      tmp.x[0] = 1;
       t = v2o (tmp);
       //
       for (j = 0; j < T; j++)
 	{
 	  if (i != j)
 	    t = omul (t, w[j]);
-	  /*
-	  if(i !=j+1)
-	    t=omul(t,w[j+1]);
-	  if(i !=j+2)
-	    t=omul(t,w[j+2]);
-	  if(i !=j+3)
-	    t=omul(t,w[j+3]);
-	  */
 	}
 	
       //printpol(o2v(t));
@@ -1347,16 +1340,16 @@ OP bibun (vec a){
 vec chen (OP f){
   vec e = { 0 };
   int i, count = 0, n, x = 0;
-  unsigned short y[256] = { 0 }, z;
-  oterm d = { 0 };
-  OP g = { 0 };
+  unsigned short z;
+  //oterm d = { 0 };
+  //OP g = { 0 };
 
 
   //  exit(1);
 //  e=o2v(f);
   n = deg (o2v (f));
 //exit(1);
-  //#pragma omp parallel for
+
   for (x = 0; x < N; x++)
     {
       z = 0;
@@ -1509,6 +1502,7 @@ OP setpol (unsigned short f[], int n){
   //  for(i=0;i<n;i++)
   //  c[i]=f[i];
   a = Setvec (n);
+  //memcpy(a.x,c,sizeof(a.x));
   g = v2o (a);
 
 
@@ -1528,7 +1522,7 @@ void det (unsigned short g[]){
   
   mat = malloc (N * sizeof (unsigned short *));
   base=malloc(sizeof(unsigned short)*K*N);
-  //#pragma omp parallel for
+  #pragma omp parallel for
   for(i=0;i<N;i++){
   //連続したメモリ空間にデータを配置
   //mat[i]=base+i*K;
@@ -1561,33 +1555,40 @@ void det (unsigned short g[]){
   h.t[1].n = 1;
   t.n = 0;
   t1=2*T;
-  
-  //#pragma omp parallel for
+#pragma omp parallel for
+  for(i=0;i<N;i++){
+    a = trace (w, i);
+    tr[i] = oinv (a);    
+  }
+  //
+  f= setpol (cc, K + 1);
   for (i = 0; i < N; i++)
     {
 
-      a = trace (w, i);
-      cc[K] = k;
+      //a = trace (w, i);
+      // cc[K] = k;
 
-      cc[K] ^= a;
-      f = setpol (cc, K + 1);
+      //cc[K] = k^(*tr+i);
+      //tr[i];
+      //f= setpol (cc, K + 1);
 
+      f.t[0].a=k^(*tr+i); //cc[K];
       h.t[0].a = i;
 
       ww = odiv (f, h);
 
-      b = oinv (a);
-      t.a = gf[b];
+      //b = oinv (a);
+      t.a = gf[tr[i]];
 
 
       u = oterml (ww, t);
       e = o2v (u);
 
       //  #pragma omp for
-  //for (j = 0; j < K; j++)
-    //mat[i][j]= e.x[K - 1 - j];
+      //  for (j = 0; j < K; j++)
+      //mat[i][j]= e.x[j];
 
-      memcpy(mat[i],e.x,sizeof(e));      //
+       memcpy(mat[i],e.x,sizeof(e));      //
 
     }
 }
@@ -1833,7 +1834,7 @@ OP osqrt(OP f,OP w){
 
     }
   }
-  printpol(o2v(r));
+  //  printpol(o2v(r));
   printf(" sqrt(g1)=======\n");
 
   //  exit(1);
@@ -1860,7 +1861,7 @@ OP osqrt(OP f,OP w){
     printf("h=========0\n");
     exit(1);
   }
-
+  /*
   if(LT(ww).n==0 && LT(ww).a==0){
     printpol(o2v(s));
     printf(" s===========\n");
@@ -1877,7 +1878,7 @@ OP osqrt(OP f,OP w){
     return ww;;
     // exit(1);
   }
-
+  */
   tmp=omod(omul(ww,ww),w);
   if(LT(tmp).n==1){
     printpol(o2v(ww));
@@ -1903,12 +1904,12 @@ OP osqrt(OP f,OP w){
 
 
     //    exit(1);
-  printpol(o2v(s));
+  //  printpol(o2v(s));
   printf(" g1^-1=========\n");
-  printpol(o2v(h));
+  // printpol(o2v(h));
   printf(" g0=========\n");
   //exit(1);
-  printpol(o2v(ww));
+  // printpol(o2v(ww));
   printf(" ww==========\n");
   //  exit(1);
    h=ww;
@@ -1921,7 +1922,7 @@ OP osqrt(OP f,OP w){
     exit(1);
   }
 
-  printpol(o2v(ww));
+  // printpol(o2v(ww));
   printf(" 来ちゃだめなところに来ました\n");
 
   exit(1);
@@ -2333,8 +2334,8 @@ label:
   //#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
-      a = trace (w, i);
-      if (a == 0)
+      tr[i] = trace (w, i);
+      if (tr[i] == 0)
 	{
 	  printf ("trace 0 @ %d\n", i);
 	  goto label;
@@ -2501,7 +2502,7 @@ label:
   printf("err=%dっ！！\n",o1);
 
   //goto label;
-  //  exit(1);
+ 
   
 
       printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
@@ -2552,8 +2553,8 @@ label:
       }
 
 
-      tt.t[0].n = 1;
-      tt.t[0].a = 1;
+      //tt.t[0].n = 1;
+      //tt.t[0].a = 1;
 
 
       ff = inv (f, w);
@@ -2568,6 +2569,7 @@ label:
 	wait();
 	goto label;
       }
+      /*
       r2 = oadd (ff, tt);
       printpol (o2v (r2));
       printf (" h+x==============\n");
@@ -2604,8 +2606,9 @@ label:
 	  //exit(1);
 	  goto label;
 	}
+      */
 
-
+      /*
       hh = xgcd (w, g1);
 
       ff = omod (omul (hh.v, g1), w);
@@ -2617,15 +2620,7 @@ label:
 	  exit(1);
 	  //goto label;
 	}
-
-      n=0;
-      hh=gcd(w,f);
-      if(deg(o2v(hh.d))>0){
-	printf("wとfが互いに素ではありません。");
-	printf("count=%d\n",k);
-	wait();
-	goto label;
-      }
+      */
       //バグトラップ（ここまで）
       
       //復号化の本体
