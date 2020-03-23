@@ -1514,32 +1514,12 @@ unsigned short *base;
 
 //パリティチェック行列を生成する
 void det (unsigned short g[]){
-  OP f={0}, h={0}, w={0},u={0};
+  OP f, h = { 0 }, w,u;
   unsigned short cc[K + 1] = { 0 }, d[2] = {0},ta[N]={0};
   int i, j, a, b ,k,t1,l=0;
   oterm t = { 0 };
-  vec e={0};
-
-  /*
-  h = (OP*)malloc (sizeof (OP) * (N));
-  f = (OP*)malloc (sizeof (OP) * (N));
-  memset (h, 0, sizeof (OP)*N);
-  memset (f, 0, sizeof (OP)*N);
-  */
+  vec e;
   
-  mat = malloc (N * sizeof (unsigned short *));
-  base=malloc(sizeof(unsigned short)*K*N);
-  #pragma omp parallel for
-  for(i=0;i<N;i++){
-  //連続したメモリ空間にデータを配置
-  //mat[i]=base+i*K;
-  //memset(mat[i],0,K);
-
-  //何でもいいので２次元配列を確保
-  mat[i]=malloc(sizeof(unsigned short)*DEG);
-  memset(mat[i],0,DEG);
-    
-  }
 
   memcpy(cc,g,sizeof(cc));
   /*
@@ -1549,7 +1529,7 @@ void det (unsigned short g[]){
       printf ("%d,", g[i]);
     }
     */
-  printf ("\n");
+  //printf ("\n");
   //  exit(1);
   //    cc[i]=g[i];
   k = cc[K];
@@ -1569,8 +1549,6 @@ void det (unsigned short g[]){
   }
   //
   f= setpol (cc, K + 1);
-  
-  // #pragma omp parallel for  
   for (i = 0; i < N; i++)
     {
 
@@ -1721,7 +1699,7 @@ void key2 (unsigned short g[]){
   printf ("鍵を生成中です。４分程かかります。\n");
     fp = fopen ("H.key", "wb");
   det (g);
-  //exit(1);
+  exit(1);
   for (i = 0; i < N; i++)
     {
       for (j = 0; j < K; j++)
@@ -1731,10 +1709,6 @@ void key2 (unsigned short g[]){
     }
   fclose (fp);
 
-  fp=fopen("sk.key","wb");
-  fwrite(g,2,K+1,fp);
-  fclose(fp);
-  
 }
 
 
@@ -2302,7 +2276,7 @@ int main (void){
   int i, j, k, l,n;
   unsigned long a, count = 0;
   //  unsigned short cc[K]={0};
- unsigned short m[K], dd[K * N] = { 0 };
+//  unsigned short m[K], dd[K * N] = { 0 };
   //time_t timer;
   FILE *fp, *fq;
   unsigned short jj[T * 2] = { 0 };
@@ -2319,6 +2293,21 @@ int main (void){
 //  int image_size=512;
 
 
+  
+
+  mat = malloc (N * sizeof (unsigned short *));
+  base=malloc(sizeof(unsigned short)*K*N);
+  #pragma omp parallel for
+  for(i=0;i<N;i++){
+  //連続したメモリ空間にデータを配置
+  mat[i]=base+i*K;
+  memset(mat[i],0,K);
+
+  //何でもいいので２次元配列を確保
+  //mat[i]=malloc(sizeof(unsigned short)*DEG);
+  //memset(mat[i],0,DEG);
+    
+  }
 
   srand (clock () + time (&t));
   printf ("@");
@@ -2326,18 +2315,14 @@ int main (void){
   //  exit(1);
 
 label:
-  
+
   for (i = 0; i < K + 1; i++)
     g[i] = 0;
   ginit ();
-  
-  
+  /*
   fp=fopen("sk.key","rb");
   fread(g,2,K+1,fp);
   fclose(fp);
-  
-  
-  /*
   for(i=0;i<K+1;i++)
     gg[K-i]=g[i];
   for(i=0;i<K+1;i++)
@@ -2351,8 +2336,8 @@ label:
   //#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
-      tr[i] = trace (w, i);
-      if (tr[i] == 0)
+      a = trace (w, i);
+      if (a == 0)
 	{
 	  printf ("trace 0 @ %d\n", i);
 	  goto label;
@@ -2369,11 +2354,10 @@ label:
   //filedec(w,argc,argv);
   //exit(1);
 
-
   /*
   fq = fopen ("H.key", "rb");
   fread (dd, 2, K * N, fq);
-  //#pragma omp parallel for
+#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
       for (j = 0; j < K; j++)
@@ -2381,12 +2365,12 @@ label:
     }
   fclose (fq);
   */
-  
-  //  #pragma omp parallel for
+  /*
+  #pragma omp parallel for
   for (j = 0; j < N; j++)
     {
       flg = 0;
-      //#pragma omp parallel for
+      #pragma omp parallel for
       for (i = 0; i < K; i++)
 	{
 	  //printf("%d,",mat[i][j]);
@@ -2394,12 +2378,10 @@ label:
 	    flg = 1;
 	  //      printf("\n");
 	}
-      if (flg == 0){
+      if (flg == 0)
 	printf ("0 is %d\n", j);
-	exit(1);
-      }
     }
-  
+  */
   // exit(1);
 
 
@@ -2435,7 +2417,7 @@ label:
   */
 
 //decode bigin
-/*
+
   for(j=0;j<N;j++){
     flg=0;
     for(i=0;i<K;i++){
@@ -2444,10 +2426,12 @@ label:
 	flg=1;
       //      printf("\n");
     }
-    if(flg==0)
+    if(flg==0){
       printf("0 is %d\n",j);
+      exit(1);
+    }
   }
-*/
+
 
     k=0;
     while(1){
@@ -2527,6 +2511,8 @@ label:
       //wait();
 
 
+      //fp=fopen("sk.key","wb");
+
       //flg=0;
       //  while(1){
 
@@ -2568,8 +2554,8 @@ label:
       }
 
 
-      tt.t[0].n = 1;
-      tt.t[0].a = 1;
+      //tt.t[0].n = 1;
+      //tt.t[0].a = 1;
 
 
       ff = inv (f, w);
@@ -2584,7 +2570,7 @@ label:
 	wait();
 	goto label;
       }
-      
+      /*
       r2 = oadd (ff, tt);
       printpol (o2v (r2));
       printf (" h+x==============\n");
@@ -2621,9 +2607,9 @@ label:
 	  //exit(1);
 	  goto label;
 	}
-      
+      */
 
-      
+      /*
       hh = xgcd (w, g1);
       ff = omod (omul (hh.v, g1), w);
       printpol (o2v (ff));
@@ -2634,23 +2620,22 @@ label:
 	  exit(1);
 	  //goto label;
 	}
-      
+      */
       //バグトラップ（ここまで）
       
       //復号化の本体
       pattarson (w, f);
       //wait();
 
-      //break;
+      break;
   }
     //goto label;
-   for(i=0;i<N;i++)
-   free(mat[i]);
+    //for(i=0;i<N;i++)
+    //free(mat[i]);
     free(base);
     free(mat);
     
     
     return 0;
 }
-
 
