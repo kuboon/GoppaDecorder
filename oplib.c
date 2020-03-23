@@ -1514,11 +1514,18 @@ unsigned short *base;
 
 //パリティチェック行列を生成する
 void det (unsigned short g[]){
-  OP f, h = { 0 }, w,u;
-  unsigned short cc[K + 1] = { 0 }, d[2] = {0};
+  OP f={0}, h={0}, w={0},u={0};
+  unsigned short cc[K + 1] = { 0 }, d[2] = {0},ta[N]={0};
   int i, j, a, b ,k,t1,l=0;
   oterm t = { 0 };
-  vec e;
+  vec e={0};
+
+  /*
+  h = (OP*)malloc (sizeof (OP) * (N));
+  f = (OP*)malloc (sizeof (OP) * (N));
+  memset (h, 0, sizeof (OP)*N);
+  memset (f, 0, sizeof (OP)*N);
+  */
   
   mat = malloc (N * sizeof (unsigned short *));
   base=malloc(sizeof(unsigned short)*K*N);
@@ -1557,11 +1564,13 @@ void det (unsigned short g[]){
   t1=2*T;
 #pragma omp parallel for
   for(i=0;i<N;i++){
-    a = trace (w, i);
-    tr[i] = oinv (a);    
+    ta[i] = trace (w, i);
+    tr[i] = oinv (ta[i]);    
   }
   //
   f= setpol (cc, K + 1);
+  
+  // #pragma omp parallel for  
   for (i = 0; i < N; i++)
     {
 
@@ -1572,7 +1581,7 @@ void det (unsigned short g[]){
       //tr[i];
       //f= setpol (cc, K + 1);
 
-      f.t[0].a=k^(*tr+i); //cc[K];
+      f.t[0].a=k^(*ta+i); //cc[K];
       h.t[0].a = i;
 
       ww = odiv (f, h);
@@ -1722,6 +1731,10 @@ void key2 (unsigned short g[]){
     }
   fclose (fp);
 
+  fp=fopen("sk.key","wb");
+  fwrite(g,2,K+1,fp);
+  fclose(fp);
+  
 }
 
 
@@ -2313,16 +2326,18 @@ int main (void){
   //  exit(1);
 
 label:
-  
+  /*  
   for (i = 0; i < K + 1; i++)
     g[i] = 0;
   ginit ();
+  */
   
-  
-  /*
   fp=fopen("sk.key","rb");
   fread(g,2,K+1,fp);
   fclose(fp);
+  
+  
+  /*
   for(i=0;i<K+1;i++)
     gg[K-i]=g[i];
   for(i=0;i<K+1;i++)
@@ -2346,15 +2361,16 @@ label:
     }
   printf ("@");
   //keygen(g);
-  key2 (g);
-  //det(g);
+  //key2 (g);
+  det(g);
   //exit(1);
   //fileenc(argc,argv);
   //wait();
   //filedec(w,argc,argv);
   //exit(1);
 
-  
+
+  /*
   fq = fopen ("H.key", "rb");
   fread (dd, 2, K * N, fq);
   //#pragma omp parallel for
@@ -2364,13 +2380,13 @@ label:
 	mat[j][i] = dd[K * i + j];
     }
   fclose (fq);
+  */
   
-  /*
-  #pragma omp parallel for
+  //  #pragma omp parallel for
   for (j = 0; j < N; j++)
     {
       flg = 0;
-      #pragma omp parallel for
+      //#pragma omp parallel for
       for (i = 0; i < K; i++)
 	{
 	  //printf("%d,",mat[i][j]);
@@ -2378,10 +2394,12 @@ label:
 	    flg = 1;
 	  //      printf("\n");
 	}
-      if (flg == 0)
+      if (flg == 0){
 	printf ("0 is %d\n", j);
+	exit(1);
+      }
     }
-  */
+  
   // exit(1);
 
 
@@ -2508,8 +2526,6 @@ label:
       //exit(1);
       //wait();
 
-
-      //fp=fopen("sk.key","wb");
 
       //flg=0;
       //  while(1){
