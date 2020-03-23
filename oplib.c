@@ -2326,11 +2326,11 @@ int main (void){
   //  exit(1);
 
 label:
-  /*  
+  
   for (i = 0; i < K + 1; i++)
     g[i] = 0;
   ginit ();
-  */
+  
   
   fp=fopen("sk.key","rb");
   fread(g,2,K+1,fp);
