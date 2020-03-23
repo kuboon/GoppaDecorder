@@ -1549,6 +1549,7 @@ void det (unsigned short g[]){
   }
   //
   f= setpol (cc, K + 1);
+  //#pragma omp parallel for  
   for (i = 0; i < N; i++)
     {
 
@@ -2431,7 +2432,7 @@ label:
       exit(1);
     }
   }
-
+  //exit(1);
 
     k=0;
     while(1){
