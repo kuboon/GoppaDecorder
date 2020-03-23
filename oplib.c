@@ -1596,7 +1596,7 @@ void bdet (){
     {
       for (j = 0; j < K; j++)
 	{
-	  l = mat[j][i];
+	  l = mat[i][j];
 	  #pragma omp parallel for
 	  for (k = 0; k < E; k++)
 	    {
@@ -1700,16 +1700,19 @@ void key2 (unsigned short g[]){
   printf ("鍵を生成中です。４分程かかります。\n");
     fp = fopen ("H.key", "wb");
   det (g);
-  exit(1);
+  //exit(1);
   for (i = 0; i < N; i++)
     {
       for (j = 0; j < K; j++)
-	dd[j] = mat[j][i];
+	dd[j] = mat[i][j];
       fwrite (dd, 2, K, fp);
 
     }
   fclose (fp);
-
+  fp=fopen("sk.key","wb");
+  fwrite(g,2,K+1,fp);
+  fclose(fp);
+  
 }
 
 
@@ -2181,12 +2184,13 @@ OP synd(unsigned short zz[]){
        printf("syn%d,",syn[i]);
   }
   printf("\n");
+  
    for(int j = 0; j < K/2; j++){
     t1 = syn[j];
     syn[j] = syn[K - j - 1];
     syn[K - j - 1] = t1;
   }
- 
+  
   //    exit(1);
   for(i=0;i<K;i++)
     printf("mat[%d][1]=%d\n",i,mat[i][1]);
@@ -2286,7 +2290,7 @@ int main (void){
   OP f = { 0 }, r = { 0 }, w = { 0 },ff={0},tt={0};
   EX hh = { 0 };
   //vec v;
-  //unsigned short d = 0;
+  unsigned short dd[K*N] = {0},gg[K+1]={0};
   time_t t;
   OP r1 = { 0 }, r2 = { 0 };
   OP g1 = { 0 },tmp={0};
@@ -2295,7 +2299,7 @@ int main (void){
 
 
   
-
+/*
   mat = malloc (N * sizeof (unsigned short *));
   base=malloc(sizeof(unsigned short)*K*N);
   #pragma omp parallel for
@@ -2309,7 +2313,8 @@ int main (void){
   //memset(mat[i],0,DEG);
     
   }
-
+*/
+  
   srand (clock () + time (&t));
   printf ("@");
   //getkey();
@@ -2320,14 +2325,11 @@ label:
   for (i = 0; i < K + 1; i++)
     g[i] = 0;
   ginit ();
+
   /*
   fp=fopen("sk.key","rb");
   fread(g,2,K+1,fp);
   fclose(fp);
-  for(i=0;i<K+1;i++)
-    gg[K-i]=g[i];
-  for(i=0;i<K+1;i++)
-    g[i]=gg[i];
   */
 
   w = setpol (g, K + 1);
@@ -2347,25 +2349,25 @@ label:
     }
   printf ("@");
   //keygen(g);
-  //key2 (g);
-  det(g);
+  key2 (g);
+  //det(g);
   //exit(1);
   //fileenc(argc,argv);
   //wait();
   //filedec(w,argc,argv);
   //exit(1);
 
-  /*
+  
   fq = fopen ("H.key", "rb");
   fread (dd, 2, K * N, fq);
-#pragma omp parallel for
+  //#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
       for (j = 0; j < K; j++)
-	mat[j][i] = dd[K * i + j];
+	mat[i][j] = dd[K * i + j];
     }
   fclose (fq);
-  */
+  
   /*
   #pragma omp parallel for
   for (j = 0; j < N; j++)
@@ -2399,7 +2401,7 @@ label:
   }
   */
   //printpol(o2v(w));
-  //    exit(1);
+  // exit(1);
 
   /*
   fp=fopen(argv[1],"rb");
@@ -2423,7 +2425,7 @@ label:
     flg=0;
     for(i=0;i<K;i++){
       //printf("%d,",mat[i][j]);
-      if(mat[i][j]>0)
+      if(mat[j][i]>0)
 	flg=1;
       //      printf("\n");
     }
@@ -2633,8 +2635,8 @@ label:
     //goto label;
     //for(i=0;i<N;i++)
     //free(mat[i]);
-    free(base);
-    free(mat);
+    //free(base);
+    //free(mat);
     
     
     return 0;
