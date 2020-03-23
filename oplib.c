@@ -1542,14 +1542,18 @@ void det (unsigned short g[]){
   h.t[1].n = 1;
   t.n = 0;
   t1=2*T;
-#pragma omp parallel for
+  //#pragma omp parallel for
   for(i=0;i<N;i++){
     ta[i] = trace (w, i);
+    if(ta[i]==0){
+      printf("%d\n",i);
+      exit(1);
+    }
     tr[i] = oinv (ta[i]);    
   }
   //
   f= setpol (cc, K + 1);
-  //#pragma omp parallel for  
+  #pragma omp parallel for  
   for (i = 0; i < N; i++)
     {
 
@@ -2349,15 +2353,15 @@ label:
     }
   printf ("@");
   //keygen(g);
-  key2 (g);
-  //det(g);
+  //key2 (g);
+  det(g);
   //exit(1);
   //fileenc(argc,argv);
   //wait();
   //filedec(w,argc,argv);
   //exit(1);
 
-  
+  /*  
   fq = fopen ("H.key", "rb");
   fread (dd, 2, K * N, fq);
   //#pragma omp parallel for
@@ -2367,7 +2371,7 @@ label:
 	mat[i][j] = dd[K * i + j];
     }
   fclose (fq);
-  
+  */
   /*
   #pragma omp parallel for
   for (j = 0; j < N; j++)
@@ -2431,7 +2435,7 @@ label:
     }
     if(flg==0){
       printf("0 is %d\n",j);
-      exit(1);
+      //exit(1);
     }
   }
   //exit(1);
@@ -2447,11 +2451,13 @@ label:
     //  for(i=0;i<N;i++)
     memset(zz,0,2*N);
 
+
+
   j=0;
   while(j<T){
     l=xor128()%N;
     //printf("l=%d\n",l);
-    if(0==zz[l] && l>0){
+    if(0==zz[l] && l>0 && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
       zz[l]=l;
       j++;
     }
@@ -2529,7 +2535,7 @@ label:
 	{
 	  l = xor128 () % N;
 	  printf ("l=%d\n", l);
-	  if (0 == zz[l])
+	  if (0 == zz[l] && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270)
 	    {
 	      zz[l] = 1;
 	      j++;
