@@ -1515,8 +1515,8 @@ unsigned short *base;
 //パリティチェック行列を生成する
 void det (unsigned short g[]){
   OP f, h = { 0 }, w,u;
-  unsigned short cc[K + 1] = { 0 }, d[2] = {0},ta[N]={0};
-  int i, j, a, b ,k,t1,l=0;
+  unsigned short cc[K + 1] = { 0 }, d[2] = {0},ta[N]={0},pp[20][K]={0};
+  int i, j, a, b ,k,t1,l=0,flg=0,count=0;
   oterm t = { 0 };
   vec e;
   
@@ -1546,14 +1546,14 @@ void det (unsigned short g[]){
   for(i=0;i<N;i++){
     ta[i] = trace (w, i);
     if(ta[i]==0){
-      printf("%d\n",i);
+      printf("%d %d\n",i,ta[i]);
       exit(1);
     }
     tr[i] = oinv (ta[i]);    
   }
   //
   f= setpol (cc, K + 1);
-  #pragma omp parallel for  
+  // #pragma omp parallel for  
   for (i = 0; i < N; i++)
     {
 
@@ -1577,12 +1577,27 @@ void det (unsigned short g[]){
       e = o2v (u);
 
       //  #pragma omp for
-      //  for (j = 0; j < K; j++)
+      //for (j = 0; j < K; j++)
       //mat[i][j]= e.x[j];
-
-       memcpy(mat[i],e.x,sizeof(e));      //
-
+      memcpy(mat[i],e.x,sizeof(e)); 
+      
     }
+
+  for(j=0;j<N;j++){
+    flg=0;
+    for(i=0;i<K;i++){
+      //printf("%d,",mat[i][j]);
+      if(mat[j][i]>0)
+	flg=1;
+      //      printf("\n");
+    }
+    if(flg==0){
+      printf("0 is %d\n",j);
+      //exit(1);
+    }
+  }
+    //exit(1);
+
 }
 
 
@@ -2001,8 +2016,12 @@ vec pattarson (OP w, OP f){
   //printpol (o2v (hh.v));
   printf (" alpha!=========\n");
   //exit(1);
-  if(deg(o2v(ff))==K/2)
+  if(deg(o2v(ff))==K/2){
     ll = oadd (omul (ff, ff), omul (tt, omul (hh.v, hh.v)));
+  }else{
+    printf("locate degree is !=K/2 %d\n",deg(o2v(ff)));
+    exit(1);
+  }
   if (deg (o2v (ll)) == 0)
     {
       printf (" locater degree is 0\n");
@@ -2010,6 +2029,10 @@ vec pattarson (OP w, OP f){
     }
   printf ("あっ、でる・・・！\n");
   count = 0;
+  printpol(o2v(ll));
+  printf(" ll=================\n");
+  printpol(o2v(f));
+  printf(" syn=================\n");
   v = chen (ll);
   printf ("う\n");
   for (i = 0; i < T * 2; i++)
@@ -2022,6 +2045,10 @@ vec pattarson (OP w, OP f){
   printf ("err=%dっ!! \n", count);
   if(count<2*T-1){
     printf(" decode failed error===========\n");
+    for(i=0;i<8192;i++){
+      if(trace(ll,i)==0)
+	printf("x=%d\n",i);
+    }
     // printpol(o2v(w));
     //printf(" w================\n");
     //printpol(o2v(f));
@@ -2129,7 +2156,7 @@ void decrypt (OP w)
 
   char buf0[8192]={0},buf1[10]={0};
 
-#pragma omp parallel for
+  //#pragma omp parallel for
   for(i=0;i<D;i++){
     snprintf(buf1, 10, "%d",err[i] );
     strcat(buf0,buf1);
@@ -2302,7 +2329,8 @@ int main (void){
 //  int image_size=512;
 
 
-  
+//matはグローバル変数でスタック領域に取る。
+//ヒープ領域は使わないことに。
 /*
   mat = malloc (N * sizeof (unsigned short *));
   base=malloc(sizeof(unsigned short)*K*N);
@@ -2353,8 +2381,8 @@ label:
     }
   printf ("@");
   //keygen(g);
-  //key2 (g);
-  det(g);
+  key2 (g);
+  //det(g);
   //exit(1);
   //fileenc(argc,argv);
   //wait();
@@ -2447,7 +2475,7 @@ label:
     count=0;
 
     //  exit(1);
-
+    
     //  for(i=0;i<N;i++)
     memset(zz,0,2*N);
 
@@ -2457,7 +2485,8 @@ label:
   while(j<T){
     l=xor128()%N;
     //printf("l=%d\n",l);
-    if(0==zz[l] && l>0 && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
+    if(0==zz[l] && l>0){//鍵生成を早くしたい場合だけコメントを外す。
+      //&& l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
       zz[l]=l;
       j++;
     }
@@ -2514,12 +2543,12 @@ label:
   //goto label;
  
   
-
+  
       printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
       //exit(1);
       //wait();
 
-
+      
       //fp=fopen("sk.key","wb");
 
       //flg=0;
@@ -2535,11 +2564,12 @@ label:
 	{
 	  l = xor128 () % N;
 	  printf ("l=%d\n", l);
-	  if (0 == zz[l] && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270)
-	    {
+	  if (0 == zz[l]){// && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
+	  // if(0==zz[l])
+	    
 	      zz[l] = 1;
 	      j++;
-	    }
+	  }
 	}
 
       //test(w,zz);
@@ -2563,8 +2593,8 @@ label:
       }
 
 
-      //tt.t[0].n = 1;
-      //tt.t[0].a = 1;
+      tt.t[0].n = 1;
+      tt.t[0].a = 1;
 
 
       ff = inv (f, w);
@@ -2579,7 +2609,8 @@ label:
 	wait();
 	goto label;
       }
-      /*
+      
+      
       r2 = oadd (ff, tt);
       printpol (o2v (r2));
       printf (" h+x==============\n");
@@ -2616,33 +2647,32 @@ label:
 	  //exit(1);
 	  goto label;
 	}
-      */
 
-      /*
+      
       hh = xgcd (w, g1);
       ff = omod (omul (hh.v, g1), w);
       printpol (o2v (ff));
       printf (" beta!=========\n");
       if (deg (o2v (ff)) != K / 2)
 	{
-	  printf("count=%d\n",k);
-	  exit(1);
-	  //goto label;
+	  printf("deg(l)!=K/2=%d %d %d\n",deg(o2v(ff)),K,k);
+	  //exit(1);
+	  goto label;
 	}
-      */
+      
       //バグトラップ（ここまで）
       
       //復号化の本体
       pattarson (w, f);
       //wait();
-
-      break;
+      
+      //break;
   }
     //goto label;
     //for(i=0;i<N;i++)
     //free(mat[i]);
-    //free(base);
-    //free(mat);
+    free(base);
+    free(mat);
     
     
     return 0;
