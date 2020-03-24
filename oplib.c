@@ -1542,18 +1542,22 @@ void det (unsigned short g[]){
   h.t[1].n = 1;
   t.n = 0;
   t1=2*T;
-  //#pragma omp parallel for
+ #pragma omp parallel for
   for(i=0;i<N;i++){
     ta[i] = trace (w, i);
+  
+    tr[i] = oinv (ta[i]);    
+  }
+  for(i=0;i<N;i++){
     if(ta[i]==0){
       printf("%d %d\n",i,ta[i]);
       exit(1);
     }
-    tr[i] = oinv (ta[i]);    
   }
+    
   //
   f= setpol (cc, K + 1);
-  // #pragma omp parallel for  
+  // #pragma omp parallel for
   for (i = 0; i < N; i++)
     {
 
@@ -1564,7 +1568,7 @@ void det (unsigned short g[]){
       //tr[i];
       //f= setpol (cc, K + 1);
 
-      f.t[0].a=k^(*ta+i); //cc[K];
+      f.t[0].a=k^ta[i]; //cc[K];
       h.t[0].a = i;
 
       ww = odiv (f, h);
@@ -1576,9 +1580,9 @@ void det (unsigned short g[]){
       u = oterml (ww, t);
       e = o2v (u);
 
-      //  #pragma omp for
+      // #pragma omp parallel for
       //for (j = 0; j < K; j++)
-      //mat[i][j]= e.x[j];
+	//mat[i][j]= e.x[j];
       memcpy(mat[i],e.x,sizeof(e)); 
       
     }
@@ -1596,7 +1600,7 @@ void det (unsigned short g[]){
       //exit(1);
     }
   }
-    //exit(1);
+  //exit(1);
 
 }
 
@@ -2331,7 +2335,7 @@ int main (void){
 
 //matはグローバル変数でスタック領域に取る。
 //ヒープ領域は使わないことに。
-/*
+
   mat = malloc (N * sizeof (unsigned short *));
   base=malloc(sizeof(unsigned short)*K*N);
   #pragma omp parallel for
@@ -2345,7 +2349,7 @@ int main (void){
   //memset(mat[i],0,DEG);
     
   }
-*/
+
   
   srand (clock () + time (&t));
   printf ("@");
@@ -2389,7 +2393,7 @@ label:
   //filedec(w,argc,argv);
   //exit(1);
 
-  /*  
+  
   fq = fopen ("H.key", "rb");
   fread (dd, 2, K * N, fq);
   //#pragma omp parallel for
@@ -2399,7 +2403,7 @@ label:
 	mat[i][j] = dd[K * i + j];
     }
   fclose (fq);
-  */
+  
   /*
   #pragma omp parallel for
   for (j = 0; j < N; j++)
@@ -2485,8 +2489,7 @@ label:
   while(j<T){
     l=xor128()%N;
     //printf("l=%d\n",l);
-    if(0==zz[l] && l>0){//鍵生成を早くしたい場合だけコメントを外す。
-      //&& l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
+    if(0==zz[l] && l>0){// && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
       zz[l]=l;
       j++;
     }
@@ -2565,7 +2568,6 @@ label:
 	  l = xor128 () % N;
 	  printf ("l=%d\n", l);
 	  if (0 == zz[l]){// && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
-	  // if(0==zz[l])
 	    
 	      zz[l] = 1;
 	      j++;
