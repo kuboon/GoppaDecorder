@@ -720,7 +720,7 @@ OP omod (OP f, OP g){
       if (deg (o2v (f)) > 0)
 	printpol (o2v (f));
       printf ("\nff1=====================\n");
-      if (LT (f).n == 0 || LT (g).n == 0)
+      if (deg(o2v(f)) == 0 || deg(o2v(g)) == 0)
 	{
 	  printf ("baka500\n");
 	  break;
@@ -814,7 +814,7 @@ OP odiv (OP f, OP g){
 
       //printpol(o2v(f));
       //printf("\nff=====================\n");
-      if (LT(f).n == 0 || LT(g).n==0)
+      if (deg(o2v(f)) == 0 || deg(o2v(g))==0)
 	{
 	  printf ("baka500\n");
 	  break;
@@ -1557,7 +1557,9 @@ void det (unsigned short g[]){
     
   //
   f= setpol (cc, K + 1);
-  // #pragma omp parallel for
+  //どうしても早くしたい人は下のパラレル構文を有効にすること。
+  //エラー処理の部分コメントも有効化が必要。
+  //  #pragma omp parallel for
   for (i = 0; i < N; i++)
     {
 
@@ -1582,9 +1584,17 @@ void det (unsigned short g[]){
 
       // #pragma omp parallel for
       //for (j = 0; j < K; j++)
-	//mat[i][j]= e.x[j];
-      memcpy(mat[i],e.x,sizeof(e)); 
-      
+      //mat[i][j]= e.x[j];
+      memcpy(mat[i],e.x,sizeof(e));
+      /*
+      if(i%418==0 && i>0){
+	printpol(e);
+	printf(" e=================\n");
+	for(j=0;j<K;j++)
+	  mat[i-1][j]=e.x[j];
+	//scanf("%d",&j);
+      }
+      */
     }
 
   for(j=0;j<N;j++){
@@ -2385,15 +2395,15 @@ label:
     }
   printf ("@");
   //keygen(g);
-  key2 (g);
-  //det(g);
+  //key2 (g);
+  det(g);
   //exit(1);
   //fileenc(argc,argv);
   //wait();
   //filedec(w,argc,argv);
   //exit(1);
 
-  
+  /*  
   fq = fopen ("H.key", "rb");
   fread (dd, 2, K * N, fq);
   //#pragma omp parallel for
@@ -2403,7 +2413,7 @@ label:
 	mat[i][j] = dd[K * i + j];
     }
   fclose (fq);
-  
+  */
   /*
   #pragma omp parallel for
   for (j = 0; j < N; j++)
