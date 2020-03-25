@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
+#include <omp.h>
 
 #include "8192.h"
 #include "global.h"
@@ -46,8 +47,16 @@ extern void makeS();
 unsigned short sy[K]={0};
 //Goppa多項式
 static unsigned short g[K+1]={0};
-unsigned short tr[N]={0};
+//unsigned short tr[N]={0};
 
+/*
+static unsigned short g[K+1]={1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+		       0,0,0,0,0,0,0,0,0,0,
+		       		       0,0,0,0,0,0,0,0,0,0,
+		       		       0,0,0,0,0,0,0,0,0,0,
+		       		       0,0,0,0,0,0,0,0,0,0,
+		       0,1};
+*/
 
 //ランダム多項式の生成
 static void ginit (void){
@@ -60,14 +69,14 @@ static void ginit (void){
 
 
   g[K] = 1; //xor128();
-  g[0] = xor128()%N;
+  g[0] = rand()%N;
   while (count < ((K / 2) - 1))
     {
       printf ("@\n");
-      j = xor128 () % (K - 1);
+      j = rand() % (K - 1);
       if (j < K && j > 0 && g[j] == 0)
 	{
-	  g[j] = xor128()%N;
+	  g[j] = rand()%N;
 	  count++;
 	}
     }
@@ -668,7 +677,7 @@ OP omod (OP f, OP g){
     }
   if (LT(g).n == 0)
     {
-      printf ("baka--\n");
+      printf ("baka('A`)\n");
       //return g;
       exit (1);
     }
@@ -726,7 +735,7 @@ OP omod (OP f, OP g){
 	  break;
 	}
 
-      if (c.n == 0)
+      if (c.n == 0 || b.n==0)
 	break;
     }
 
@@ -911,10 +920,13 @@ OP inv (OP a, OP n){
   x.t[0].n = 0;
   s.t[0].a = 1;
   s.t[0].n = 0;
-  while (LT (a).n > 0)
+  while (deg(o2v(a)) > 0)
     {
-
+      if(deg(o2v(a))>0)
       r = omod (d, a);
+      if(LT(a).a==0)
+	break;
+      if(LT(a).a>0)
       q = odiv (d, a);
 
       d = a;
@@ -970,7 +982,7 @@ OP inv (OP a, OP n){
   printf ("ss==============\n");
   //       exit(1);
   // if(deg(o2v(w))>0)
-  if (LT (v).n > 0)
+  if (LT (v).n > 0 && LT(w).n>0)
     {
       u = omod (v, w);
     }
@@ -985,7 +997,8 @@ OP inv (OP a, OP n){
 
       exit (1);
     }
-  if (LT (u).a > 0 && LT (d).a > 0)
+  //caution !!
+  if (LT (u).a > 0 && LT(d).a > 0)
     {
       u = odiv (u, d);
     }
@@ -1026,12 +1039,16 @@ OP vx(OP f,OP g){
   i=0;
 
   while(1){
-
+    if(deg(o2v(g))==0)
+      break;
+    if(deg(o2v(g))>0)
     h=omod(f,g);
     printpol(o2v(h));
     printf(" modh vx==============\n");
+    if(LT(g).a==0)
+      break;
+    if(LT(g).a>0)
     ww=odiv(f,g);
-
     printf("ww======= ");
     printpol(o2v(ww));
     printf("\n");
@@ -1106,6 +1123,8 @@ OP ogcd (OP f, OP g){
 
   for (i = 0; i < T; i++)
     {
+      if(deg(o2v(g))==0)
+	break;
       h = omod (f, g);
       f = g;
       g = h;
@@ -1154,7 +1173,9 @@ EX xgcd (OP f, OP g){
    while(1){
       if (LT (g).a == 0)
 	break;
+      if(deg(o2v(g))>0)
       h = omod (f, g);
+      if(LT(g).a>0)
       ww = odiv (f, g);
 
       v[i+2] = oadd (v[i], omul (ww, v[i+1]));
@@ -1233,7 +1254,11 @@ EX gcd (OP f, OP g){
     {
       if (LT (g).a == 0)
 	break;
+      if(deg(o2v(g))>0)
       h = omod (f, g);
+      if(LT(g).a==0)
+	break;
+      if(LT(g).a>0)
       ww = odiv (f, g);
 
       v[2] = oadd (v[0], omul (ww, v[1]));
@@ -1510,12 +1535,113 @@ OP setpol (unsigned short f[], int n){
 }
 
 
+void det2(int i){
+  OP f[16], h[16] = { 0 }, w,u[16];
+  unsigned short cc[K + 1] = { 0 }, d[2] = {0};
+  int  j, a, b ,k,t1,l=0,flg=0,id;
+  oterm t[16] = { 0 };
+  vec e[16];
+
+  id=omp_get_thread_num();
+  //memcpy(cc,g,sizeof(cc));
+  
+  for (j = 0; j < K + 1; j++)
+    {
+      cc[j] = g[j];
+      //  printf ("%d,", g[i]);
+    }
+    
+  //  printf ("\n");
+  //  exit(1);
+  //    cc[i]=g[i];
+  k = cc[0];//cc[K];
+  w = setpol (g, K + 1);
+
+  OP ww[16]; // = { 0 };
+
+  h[id].t[0].n = 0;
+  h[id].t[1].a = 1;
+  h[id].t[1].n = 1;
+  t[id].n = 0;
+  unsigned short tr[N];
+  unsigned short ta[N];
+  //  for(i=0;i<N;i++){
+      ta[i] = trace (w, i);
+      tr[i]=oinv(ta[i]);
+      //}
+  cc[0]=k;
+  f[id]=setpol(cc,K+1);
+
+      //a = trace (w, i);
+      //cc[K] = k;
+      //cc[0]=k;
+      //cc[K] ^= a;
+      //cc[0]=k^ta[i];
+      //f= setpol (cc, K + 1);
+      f[id].t[0].a^=ta[i];
+      h[id].t[0].a = i;
+
+      ww[id] = odiv (f[id], h[id]);
+
+      //b = oinv (a);
+      t[id].a = gf[tr[i]];
+
+
+      u[id] = oterml (ww[id], t[id]);
+      e[id] = o2v (u[id]);
+
+      //  #pragma omp for
+      for (j = 0; j < K; j++)
+      mat[i][j]= e[id].x[j];
+
+      //memcpy(mat[i],e.x,sizeof(e));      //
+
+}
+
+
+
+
+//パリティチェック行列を生成する
+void deta (unsigned short g[]){
+  OP f, h = { 0 }, w,u;
+  unsigned short cc[K + 1] = { 0 }, d[2] = {0};
+  int i, j, a, b ,k,t1,l=0,flg=0;
+  oterm t = { 0 };
+  vec e;
+
+
+#pragma omp parallel num_threads(8)
+  {
+#pragma omp for schedule(static)
+  for (i = 0; i < N; i++)
+    {
+      det2(i);
+    }
+  }
+    for(j=0;j<N;j++){
+    flg=0;
+    for(i=0;i<K;i++){
+      //printf("%d,",mat[i][j]);
+      if(mat[j][i]>0)
+	flg=1;
+      //      printf("\n");
+    }
+    if(flg==0){
+      printf("0 is %d\n",j);
+      exit(1);
+    }
+  }
+    //exit(1);
+
+}
+
+
 unsigned short *base;
 
 //パリティチェック行列を生成する
 void det (unsigned short g[]){
   OP f, h = { 0 }, w,u;
-  unsigned short cc[K + 1] = { 0 }, d[2] = {0},ta[N]={0},pp[20][K]={0};
+  unsigned short cc[K + 1] = { 0 }, d[2] = {0},pp[20][K]={0};
   int i, j, a, b ,k,t1,l=0,flg=0,count=0;
   oterm t = { 0 };
   vec e;
@@ -1542,10 +1668,12 @@ void det (unsigned short g[]){
   h.t[1].n = 1;
   t.n = 0;
   t1=2*T;
- #pragma omp parallel for
+  // #pragma omp parallel for
+  unsigned short tr[N];
+  unsigned short ta[N];
+
   for(i=0;i<N;i++){
     ta[i] = trace (w, i);
-  
     tr[i] = oinv (ta[i]);    
   }
   for(i=0;i<N;i++){
@@ -1559,7 +1687,7 @@ void det (unsigned short g[]){
   f= setpol (cc, K + 1);
   //どうしても早くしたい人は下のパラレル構文を有効にすること。
   //エラー処理の部分コメントも有効化が必要。
-  //  #pragma omp parallel for
+  // #pragma omp parallel for
   for (i = 0; i < N; i++)
     {
 
@@ -1572,7 +1700,7 @@ void det (unsigned short g[]){
 
       f.t[0].a=k^ta[i]; //cc[K];
       h.t[0].a = i;
-
+      
       ww = odiv (f, h);
 
       //b = oinv (a);
@@ -1586,17 +1714,9 @@ void det (unsigned short g[]){
       //for (j = 0; j < K; j++)
       //mat[i][j]= e.x[j];
       memcpy(mat[i],e.x,sizeof(e));
-      /*
-      if(i%418==0 && i>0){
-	printpol(e);
-	printf(" e=================\n");
-	for(j=0;j<K;j++)
-	  mat[i-1][j]=e.x[j];
-	//scanf("%d",&j);
-      }
-      */
     }
-
+    
+    
   for(j=0;j<N;j++){
     flg=0;
     for(i=0;i<K;i++){
@@ -1731,7 +1851,7 @@ void key2 (unsigned short g[]){
   int i,j,k;
 
   printf ("鍵を生成中です。４分程かかります。\n");
-    fp = fopen ("H.key", "wb");
+    fp = fopen ("H2.key", "wb");
   det (g);
   //exit(1);
   for (i = 0; i < N; i++)
@@ -2345,7 +2465,7 @@ int main (void){
 
 //matはグローバル変数でスタック領域に取る。
 //ヒープ領域は使わないことに。
-
+/*
   mat = malloc (N * sizeof (unsigned short *));
   base=malloc(sizeof(unsigned short)*K*N);
   #pragma omp parallel for
@@ -2359,7 +2479,7 @@ int main (void){
   //memset(mat[i],0,DEG);
     
   }
-
+*/
   
   srand (clock () + time (&t));
   printf ("@");
@@ -2369,7 +2489,7 @@ int main (void){
 label:
 
   for (i = 0; i < K + 1; i++)
-    g[i] = 0;
+  g[i] = 0;
   ginit ();
 
   /*
@@ -2396,7 +2516,7 @@ label:
   printf ("@");
   //keygen(g);
   //key2 (g);
-  det(g);
+  deta(g);
   //exit(1);
   //fileenc(argc,argv);
   //wait();
@@ -2492,7 +2612,6 @@ label:
     
     //  for(i=0;i<N;i++)
     memset(zz,0,2*N);
-
 
 
   j=0;
@@ -2596,7 +2715,7 @@ label:
 
 
       //バグトラップのためのコード（冗長）
-      
+      /*      
       hh=gcd(w,f);
       if(deg(o2v(hh.d))>0){
 	printf(" s,wは互いに素じゃありません。\n");
@@ -2671,7 +2790,7 @@ label:
 	  //exit(1);
 	  goto label;
 	}
-      
+      */
       //バグトラップ（ここまで）
       
       //復号化の本体
@@ -2683,8 +2802,8 @@ label:
     //goto label;
     //for(i=0;i<N;i++)
     //free(mat[i]);
-    free(base);
-    free(mat);
+    //free(base);
+    //free(mat);
     
     
     return 0;
