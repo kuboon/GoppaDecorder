@@ -1685,9 +1685,6 @@ void det (unsigned short g[]){
     
   //
   f= setpol (cc, K + 1);
-  //どうしても早くしたい人は下のパラレル構文を有効にすること。
-  //エラー処理の部分コメントも有効化が必要。
-  // #pragma omp parallel for
   for (i = 0; i < N; i++)
     {
 
@@ -2516,6 +2513,7 @@ label:
   printf ("@");
   //keygen(g);
   //key2 (g);
+  //どうしても早くしたい人はdeta()にすること。defaultはdet()
   deta(g);
   //exit(1);
   //fileenc(argc,argv);
