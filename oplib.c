@@ -1171,7 +1171,7 @@ EX xgcd (OP f, OP g){
   k = 0;
   i=0;
    while(1){
-      if (LT (g).a == 0)
+      if (LT (g).n == 0)
 	break;
       if(deg(o2v(g))>0)
       h = omod (f, g);
@@ -1541,7 +1541,9 @@ void det2(int i){
   int  j, a, b ,k,t1,l=0,flg=0,id;
   oterm t[16] = { 0 };
   vec e[16];
+  OP ww[16]; // = { 0 };
 
+  
   id=omp_get_thread_num();
   //memcpy(cc,g,sizeof(cc));
   
@@ -1557,7 +1559,6 @@ void det2(int i){
   k = cc[0];//cc[K];
   w = setpol (g, K + 1);
 
-  OP ww[16]; // = { 0 };
 
   h[id].t[0].n = 0;
   h[id].t[1].a = 1;
@@ -1565,9 +1566,13 @@ void det2(int i){
   t[id].n = 0;
   unsigned short tr[N];
   unsigned short ta[N];
-  //  for(i=0;i<N;i++){
-      ta[i] = trace (w, i);
-      tr[i]=oinv(ta[i]);
+  //for(i=0;i<N;i++){
+  ta[i] = trace (w, i);
+  if(ta[i]==0){
+    printf("%d %d\n",i,ta[i]);
+    exit(1);
+  }   
+  tr[i]=oinv(ta[i]);
       //}
   cc[0]=k;
   f[id]=setpol(cc,K+1);
@@ -1602,7 +1607,7 @@ void det2(int i){
 
 
 //パリティチェック行列を生成する
-void deta (unsigned short g[]){
+void deta (){
   OP f, h = { 0 }, w,u;
   unsigned short cc[K + 1] = { 0 }, d[2] = {0};
   int i, j, a, b ,k,t1,l=0,flg=0;
@@ -1674,13 +1679,13 @@ void det (unsigned short g[]){
 
   for(i=0;i<N;i++){
     ta[i] = trace (w, i);
-    tr[i] = oinv (ta[i]);    
-  }
-  for(i=0;i<N;i++){
     if(ta[i]==0){
-      printf("%d %d\n",i,ta[i]);
-      exit(1);
-    }
+  printf("%d %d\n",i,ta[i]);
+  exit(1);
+}   
+    tr[i] = oinv (ta[i]);    
+}
+  for(i=0;i<N;i++){
   }
     
   //
@@ -2514,7 +2519,7 @@ label:
   //keygen(g);
   //key2 (g);
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
-  deta(g);
+  deta();
   //exit(1);
   //fileenc(argc,argv);
   //wait();
