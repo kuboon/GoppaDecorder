@@ -1562,9 +1562,7 @@ void det (unsigned short g[]){
   }
   cc[0]=k;
   f=setpol(cc,K+1);
-#pragma omp parallel num_threads(8)
-  {
-#pragma omp for schedule(static)
+
   for (i = 0; i < N; i++)
     {
 
@@ -1587,14 +1585,14 @@ void det (unsigned short g[]){
       e = o2v (u);
 
       //  #pragma omp for
-      for (j = 0; j < K; j++)
-	mat[i][j]= e.x[j];
+      //for (j = 0; j < K; j++)
+      //mat[i][j]= e.x[j];
 
-      //memcpy(mat[i],e.x,sizeof(e));      //
+      memcpy(mat[i],e.x,sizeof(e));      //
 
     }
-  }
-    for(j=0;j<N;j++){
+
+  for(j=0;j<N;j++){
     flg=0;
     for(i=0;i<K;i++){
       //printf("%d,",mat[i][j]);
