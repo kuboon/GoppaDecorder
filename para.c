@@ -26,42 +26,6 @@
 #include <omp.h>
 
 
-/*
-//符号のパラーメータの指定。通常[N,K,T]として、
-//Nは符号の長さ、Kが符号の次元、Tは訂正エラー数
-//を表す。ここではDは符号長にしている。
-#define N 6688 // (^^;)?
-#define M 8192 //有限体の元の数
-#define K (170) //符号の次元
-#define DEG (K*2)
-#define T (K/2) //エラーの数
-#define E (13) //拡大体のビット数
-#define D (6688) //符号長（短縮符号）
-#define F 256*13 //2040
-
-
-
-unsigned char tmp[E * K][N]={0};
-unsigned char pub[E * K][N]={0};
-unsigned char BH[E * K][N]={0};
-static unsigned short c[2 * K + 1]={0};
-static unsigned short mat[N][K]={0};
-
-
-
-unsigned char a[F][F]={0};
-unsigned char cc[F][F]={0};
-unsigned char bb[F][F]={0};
-unsigned char cl[F][F]={0};
-
-
-//unsigned short syn[K]={0};
-unsigned char A[N][N]={0};
-unsigned short P[N]={0};
-unsigned short inv_P[N]={0};
-unsigned short uu=0;
-*/
-
 
 #include "8192.h"
 #include "global.h"
@@ -1764,90 +1728,6 @@ void det (unsigned short g[]){
 }
 
 
-/*
-//パリティチェック行列を生成する from oplib.c
-void det (unsigned short g[]){
-  OP f, h = { 0 }, w,u;
-  unsigned short cc[K + 1] = { 0 }, d[2] = {0},pp[20][K]={0};
-  int i, j, a, b ,k,t1,l=0,flg=0,count=0;
-  oterm t = { 0 };
-  vec e;
-  
-
-  memcpy(cc,g,sizeof(cc));
-  k = cc[K];
-  w = setpol (g, K + 1);
-
-  OP ww = { 0 };
-
-  h.t[0].n = 0;
-  h.t[1].a = 1;
-  h.t[1].n = 1;
-  t.n = 0;
-  t1=2*T;
-  // #pragma omp parallel for
-  unsigned short tr[N];
-  unsigned short ta[N];
-
-  for(i=0;i<N;i++){
-    ta[i] = trace (w, i);
-    if(ta[i]==0){
-  printf("%d %d\n",i,ta[i]);
-  exit(1);
-}   
-    tr[i] = oinv (ta[i]);    
-}
-  for(i=0;i<N;i++){
-  }
-    
-  //
-  f= setpol (cc, K + 1);
-  for (i = 0; i < N; i++)
-    {
-
-      //a = trace (w, i);
-      // cc[K] = k;
-
-      //cc[K] = k^(*tr+i);
-      //tr[i];
-      //f= setpol (cc, K + 1);
-
-      f.t[0].a=k^ta[i]; //cc[K];
-      h.t[0].a = i;
-      
-      ww = odiv (f, h);
-
-      //b = oinv (a);
-      t.a = gf[tr[i]];
-
-
-      u = oterml (ww, t);
-      e = o2v (u);
-
-      // #pragma omp parallel for
-      //for (j = 0; j < K; j++)
-      //mat[i][j]= e.x[j];
-      memcpy(mat[i],e.x,sizeof(e));
-    }
-    
-    
-  for(j=0;j<N;j++){
-    flg=0;
-    for(i=0;i<K;i++){
-      //printf("%d,",mat[i][j]);
-      if(mat[j][i]>0)
-	flg=1;
-      //      printf("\n");
-    }
-    if(flg==0){
-      printf("0 is %d\n",j);
-      //exit(1);
-    }
-  }
-  //exit(1);
-
-}
-*/
 
 
 //バイナリ型パリティチェック行列を生成する
@@ -1967,7 +1847,7 @@ void key2 (unsigned short g[]){
 
   printf ("鍵を生成中です。４分程かかります。\n");
     fp = fopen ("H2.key", "wb");
-  det3 (g);
+  deta (g);
   // exit(1);
   for (i = 0; i < N; i++)
     {
@@ -2625,7 +2505,7 @@ label:
   printf ("@");
   //keygen(g);
   //key2 (g);
-  det(g);
+  deta(g);
   //exit(1);
   //fileenc(argc,argv);
   //wait();
