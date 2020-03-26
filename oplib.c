@@ -1535,110 +1535,6 @@ OP setpol (unsigned short f[], int n){
 }
 
 
-void det2(int i){
-  OP f[16], h[16] = { 0 }, w,u[16];
-  unsigned short cc[K + 1] = { 0 }, d[2] = {0};
-  int  j, a, b ,k,t1,l=0,flg=0,id;
-  oterm t[16] = { 0 };
-  vec e[16];
-  OP ww[16]; // = { 0 };
-
-  
-  id=omp_get_thread_num();
-  //memcpy(cc,g,sizeof(cc));
-  
-  for (j = 0; j < K + 1; j++)
-    {
-      cc[j] = g[j];
-      //  printf ("%d,", g[i]);
-    }
-    
-  //  printf ("\n");
-  //  exit(1);
-  //    cc[i]=g[i];
-  k = cc[0];//cc[K];
-  w = setpol (g, K + 1);
-
-
-  h[id].t[0].n = 0;
-  h[id].t[1].a = 1;
-  h[id].t[1].n = 1;
-  t[id].n = 0;
-  unsigned short tr[N];
-  unsigned short ta[N];
-  //for(i=0;i<N;i++){
-  ta[i] = trace (w, i);
-  if(ta[i]==0){
-    printf("%d %d\n",i,ta[i]);
-    exit(1);
-  }   
-  tr[i]=oinv(ta[i]);
-      //}
-  cc[0]=k;
-  f[id]=setpol(cc,K+1);
-
-      //a = trace (w, i);
-      //cc[K] = k;
-      //cc[0]=k;
-      //cc[K] ^= a;
-      //cc[0]=k^ta[i];
-      //f= setpol (cc, K + 1);
-      f[id].t[0].a^=ta[i];
-      h[id].t[0].a = i;
-
-      ww[id] = odiv (f[id], h[id]);
-
-      //b = oinv (a);
-      t[id].a = gf[tr[i]];
-
-
-      u[id] = oterml (ww[id], t[id]);
-      e[id] = o2v (u[id]);
-
-      //  #pragma omp for
-      for (j = 0; j < K; j++)
-      mat[i][j]= e[id].x[j];
-
-      //memcpy(mat[i],e.x,sizeof(e));      //
-
-}
-
-
-
-
-//パリティチェック行列を生成する
-void deta (){
-  OP f, h = { 0 }, w,u;
-  unsigned short cc[K + 1] = { 0 }, d[2] = {0};
-  int i, j, a, b ,k,t1,l=0,flg=0;
-  oterm t = { 0 };
-  vec e;
-
-
-#pragma omp parallel num_threads(8)
-  {
-#pragma omp for schedule(static)
-  for (i = 0; i < N; i++)
-    {
-      det2(i);
-    }
-  }
-    for(j=0;j<N;j++){
-    flg=0;
-    for(i=0;i<K;i++){
-      //printf("%d,",mat[i][j]);
-      if(mat[j][i]>0)
-	flg=1;
-      //      printf("\n");
-    }
-    if(flg==0){
-      printf("0 is %d\n",j);
-      exit(1);
-    }
-  }
-    //exit(1);
-
-}
 
 
 unsigned short *base;
@@ -1674,6 +1570,7 @@ void det (unsigned short g[]){
   t.n = 0;
   t1=2*T;
   // #pragma omp parallel for
+  /*
   unsigned short tr[N];
   unsigned short ta[N];
 
@@ -1685,28 +1582,27 @@ void det (unsigned short g[]){
 }   
     tr[i] = oinv (ta[i]);    
 }
-  for(i=0;i<N;i++){
-  }
+  */
     
   //
   f= setpol (cc, K + 1);
   for (i = 0; i < N; i++)
     {
 
-      //a = trace (w, i);
+      a = trace (w, i);
       // cc[K] = k;
 
-      //cc[K] = k^(*tr+i);
+      cc[K] = k^a;
       //tr[i];
-      //f= setpol (cc, K + 1);
+      f= setpol (cc, K + 1);
 
-      f.t[0].a=k^ta[i]; //cc[K];
+      //f.t[0].a=k^ta[i]; //cc[K];
       h.t[0].a = i;
       
       ww = odiv (f, h);
 
-      //b = oinv (a);
-      t.a = gf[tr[i]];
+      b = oinv (a);
+      t.a = gf[b];
 
 
       u = oterml (ww, t);
@@ -2154,6 +2050,8 @@ vec pattarson (OP w, OP f){
   //exit(1);
   if(deg(o2v(ff))==K/2){
     ll = oadd (omul (ff, ff), omul (tt, omul (hh.v, hh.v)));
+  }else if(deg(o2v(ff))==1){
+    ll=oadd (omul (ff, ff), omul (tt, omul (hh.v, hh.v)));
   }else{
     printf("locate degree is !=K/2 %d\n",deg(o2v(ff)));
     exit(1);
@@ -2519,7 +2417,7 @@ label:
   //keygen(g);
   //key2 (g);
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
-  deta();
+  det(g);
   //exit(1);
   //fileenc(argc,argv);
   //wait();
