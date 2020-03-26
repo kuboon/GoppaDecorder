@@ -1572,6 +1572,8 @@ void det2(int i,unsigned short g[]){
 
   
   id=omp_get_thread_num();
+#pragma omp parallel private(j)
+  {
   //memcpy(cc,g,sizeof(cc));
   
   for (j = 0; j < K + 1; j++)
@@ -1628,7 +1630,8 @@ void det2(int i,unsigned short g[]){
       mat[i][j]= e[id].x[j];
 
       //memcpy(mat[i],e[id].x,sizeof(e[id]));      //
-
+  }
+  
 }
 
 
