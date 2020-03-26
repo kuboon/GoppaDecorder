@@ -1559,6 +1559,9 @@ OP setpol (unsigned short f[], int n){
 }
 
 
+unsigned short tr[N]={0};
+unsigned short ta[N]={0};
+
 void det2(int i,unsigned short g[]){
   OP f[16]={0}, h[16] = { 0 }, w,u[16]={0};
   unsigned short cc[K + 1] = { 0 }, d[2] = {0};
@@ -1566,8 +1569,6 @@ void det2(int i,unsigned short g[]){
   oterm t[16] = { 0 };
   vec e[16]={0};
   OP ww[16] = { 0 };
-  unsigned short tr[N]={0};
-  unsigned short ta[N]={0};
 
   
   id=omp_get_thread_num();
@@ -1590,15 +1591,16 @@ void det2(int i,unsigned short g[]){
   h[id].t[1].a = 1;
   h[id].t[1].n = 1;
   t[id].n = 0;
-  
-  //for(i=0;i<N;i++){
+
+  /*
+  for(j=0;j<N;j++){
   ta[i] = trace (w, i);
   if(ta[i]==0){
     printf("ta[%d]=%d\n",i,ta[i]);
     exit(1);
   }
   tr[i]=oinv(ta[i]);
-  
+  */
       //}
   //  cc[0]=k;
     f[id]=setpol(cc,K+1);
@@ -2649,18 +2651,25 @@ label:
   w = setpol (g, K + 1);
   oprintpol (w);
   //exit(1);
-
+  for(i=0;i<N;i++){
+    ta[i]=0;
+    tr[i]=0;
+  }
   //#pragma omp parallel for
   for (i = 0; i < N; i++)
     {
-      a = trace (w, i);
-      if (a == 0)
+      ta[i] = trace (w, i);
+      if (ta[i] == 0)
 	{
 	  printf ("trace 0 @ %d\n", i);
 	  goto label;
 	  //  exit(1);
 	}
     }
+  for(i=0;i<N;i++){
+    tr[i]=oinv(ta[i]);
+  }
+  
   printf ("@");
   //keygen(g);
   //key2 (g);
