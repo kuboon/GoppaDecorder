@@ -51,7 +51,8 @@ unsigned short sy[K]={0};
 //unsigned short tr[N]={0};
 //unsigned short ta[N]={0};
 
-static unsigned short g[K+1]={
+unsigned short g[K+1]={//0};
+  
   1,0,0,0,0,0,0,0,1,0,
   0,0,0,0,0,1,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,
@@ -78,7 +79,7 @@ static unsigned short g[K+1]={
   0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,1};
-
+  
 
 
 
@@ -1542,11 +1543,13 @@ OP setpol (unsigned short f[], int n){
 
 
   memset (c, 0, sizeof (c));
-  // for(i=0;i<K+1;i++)
-  // c[i]=0;
+  //for(i=0;i<K+1;i++)
+  //c[i]=0;
   memcpy (c, f, 2*n);
-  //  for(i=0;i<n;i++)
-  //  c[i]=f[i];
+  //for(i=0;i<n;i++)
+  // c[i]=f[i];
+  //for(i=0;i<n;i++)
+  //a.x[i]=c[i];
   //a = Setvec (n);
   memcpy(a.x,c,sizeof(a.x));
   g = v2o (a);
@@ -1557,14 +1560,14 @@ OP setpol (unsigned short f[], int n){
 
 
 void det2(int i,unsigned short g[]){
-  OP f[16], h[16] = { 0 }, w,u[16];
+  OP f[16]={0}, h[16] = { 0 }, w,u[16]={0};
   unsigned short cc[K + 1] = { 0 }, d[2] = {0};
   int  j, a, b ,k,t1,l=0,flg=0,id;
   oterm t[16] = { 0 };
-  vec e[16];
-  OP ww[16]; // = { 0 };
-  unsigned short tr[N];
-  unsigned short ta[N];
+  vec e[16]={0};
+  OP ww[16] = { 0 };
+  unsigned short tr[N]={0};
+  unsigned short ta[N]={0};
 
   
   id=omp_get_thread_num();
@@ -1579,7 +1582,7 @@ void det2(int i,unsigned short g[]){
   //  printf ("\n");
   //  exit(1);
   //    cc[i]=g[i];
-  //  k = cc[0];//cc[K];
+  //k = cc[0];//cc[K];
   w = setpol (g, K + 1);
 
 
@@ -1587,23 +1590,25 @@ void det2(int i,unsigned short g[]){
   h[id].t[1].a = 1;
   h[id].t[1].n = 1;
   t[id].n = 0;
+  
   //for(i=0;i<N;i++){
   ta[i] = trace (w, i);
   if(ta[i]==0){
-    printf("%d %d\n",i,ta[i]);
+    printf("ta[%d]=%d\n",i,ta[i]);
     exit(1);
-  }   
+  }
   tr[i]=oinv(ta[i]);
+  
       //}
   //  cc[0]=k;
-  f[id]=setpol(cc,K+1);
+    f[id]=setpol(cc,K+1);
 
-      //a = trace (w, i);
+  //a = trace (w, i);
       //cc[K] = k;
       //cc[0]=k;
       //cc[K] ^= a;
-      //cc[0]=k^ta[i];
-      //f= setpol (cc, K + 1);
+      //cc[0]^=ta[i];
+      //f[id]= setpol (cc, K + 1);
       f[id].t[0].a^=ta[i];
       h[id].t[0].a = i;
 
@@ -1620,20 +1625,147 @@ void det2(int i,unsigned short g[]){
       for (j = 0; j < K; j++)
       mat[i][j]= e[id].x[j];
 
-      //memcpy(mat[i],e.x,sizeof(e));      //
+      //memcpy(mat[i],e[id].x,sizeof(e[id]));      //
 
 }
 
 
 
+void f1(unsigned short g[]){
+  int i;
+  
+  for (i = 0; i < 836; i++)
+    {
+      det2(i,g);
+    }
+
+
+}
+void f2(unsigned short g[]){
+  int i;
+  
+  for (i = 836; i < 1672; i++)
+    {
+      det2(i,g);
+    }
+
+
+}
+void f3(unsigned short g[]){
+  int i;
+  
+  for (i = 1672; i < 2508; i++)
+    {
+      det2(i,g);
+    }
+
+
+}
+void f4(unsigned short g[]){
+  int i;
+  
+  for (i = 2508; i < 3344; i++)
+    {
+      det2(i,g);
+    }
+
+
+}
+void f5(unsigned short g[]){
+  int i;
+  
+  for (i = 3344; i <4180 ; i++)
+    {
+      det2(i,g);
+    }
+
+
+}
+void f6(unsigned short g[]){
+  int i;
+  
+  for (i = 4180; i <5016 ; i++)
+    {
+      det2(i,g);
+    }
+
+
+}
+void f7(unsigned short g[]){
+  int i;
+  
+  for (i = 5016; i <5852 ; i++)
+    {
+      det2(i,g);
+    }
+
+
+}
+void f8(unsigned short g[]){
+  int i;
+  
+  for (i = 5852; i < 6688; i++)
+    {
+      det2(i,g);
+    }
+
+
+}
+
+
+void detb(unsigned short g[]){
+  
+#pragma omp parallel
+  {
+#pragma omp sections
+    {
+    //if(omp_get_thread_num() == 0){
+#pragma omp section
+    f1(g);
+    
+    //if(omp_get_thread_num() == 1){
+#pragma omp section
+    f2(g);
+    //}
+    //if(omp_get_thread_num() == 2){
+#pragma omp section
+    f3(g);
+    //}
+    //if(omp_get_thread_num() == 3){
+#pragma omp section
+    f4(g);
+    //}
+    //if(omp_get_thread_num() == 4){
+#pragma omp section
+    f5(g);
+    //}
+    //if(omp_get_thread_num() == 5){
+#pragma omp section
+    f6(g);
+    //}
+    //if(omp_get_thread_num() == 6){
+#pragma omp section
+    f7(g);
+    //}
+    //if(omp_get_thread_num() == 7){
+#pragma omp section
+    f8(g);
+    //}
+  }
+}
+  
+  
+  }
+
 
 //パリティチェック行列を生成する
 void deta (unsigned short g[]){
-  int i, j, a, b ,k,t1,l=0,flg=0;
+  int i, j, a, b ,k,t1,l=0,flg=0,id;
 
 
 #pragma omp parallel num_threads(8)
   {
+    //    id=omp_get_thread_num();
 #pragma omp for schedule(static)
   for (i = 0; i < N; i++)
     {
@@ -1653,7 +1785,8 @@ void deta (unsigned short g[]){
       exit(1);
     }
   }
-    //exit(1);
+    printf("end2\n");
+    // exit(1);
 
 }
 
@@ -1664,11 +1797,11 @@ unsigned short *base;
 
 
 void det (unsigned short g[]){
-  OP f, h = { 0 }, w,u;
+  OP f={0}, h = { 0 }, w={0},u={0};
   unsigned short cc[K + 1] = { 0 }, d[2] = {0};
   int i, j, a, b ,k,t1,l=0,flg=0;
   oterm t = { 0 };
-  vec e;
+  vec e={0};
 
   
   //#pragma omp parallel for
@@ -1693,41 +1826,44 @@ void det (unsigned short g[]){
   h.t[1].a = 1;
   h.t[1].n = 1;
   t.n = 0;
+  /*
   unsigned short tr[N]={0};
   unsigned short ta[N]={0};
+  
   for(i=0;i<N;i++){
       ta[i] = trace (w, i);
       tr[i]=oinv(ta[i]);
   }
+  */
   cc[0]=k;
   f=setpol(cc,K+1);
 
   for (i = 0; i < N; i++)
     {
 
-      //a = trace (w, i);
+      a = trace (w, i);
       //cc[K] = k;
       //cc[0]=k;
-      //cc[K] ^= a;
-      //cc[0]=k^ta[i];
-      //f= setpol (cc, K + 1);
-      f.t[0].a=k^ta[i];
+      //cc[0] ^= ta[i];
+      cc[0]=k^a;
+      f= setpol (cc, K + 1);
+      //f.t[0].a=k^ta[i];
       h.t[0].a = i;
 
       ww = odiv (f, h);
 
-      //b = oinv (a);
-      t.a = gf[tr[i]];
+      b = oinv (a);
+      t.a = gf[b];
 
 
       u = oterml (ww, t);
       e = o2v (u);
 
       //  #pragma omp for
-      for (j = 0; j < K; j++)
-	mat[i][j]= e.x[j];
+      //for (j = 0; j < K; j++)
+      //mat[i][j]= e.x[j];
 
-      //memcpy(mat[i],e.x,sizeof(e));      //
+      memcpy(mat[i],e.x,sizeof(e));      //
 
     }
 
@@ -1867,8 +2003,8 @@ void key2 (unsigned short g[]){
   int i,j,k;
 
   printf ("鍵を生成中です。４分程かかります。\n");
-    fp = fopen ("H.key", "wb");
-  det(g);
+    fp = fopen ("H10.key", "wb");
+  deta(g);
   // exit(1);
   for (i = 0; i < N; i++)
     {
@@ -1882,6 +2018,8 @@ void key2 (unsigned short g[]){
   fwrite(g,2,K+1,fp);
   fclose(fp);
 
+  printf("end\n");
+  // exit(1);
 }
 
 
@@ -2486,17 +2624,17 @@ int main (void){
   }
 */
   
-  //srand (clock () + time (&t));
+  srand (clock () + time (&t));
   printf ("@");
   //getkey();
   //  exit(1);
 
 label:
 
-  //for (i = 0; i < K + 1; i++)
-  //g[i] = 0;
-  //ginit ();
-
+  for (i = 0; i < K + 1; i++)
+    g[i] = 0;
+  ginit ();
+  
   /*
   fp=fopen("sk.key","rb");
   fread(g,2,K+1,fp);
@@ -2525,9 +2663,9 @@ label:
     }
   printf ("@");
   //keygen(g);
-  key2 (g);
-  //deta(g);
-  exit(1);
+  //key2 (g);
+  deta(g);
+  //exit(1);
   //fileenc(argc,argv);
   //wait();
   //filedec(w,argc,argv);
@@ -2544,8 +2682,9 @@ label:
     }
   fclose (fq);
   */
-  
+  printf("end3\n");
   //  #pragma omp parallel for
+  
   for (j = 0; j < N; j++)
     {
       flg = 0;
@@ -2557,14 +2696,16 @@ label:
 	    flg = 1;
 	  //      printf("\n");
 	}
-      if (flg == 0)
-	printf ("0 is %d\n", j);
+      if (flg == 0){
+	printf ("end 0 is %d\n", j);
+	exit(1);
+      }
     }
   
   //  exit(1);
 
 
-  printf ("すげ、オレもうイキそ・・・\n");
+  printf ("endすげ、オレもうイキそ・・・\n");
   /*
   uu=0;
   //#pragma omp parallel for
