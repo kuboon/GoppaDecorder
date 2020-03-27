@@ -1950,7 +1950,7 @@ void detc(unsigned short g[]){
 }
 
 //パリティチェック行列を生成する
-void deta (unsigned short g[]){
+int deta (unsigned short g[]){
   int i, j, a, b ,k,t1,l=0,flg=0,id;
 
 
@@ -1958,12 +1958,12 @@ void deta (unsigned short g[]){
   {
     //    id=omp_get_thread_num();
 #pragma omp for schedule(static)
-  for (i = 0; i < N; i++)
-    {
-      det2(i,g);
-    }
+    for (i = 0; i < N; i++)
+      {
+	det2(i,g);
+      }
   }
-    for(j=0;j<N;j++){
+  for(j=0;j<N;j++){
     flg=0;
     for(i=0;i<K;i++){
       //printf("%d,",mat[i][j]);
@@ -1973,12 +1973,12 @@ void deta (unsigned short g[]){
     }
     if(flg==0){
       printf("0 is %d\n",j);
-      exit(1);
+      return -1;
     }
   }
-    printf("end2\n");
-    // exit(1);
-
+  printf("end2\n");
+  // exit(1);
+  return 0;
 }
 
 
@@ -2827,7 +2827,7 @@ int main (void){
   }
 */
   
-  srand(1234); //(clock () + time (&t));
+  srand(clock () + time (&t));
   printf ("@");
   //getkey();
   //  exit(1);
@@ -2862,11 +2862,23 @@ label:
   for(i=0;i<N;i++)
     tr[i]=oinv(ta[i]);
   printf ("@");
+  for(i=0;i<N;i++){
+    for(j=0;j<K;j++)
+      mat[i][j]=0;
+  }
   //keygen(g);
-  key2 (g);
+  //key2 (g);
+  
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
-  //deta(g);
-  exit(1);
+  //det(g);
+  
+  i=0;
+  i=deta(g);
+  if(i== -1)
+    goto label;
+  
+  //}while(i== -1);
+  //exit(1);
   //fileenc(argc,argv);
   //wait();
   //filedec(w,argc,argv);
@@ -2946,7 +2958,7 @@ label:
     }
     if(flg==0){
       printf("0 is %d\n",j);
-      //exit(1);
+      exit(1);
     }
   }
   //exit(1);
