@@ -1307,12 +1307,14 @@ OP init_pol (OP f)
 }
 
 
+
 //多項式の形式的微分
 OP bibun (vec a){
   OP w[T * 2] = { 0 };
   OP l = { 0 } , t = { 0 };
-  int i, j,  n;
+  int i, j,  n,id;
   vec tmp = { 0 };
+
 
 
   n = deg (a);
@@ -1336,11 +1338,13 @@ OP bibun (vec a){
   //  exit(1);
 
   tmp.x[0] = 1;  
-  //#pragma omp parallel for
+  //
+  //  #pragma omp parallel for
   for (i = 0; i < T; i++)
     {
       t = v2o (tmp);
       //
+
       for (j = 0; j < T; j++)
 	{
 	  if (i != j)
@@ -1610,9 +1614,10 @@ void det2(int i,unsigned short g[]){
       e[id] = o2v (u[id]);
 
       // #pragma omp parallel for
-      for (j = 0; j < K; j++)
-      mat[i][j]= e[id].x[j];
-
+      //for (j = 0; j < K; j++)
+      //mat[i][j]= e[id].x[j];
+     
+      //memcpy(mat[i],e[id].x,sizeof(e));
     
       /*    
   for(j=0;j<N;j++){
@@ -1691,8 +1696,8 @@ void det2(int i,unsigned short g[]){
       //f[id]= setpol (cc, K + 1);
 
       //  #pragma omp for
-      //for (j = 0; j < K; j++)
-      //mat[i][j]= e[id].x[j];
+      for (j = 0; j < K; j++)
+	mat[i][j]= e[id].x[j];
 
       //memcpy(mat[i],e[id].x,sizeof(e[id]));      //
       //  }
@@ -1973,6 +1978,7 @@ int deta (unsigned short g[]){
     }
     if(flg==0){
       printf("0 is %d\n",j);
+      //exit(1);
       return -1;
     }
   }
@@ -2543,16 +2549,15 @@ vec pattarson (OP w, OP f){
 
 
 //512bitの秘密鍵を暗号化
-void encrypt (unsigned char buf[],unsigned char sk[])
+void encrypt (char buf[],unsigned char sk[64])
 {
-  const uint8_t *hash;
-  sha3_context c;
+  const uint8_t *hash={0};
+  sha3_context c={0};
   int image_size=512,i;
   FILE *fp;
 //  unsigned short dd=0;
 
 
-  fp=fopen("enc.sk","wb");
 
   printf("plain text=");
   for(i=0;i<64;i++)
@@ -2569,7 +2574,7 @@ void encrypt (unsigned char buf[],unsigned char sk[])
 
   //j=0;
 
-  for(i=0; i<image_size/8; i++) {
+  for(i=0; i<64; i++) {
     printf("%d", hash[i]);
       //char s[3];
       //byte_to_hex(hash[i],s);
@@ -2581,14 +2586,12 @@ void encrypt (unsigned char buf[],unsigned char sk[])
   for(i=0;i<64;i++)
     printf("%d,",sk[i]);
   printf("\n");
+
+  fp=fopen("enc.sk","wb");
   fwrite(sy,2,K,fp);
   fwrite(sk,1,64,fp);
   fclose(fp);
-  //  printf("in enc2 sk=\n");
-  // for(i=0;i<9;i++)
-  //printf("%d,",sk[i]);
-  //printf("\n");
-  // exit(1);
+
 }
 
 
@@ -2600,17 +2603,17 @@ void decrypt (OP w)
   unsigned short buf[K]={0},tmp[K]={0};
   OP f={0};
   vec v={0};
-  const uint8_t *hash;
-  sha3_context c;
+  const uint8_t *hash={0};
+  sha3_context c={0};
   int image_size=512;
 
 
-
+  j=0;
   fp=fopen("enc.sk","rb");
 
   fread(tmp,2,K,fp);
   fread(sk,1,64,fp);
-
+  fclose(fp);
 
   for(i=0;i<K;i++)
     buf[i]=tmp[K-i-1];
@@ -2626,10 +2629,11 @@ void decrypt (OP w)
     err[0]=1;
     j++;
   }
+
   printf("j=%d\n",j);
   printf("after j\n");
   for(i=j;i<2*T;i++){
-    if(v.x[i]>0){
+    if(v.x[i]>0 && v.x[i]<N){
       err[v.x[i]]=1;
     }
   }
@@ -2637,7 +2641,7 @@ void decrypt (OP w)
   char buf0[8192]={0},buf1[10]={0};
 
   //#pragma omp parallel for
-  for(i=0;i<D;i++){
+  for(i=0;i<N;i++){
     snprintf(buf1, 10, "%d",err[i] );
     strcat(buf0,buf1);
   }
@@ -2655,7 +2659,7 @@ void decrypt (OP w)
 
   j=0;
   printf("hash=");
-  for(i=0; i<image_size/8; i++) {
+  for(i=0; i<64; i++) {
     printf("%d", hash[i]);
       //char s[3];
       //byte_to_hex(hash[i],s);
@@ -2664,7 +2668,7 @@ void decrypt (OP w)
   }
   printf("\ndecript sk=");
   for(i=0;i<64;i++)
-  printf("%u,",sk[i]);
+    printf("%u,",sk[i]);
   printf("\n");
   //  exit(1);
 
@@ -2748,7 +2752,7 @@ void test(OP w,unsigned short zz[]){
       for(i=0;i<64;i++)
       sk[i]=i+1;
 
-      for(i=0;i<D;i++){
+      for(i=0;i<N;i++){
 	snprintf(buf1, 10, "%d",zz[i] );
 	strcat(buf,buf1);
       }
@@ -2862,12 +2866,12 @@ label:
   for(i=0;i<N;i++)
     tr[i]=oinv(ta[i]);
   printf ("@");
-  for(i=0;i<N;i++){
-    for(j=0;j<K;j++)
-      mat[i][j]=0;
-  }
+
+  memset(mat,0,sizeof(mat));
+
   //keygen(g);
   //key2 (g);
+  //exit(1);
   
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
   //det(g);
@@ -2876,9 +2880,9 @@ label:
   i=deta(g);
   if(i== -1)
     goto label;
-  
+  //exit(1);  
   //}while(i== -1);
-  //exit(1);
+  
   //fileenc(argc,argv);
   //wait();
   //filedec(w,argc,argv);
@@ -3003,6 +3007,7 @@ label:
     }else if(r.t[i].a!=r.t[i].n){
 	printpol(o2v(w));
 	printf(" goppa polynomial==============\n");
+	exit(1);
 	for(l=0;l<N;l++){
 	  // printf("%d,",zz[l]);
 	  if(zz[l]>0 && zz[l]==l)
@@ -3064,9 +3069,10 @@ label:
 	  }
 	}
 
-      //test(w,zz);
+      test(w,zz);
       //wait();
-
+      //exit(1);
+      
       f=synd(zz);
 
       //      f = setpol (syn, K);
