@@ -3213,59 +3213,59 @@ label:
   //goto label;
  
   
-    
-      printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
-      //exit(1);
-      //wait();
-
-      
-      //fp=fopen("sk.key","wb");
-
-      //flg=0;
-      //  while(1){
-
-       
-      //for (i = 0; i < N; i++)
+  
+  printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
+  //exit(1);
+  //wait();
+  
+  
+  //fp=fopen("sk.key","wb");
+  
+  //flg=0;
+  //  while(1){
+  
+  
+  //for (i = 0; i < N; i++)
   memset(zz,0,2*N);
-//	zz[i] = 0;
-
-
-      j = 0;
-      while (j < T * 2)
-	{
-	  l = xor128 () % N;
-	  printf ("l=%d\n", l);
-	  if (0 == zz[l]){// && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
-	    
-	      zz[l] = 1;
-	      j++;
-	  }
-	}
-
-      test(w,zz);
-      //wait();
-      //exit(1);
-      for(i=0;i<N;i++)
-	printf("%d,",zz[i]);
-      printf("\n");
-      
-      f=synd(zz);
-
-      //      f = setpol (syn, K);
-      printpol (o2v (f));
-      printf (" syn=============\n");
-      //exit(1);
-      
-
-      //バグトラップのためのコード（冗長）
-      /*      
-      hh=gcd(w,f);
-      if(deg(o2v(hh.d))>0){
-	printf(" s,wは互いに素じゃありません。\n");
-	wait();
-	goto label;
+  //	zz[i] = 0;
+  
+  
+  j = 0;
+  while (j < T * 2)
+    {
+      l = xor128 () % N;
+      printf ("l=%d\n", l);
+      if (0 == zz[l]){// && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
+	
+	zz[l] = 1;
+	j++;
       }
-
+    }
+  
+  test(w,zz);
+  //wait();
+  //exit(1);
+  for(i=0;i<N;i++)
+    printf("%d,",zz[i]);
+  printf("\n");
+  
+  f=synd(zz);
+  
+  //      f = setpol (syn, K);
+  printpol (o2v (f));
+  printf (" syn=============\n");
+  //exit(1);
+  
+  
+  //バグトラップのためのコード（冗長）
+  /*      
+	  hh=gcd(w,f);
+	  if(deg(o2v(hh.d))>0){
+	  printf(" s,wは互いに素じゃありません。\n");
+	  wait();
+	  goto label;
+	  }
+	  
 
       tt.t[0].n = 1;
       tt.t[0].a = 1;
