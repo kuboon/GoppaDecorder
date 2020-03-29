@@ -1136,13 +1136,13 @@ OP ogcd (OP f, OP g){
   //oprintpol((g));
   //  exit(1);
 
-  for (i = 0; i < T; i++)
+  while(1)
     {
       if(deg(o2v(g))==0)
 	break;
       h = omod (f, g);
-      //if(deg(o2v(h))==T-1)
-      //return h;
+      if(deg(o2v(h))==T-1)
+	return h;
       f = g;
       g = h;
     }
@@ -1227,15 +1227,13 @@ EX xgcd (OP f, OP g){
   printf (" h=============\n");
   //exit(1);
 
-  h=v[i];
-  ww=u[i];
+  
+  e.d = f;
+  e.v=v[i];
+  e.u=u[i];
 
   free(v);
   free(u);
-  
-  e.d = f;
-  e.v = h;
-  e.u = ww;
 
 
   return e;
@@ -2522,7 +2520,7 @@ vec pattarson (OP w, OP f){
   flg=0;
  aa:
   ff = omod (omul (hh.v, g1), w);
-//  printpol (o2v (ff));
+ printpol (o2v (ff));
   printf (" beta!=========\n");
   if (deg (o2v (ff)) != K / 2)
     {
@@ -3125,6 +3123,9 @@ label:
       test(w,zz);
       //wait();
       //exit(1);
+      for(i=0;i<N;i++)
+	printf("%d,",zz[i]);
+      printf("\n");
       
       f=synd(zz);
 
