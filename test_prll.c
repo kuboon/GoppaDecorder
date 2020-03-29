@@ -1141,8 +1141,8 @@ OP ogcd (OP f, OP g){
       if(deg(o2v(g))==0)
 	break;
       h = omod (f, g);
-      if(deg(o2v(h))==T-1)
-	return h;
+      //if(deg(o2v(h))==T-1)
+      //return h;
       f = g;
       g = h;
     }
@@ -3017,7 +3017,7 @@ label:
     //  exit(1);
     
     //  for(i=0;i<N;i++)
-    //memset(zz,0,2*N);
+    memset(zz,0,2*N);
 
     
   j=0;
@@ -3217,7 +3217,7 @@ label:
       pattarson (w, f);
       //wait();
       
-      break;
+      //break;
   }
     //goto label;
     //for(i=0;i<N;i++)
