@@ -2900,8 +2900,8 @@ label:
       if (ta[i] == 0)
 	{
 	  printf ("trace 0 @ %d\n", i);
-	  //goto label;
-	    exit(1);
+	  goto label;
+	  //exit(1);
 	}
     }
   for(i=0;i<N;i++)
