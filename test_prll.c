@@ -1356,8 +1356,8 @@ EX xgcd (OP f, OP g){
   printf (" v=============\n");
   printpol (o2v (u[i]));
   printf (" u=============\n");
-  printpol (o2v (h));
-  printf (" h=============\n");
+  printpol (o2v (f));
+  printf (" f=============\n");
   //exit(1);
 
   
