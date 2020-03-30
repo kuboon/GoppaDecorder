@@ -202,8 +202,8 @@ g[5]=5400;
 g[3]=3852;
 g[2]=5328;
 g[0]=4920;
-  */
-    
+  */  
+  /*      
 g[256]=1;
 g[254]=149;
 g[253]=2329;
@@ -333,9 +333,9 @@ g[5]=164;
 g[4]=2079;
 g[3]=6653;
 g[0]=2429;
-  
+  */
 
-/*
+
   g[K] = 1; //xor128();
   g[0] = rand()%N;
   while (count < ((K / 2) - 1))
@@ -348,7 +348,7 @@ g[0]=2429;
 	  count++;
 	}
     }
-*/
+
   
   for (j = 0; j < K + 1; j++)
   gg[j] = g[K - j];
@@ -1407,7 +1407,7 @@ OP ogcd (OP f, OP g){
       if(deg(o2v(h))==T-1){
 	printpol(o2v(h));
 	printf(" in ogcd=============\n");
-	wait();
+	//wait();
 	return h;
       }
       f = g;
@@ -1475,8 +1475,9 @@ EX xgcd (OP f, OP g){
       f = g;
       g = h;
 
-      if(deg(o2v(v[i]))==T-1 || deg(o2v(f))==T-1){
-      break;
+      // if(deg(o2v(v[i]))==T-1 ||
+      if(deg(o2v(f))==T-1){
+	break;
       }
       i++;
    }
@@ -1759,7 +1760,7 @@ OP decode (OP f, OP s){
   printf ("@@@@@@@@@\n");
   //exit(1);
 
-  hh = xgcd (f, s);
+  h = ogcd (f, s);
   printpol (o2v (hh.d));
   //wait();
 
@@ -1790,7 +1791,7 @@ OP decode (OP f, OP s){
   for (i = 0; i < j; i++)
     {
       //  if(x.x[i]>0){
-      e.t[i].a = gf[mlt (fg[trace (hh.d, x.x[i])], oinv (trace (l, x.x[i])))];
+      e.t[i].a = gf[mlt (fg[trace (h, x.x[i])], oinv (trace (l, x.x[i])))];
       e.t[i].n = x.x[i];
 
 // }
@@ -1803,7 +1804,7 @@ OP decode (OP f, OP s){
 
   
   for (i = 0; i < T; i++)
-    if (gf[trace (hh.d, x.x[i])] == 0)
+    if (gf[trace (h, x.x[i])] == 0)
       printf ("h=0");
   //printf("\n");
   for (i = 0; i < T; i++)
