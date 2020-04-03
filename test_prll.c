@@ -1997,11 +1997,11 @@ void det2(int i,unsigned short g[]){
       //cc[0]^=ta[i];
       //f[id]= setpol (cc, K + 1);
 
-      //  #pragma omp for
+      #pragma omp parallel for
       for (j = 0; j < K; j++)
-	mat[i][j]= e[id].x[j];
+      mat[i][j]= e[id].x[j];
 
-      //memcpy(mat[i],e[id].x,sizeof(e[id]));      //
+      //memcpy(mat[i],e[id].x,sizeof(e));      //
       //  }
   
 }
@@ -2722,7 +2722,7 @@ vec pattarson (OP w, OP f){
   OP g1 = { 0 }, ll = { 0 };
   int i, j, k, l, c,n,count=0;
   int flg, o1 = 0;
-  OP tt = { 0 }, ff = { 0 };
+  OP tt = { 0 }, ff = { 0 },h={0};
   EX hh = { 0 };
   vec v;
   oterm rr = { 0 };
@@ -3276,7 +3276,7 @@ label:
 
     //  exit(1);
 
-    
+    /*    
     //  for(i=0;i<N;i++)
     memset(zz,0,2*N);
 
@@ -3285,7 +3285,7 @@ label:
   while(j<T){
     l=xor128()%N;
     //printf("l=%d\n",l);
-    if(0==zz[l] && l>0){// && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
+    if(0==zz[l] && l>0){
       zz[l]=l;
       j++;
     }
@@ -3355,7 +3355,7 @@ label:
   printf("err=%dっ！！\n",o1);
 
   //goto label;
- 
+  */ 
   
   
   printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
@@ -3379,8 +3379,7 @@ label:
     {
       l = xor128 () % N;
       printf ("l=%d\n", l);
-      if (0 == zz[l]){// && l!=418 && l!=836 && l!=1254 && l!=1672 && l!=2090 && l!=2508 && l!=2926 && l!=3344 && l!=3762 && l!=4180 && l!=4598 && l!=5016 && l!=5434 && l!=5852 && l!=6270){
-	
+      if (0 == zz[l]){
 	zz[l] = 1;
 	j++;
       }
@@ -3482,7 +3481,7 @@ label:
       
       //復号化の本体
       pattarson (w, f);
-      //wait();
+      wait();
       
       //break;
   }
