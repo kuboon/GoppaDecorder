@@ -3146,7 +3146,7 @@ label:
   oprintpol (w);
   //exit(1);
 
-  //#pragma omp parallel for
+  
   for (i = 0; i < N; i++)
     {
       ta[i] = trace (w, i);
@@ -3157,6 +3157,8 @@ label:
 	  //exit(1);
 	}
     }
+  
+#pragma omp parallel for
   for(i=0;i<N;i++)
     tr[i]=oinv(ta[i]);
   printf ("@");
@@ -3164,6 +3166,7 @@ label:
   memset(mat,0,sizeof(mat));
 
   //keygen(g);
+  //鍵をファイルに書き込むためにはkey2を有効にしてください。
   //key2 (g);
   //exit(1);
   
@@ -3175,7 +3178,8 @@ label:
   //if(i== -1)
   //goto label;
 
-  
+
+  //固定した鍵を使いたい場合はファイルから読み込むようにしてください。  
   /*  
   fq = fopen ("H.key", "rb");
   fread (dd, 2, K * N, fq);
@@ -3208,35 +3212,7 @@ label:
 
 
   printf ("すげ、オレもうイキそ・・・\n");
-  /*
-  uu=0;
-  //#pragma omp parallel for
-  for(i=0;i<N;i++){
-  a=trace(w,i);
-  if(a==0){
-    printf("trace 0\n");
-       exit(1);
-  }
-  }
-  */
-  //printpol(o2v(w));
-  // exit(1);
 
-  /*
-  fp=fopen(argv[1],"rb");
-  fq=fopen(argv[2],"wb");
-  while((c=fread(zz,1,T,fp))>0){
-  for(i=0;i<M;i++){
-    d=trace(w,(unsigned short)i);
-    printf("%d,",d);
-    if(d==0){
-      printf("%i bad trace 0\n",i);
-      exit(1);
-    }
-  }
-  printf("\n");
-  //exit(1);
-  */
 
 //decode bigin
 
