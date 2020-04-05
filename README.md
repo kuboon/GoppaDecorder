@@ -1,4 +1,4 @@
-# GoppaDecorder(WhiteBlood)
+# GoppaDecorder
 
 １．プログラム実行に当たって(oplib.c)　20200304
 
