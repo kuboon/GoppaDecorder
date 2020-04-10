@@ -1,4 +1,4 @@
-# GoppaDecorder(Goppy)
+# GoppaDecorder(Goppie)
 
 １．プログラム実行に当たって(oplib.c)　20200304
 
