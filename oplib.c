@@ -1606,10 +1606,10 @@ void det2(int i,unsigned short g[]){
   e[id] = o2v (u[id]);
   
 
-  for (j = 0; j < K; j++)
-    mat[i][j]= e[id].x[j];
+  //for (j = 0; j < K; j++)
+  // mat[i][j]= e[id].x[j];
   
-  //memcpy(mat[i],e[id].x,sizeof(e));
+  memcpy(mat[i],e[id].x,sizeof(mat[i]));
 
   
 }
@@ -1973,7 +1973,7 @@ void det (unsigned short g[]){
       // #pragma omp parallel for
       //for (j = 0; j < K; j++)
       //mat[i][j]= e.x[j];
-      memcpy(mat[i],e.x,sizeof(e));
+      memcpy(mat[i],e.x,sizeof(mat[i]));
     }
     
     
