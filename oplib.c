@@ -2120,11 +2120,9 @@ void key2 (unsigned short g[]){
 
   printf ("鍵を生成中です。４分程かかります。\n");
     fp = fopen ("H.key", "wb");
+    i=0;
     do{
-      i=0;
       i=deta (g);
-      if(i==-1)
-	exit(1);
     }while(i==-1);
       
   //exit(1);
@@ -2758,26 +2756,15 @@ label:
 
   //keygen(g);
   //鍵をファイルに書き込むためにはkey2を有効にしてください。
-  //key2 (g);
-
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
   //det(g);
   
-  //i=0;
+  i=0;
   do{
     i=deta(g);
   }while(i==-1);
 
   //key2 (g);
-  printf ("end of ky2\n");
-  makeS ();
-  printf ("end of S\n");
-  bdet ();
-  printf ("end of bdet\n");
-  Pgen ();
-  printf ("end of Pgen\n");
-  pubkeygen ();
-  exit(1);
   
 
   //固定した鍵を使いたい場合はファイルから読み込むようにしてください。  
@@ -3059,9 +3046,9 @@ label:
 	  }
 	}
       printf ("err=%dっ!! \n", count);
-      wait();
+      //wait();
       
-      //break;
+      break;
   }
 
     //free(base);
