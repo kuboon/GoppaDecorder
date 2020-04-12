@@ -1607,7 +1607,7 @@ void det2(int i,unsigned short g[]){
   
 
   //for (j = 0; j < K; j++)
-  // mat[i][j]= e[id].x[j];
+  //mat[i][j]= e[id].x[j];
   
   memcpy(mat[i],e[id].x,sizeof(mat[i]));
 
@@ -2044,16 +2044,24 @@ void pubkeygen (){
 
 
   fp = fopen ("pub.key", "wb");
+  //#pragma omp parallel for
   for (i = 0; i < E * K; i++)
     {
+#pragma omp parallel num_threads(8)
+      {
+	//    id=omp_get_thread_num();
+#pragma omp for schedule(static)
       for (j = 0; j < N; j++)
 	{
-	  #pragma omp parallel for
+	  l=0;
+#pragma omp parallel for reduction (^:l)
 	  for (k = 0; k < E * K; k++)
-	    {
-	      tmp[i][j] ^= cl[i][k] & BH[k][j];
+	    {      
+		l^= cl[i][k] & BH[k][j];
 	    }
+	  tmp[i][j]=l;
 	}
+      }
     }
   P2Mat (P);
 
@@ -2112,7 +2120,13 @@ void key2 (unsigned short g[]){
 
   printf ("鍵を生成中です。４分程かかります。\n");
     fp = fopen ("H.key", "wb");
-  det (g);
+    do{
+      i=0;
+      i=deta (g);
+      if(i==-1)
+	exit(1);
+    }while(i==-1);
+      
   //exit(1);
   for (i = 0; i < N; i++)
     {
@@ -2741,19 +2755,29 @@ label:
 
   memset(mat,0,sizeof(mat));
 
+
   //keygen(g);
   //鍵をファイルに書き込むためにはkey2を有効にしてください。
   //key2 (g);
-  //exit(1);
-  
+
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
-  det(g);
+  //det(g);
   
   //i=0;
-  //i=deta(g);
-  //if(i== -1)
-  //goto label;
-
+  i=deta(g);
+  if(i== -1)
+  goto label;
+  //key2 (g);
+  printf ("end of ky2\n");
+  makeS ();
+  printf ("end of S\n");
+  bdet ();
+  printf ("end of bdet\n");
+  Pgen ();
+  printf ("end of Pgen\n");
+  pubkeygen ();
+  exit(1);
+  
 
   //固定した鍵を使いたい場合はファイルから読み込むようにしてください。  
   /*  
