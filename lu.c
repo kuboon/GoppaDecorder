@@ -43,15 +43,13 @@ void g2(){
       bb[j][i]=xor128()%2;
     }
   }
-  unsigned short s;
+
   for(i=0;i<F;i++){
     for(j=0;j<F;j++){
-      s=0;
-      //#pragma omp parallel for reduction(^:s) 
+      //#pragma omp parallel for  
       for(k=0;k<F;k++){
 	cc[i][j]^=bb[i][k]&a[k][j];
       }
-
     }
   }
 
