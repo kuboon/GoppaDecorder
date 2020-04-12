@@ -2764,9 +2764,10 @@ label:
   //det(g);
   
   //i=0;
-  i=deta(g);
-  if(i== -1)
-  goto label;
+  do{
+    i=deta(g);
+  }while(i==-1);
+
   //key2 (g);
   printf ("end of ky2\n");
   makeS ();
