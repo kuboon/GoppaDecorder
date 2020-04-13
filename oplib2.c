@@ -4,7 +4,7 @@
 //code name : OVP - One Variable Polynomial library with OpenMP friendly
 //status    : now in debugging (ver 0.1)
 
-#include "chash.cpp"
+#include "chash.c"
 //#include "ecole.c"
 
 
