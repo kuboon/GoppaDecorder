@@ -2893,7 +2893,7 @@ label:
   }
   printf("err=%dっ！！\n",o1);
 
-  //goto lab;
+  goto label;
    
   
   
@@ -3042,7 +3042,7 @@ label:
 	printf("\n");
       }
       
-      goto lab;
+      //goto lab;
       //wait();
       
       break;
