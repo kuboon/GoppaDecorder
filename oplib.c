@@ -49,10 +49,7 @@ extern void makeS();
 unsigned short sy[K]={0};
 //Goppa多項式
 static unsigned short g[K+1]={0};
-//unsigned short tr[N]={0};
-
-
-
+unsigned short zz[N]={0};
 
 
 /*
@@ -71,8 +68,7 @@ static void ginit (void){
   //unsigned short g[K+1]={0};
 
   printf ("in ginit\n");
-
-
+  
 
   g[K] = 1; //xor128();
   g[0] = rand()%N;
@@ -314,6 +310,17 @@ vec Setvec (int n){
 
 
   return v;
+}
+
+
+void printvec(vec v){
+  int i,j;
+  
+  for(i=0;i<deg(v)+1;i++){
+    if(v.x[i]>0)
+    printf("g[%d]=%d;\n",i,v.x[i]);
+  }
+
 }
 
 
@@ -1148,6 +1155,7 @@ OP ogcd (OP f, OP g){
 	printpol(o2v(h));
 	printf(" in ogcd=============\n");
 	//wait();
+	//break;
 	return h;
       }
       f = g;
@@ -1430,7 +1438,7 @@ vec chen (OP f){
 
 //ユークリッドアルゴリズムによる復号関数
 OP decode (OP f, OP s){
-  int i, j, k;
+  int i, j, k,count=0;
   OP r = { 0 }, w ={ 0 }, e = { 0 }, l = { 0 };
   oterm t1, t2, d1, a, b;
   vec x = { 0 };
@@ -1443,7 +1451,7 @@ OP decode (OP f, OP s){
   printpol (o2v (s));
   printf ("\nsyn===========\n");
   r = vx (f, s);
-  h=ogcd(f,s);
+  //h=ogcd(f,s);
 
   if (deg (o2v (r)) == 0)
     {
@@ -1465,7 +1473,11 @@ OP decode (OP f, OP s){
       if (k > 1)
 	{
 	  printf ("baka0\n");
+	  printvec(o2v(f));
+	  for(i=0;i<N;i++)
+	    printf("%d,",zz[i]);
 	  exit (1);
+	  //return f;
 	}
     }
   //exit(1);
@@ -1515,8 +1527,8 @@ OP decode (OP f, OP s){
   for (i = 0; i < j; i++)
     {
       if(x.x[i]>0){
-      //e.t[i].a = gf[mlt (fg[trace (hh.d, x.x[i])], oinv (trace (l, x.x[i])))];
-      e.t[i].a = gf[mlt (fg[trace (h, x.x[i])], oinv (trace (l, x.x[i])))];
+      e.t[i].a = gf[mlt (fg[trace (hh.d, x.x[i])], oinv (trace (l, x.x[i])))];
+      //e.t[i].a = gf[mlt (fg[trace (h, x.x[i])], oinv (trace (l, x.x[i])))];
       e.t[i].n = x.x[i];
       }
     }
@@ -1767,8 +1779,8 @@ void f8(unsigned short g[]){
 }
 
 
-void detb(unsigned short g[]){
-  int i,j;
+int detb(unsigned short g[]){
+  int i,j,flg=0;
   /*
   for(i=0;i<N;i++){
     for(j=0;j<K;j++)
@@ -1814,55 +1826,25 @@ void detb(unsigned short g[]){
     }
   }
   printf("enf of detb\n");  
-  
-}
-
-
-void detc(unsigned short g[]){
-  int id[16]={0},i;
-  
-#pragma omp parallel num_threads(8)
-  {
-    i=omp_get_thread_num();
-    while(1){
-    if(i == 0 && id[0]==0){
-      f1(g);
-      id[0]++;
+  for(j=0;j<N;j++){
+    flg=0;
+    for(i=0;i<K;i++){
+      //printf("%d,",mat[i][j]);
+      if(mat[j][i]>0)
+	flg=1;
+      //      printf("\n");
     }
-    if(i == 1 && id[1]==0){
-    f2(g);
-    id[1]++;
-    }
-    if(i == 2 && id[2]==0){
-      f3(g);
-      id[2]++;
-    }
-    if(i == 3 && id[3]==0){
-      f4(g);
-      id[3]++;
-    }
-    if(i == 4 && id[4]==0){
-      f5(g);
-      id[4]++;
-    }
-    if(i == 5 && id[5]==0){
-    f6(g);
-    id[5]++;
-    }
-    if(i == 6 && id[6]==0){
-    f7(g);
-    id[6]++;
-    }
-    if(i == 7 && id[7]==0){
-    f8(g);
-    id[7]++;
-    }
-    if(id[0]>0 && id[1]>0 && id[2]>0 && id[3]>0 && id[4]>0 && id[5]>0 && id[6]>0 && id[7]>0)
-      break;
+    if(flg==0){
+      printf("0 is %d\n",j);
+      //exit(1);
+      return -1;
     }
   }
 
+  return 0;
 }
+
+
 
 //パリティチェック行列を生成する
 int deta (unsigned short g[]){
@@ -2687,7 +2669,7 @@ int main (void){
   int i, j, k, l;
   int count = 0;
   FILE *fp, *fq;
-  unsigned short zz[N] = { 0 };
+  //unsigned short zz[N] = { 0 };
   int flg, o1 = 0;
   OP f = { 0 }, r = { 0 }, w = { 0 },ff={0},tt={0};
   EX hh = { 0 };
@@ -2758,12 +2740,17 @@ label:
   //鍵をファイルに書き込むためにはkey2を有効にしてください。
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
   //det(g);
-  
+  //exit(1);
+
+  //gccの場合、並列化すると鍵生成が不完全になる。その場合、デバッグデータを出力して終了。
+  //再現性がないので余り役に立たない。
   i=0;
   do{
-    i=deta(g);
-  }while(i==-1);
+  i=deta(g);
+ }while(i==-1);
 
+  lab:
+  //exit(1);
   //key2 (g);
   
 
@@ -2832,7 +2819,7 @@ label:
     //  for(i=0;i<N;i++)
     memset(zz,0,sizeof(zz));
 
-    
+         
   j=0;
   while(j<T){
     l=xor128()%N;
@@ -2843,7 +2830,7 @@ label:
     }
   }
     
-
+    
     
   f=synd(zz);
   printpol(o2v(f));
@@ -2858,7 +2845,7 @@ label:
   printf("%d\n",count);
   //exit(1);
 
-  
+    
   r=decode(w,f);
   //  exit(1);
 
@@ -2906,13 +2893,13 @@ label:
   }
   printf("err=%dっ！！\n",o1);
 
-  //goto label;
+  //goto lab;
    
   
   
   printf("パターソンアルゴリズムを実行します。何か数字を入れてください。\n");
   //exit(1);
-  wait();
+  //wait();
   
   
     //flg=0;
@@ -2936,7 +2923,7 @@ label:
     }
   
   test(w,zz);
-  wait();
+  //wait();
 
   //exit(1);
 
@@ -3046,6 +3033,16 @@ label:
 	  }
 	}
       printf ("err=%dっ!! \n", count);
+      if(count<255){
+	printpol(o2v(w));
+	for(i=0;i<N;i++){
+	  if(zz[i]>0)
+	    printf("%d,",zz[i]);
+	}
+	printf("\n");
+      }
+      
+      goto lab;
       //wait();
       
       break;
