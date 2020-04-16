@@ -2685,16 +2685,16 @@ label:
 
   //gccの場合、並列化すると鍵生成が不完全になる。その場合、デバッグデータを出力して終了。
   //再現性がないので余り役に立たない。
-  /*
+  
   i=0;
   do{
-    // memset(mat,0,sizeof(mat));
+    memset(mat,0,sizeof(mat));
     i=deta(g);
   }while(i==-1);
-  */
+  
     
   lab:
-  //exit(1);
+  exit(1);
   //key2 (g);
   
 
