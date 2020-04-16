@@ -31,7 +31,7 @@
 #include "8192.h"
 #include "global.h"
 #include "struct.h"
-//#include "sha3.h"
+
 
 
 #include "chash.c"
@@ -44,7 +44,7 @@ extern int mlt(int x,int y);
 extern int mltn(int n,int a);
 extern void makeS();
 
-
+//#pragma omp threadprivate(mat)
 //シンドロームのコピー
 unsigned short sy[K]={0};
 //Goppa多項式
@@ -1378,15 +1378,17 @@ OP bibun (vec a){
   tmp.x[0] = 1;  
   //
 
+  //#pragma omp parallel for private(i,j)
   for (i = 0; i < T; i++)
     {
       t = v2o (tmp);
       //
-
       for (j = 0; j < T; j++)
 	{
-	  if (i != j)
+	  // #pragma omp critical
+	  if (i != j){
 	    t = omul (t, w[j]);
+	}
 	}
 	
       //printpol(o2v(t));
@@ -1398,7 +1400,7 @@ OP bibun (vec a){
 	}
       l = oadd (l, t);
     }
-
+  
 
   return l;
 }
@@ -1589,9 +1591,11 @@ void det2(int i,unsigned short g[]){
   
   k = cc[K];
   w = setpol (g, K + 1);
+  
+  //  omp_set_num_threads(8);
   id=omp_get_thread_num();
   
-  
+
   h[id].t[0].n = 0;
   h[id].t[1].a = 1;
   h[id].t[1].n = 1;
@@ -1616,84 +1620,19 @@ void det2(int i,unsigned short g[]){
   t[id].a = gf[tr[i]];
   u[id] = oterml (ww[id], t[id]);
   e[id] = o2v (u[id]);
+
+  //#pragma omp parallel for default(shared)
+  //for (j = 0; j < K; j++){
+  // mat[i][j]= e[id].x[j];
+  //}
   
-
-  //for (j = 0; j < K; j++)
-  //mat[i][j]= e[id].x[j];
-  
-  memcpy(mat[i],e[id].x,sizeof(mat[i]));
-
-  
-}
-
-
-void det22(int i,unsigned short g[]){
-  OP f={0}, h = { 0 }, w,u={0};
-  unsigned short cc[K + 1] = { 0 }, d[2] = {0};
-  int  j, a, b ,k,t1,l=0,flg=0,id;
-  oterm t = { 0 };
-  vec e={0};
-  OP ww = { 0 };
-
-
-    memcpy(cc,g,sizeof(cc));
-  k = cc[K];
-  w = setpol (g, K + 1);
-  id=omp_get_thread_num();
-
-
-  h.t[0].n = 0;
-  h.t[1].a = 1;
-  h.t[1].n = 1;
-  t.n = 0;
- 
-    
-  //
-  f= setpol (cc, K + 1);
-
-
-
-      //a = trace (w, i);
-      // cc[K] = k;
-
-      cc[K] = k^ta[i];
-      //tr[i];
-      f= setpol (cc, K + 1);
-
-      //f.t[0].a=k^ta[i]; //cc[K];
-      h.t[0].a = i;
-      
-      ww = odiv (f, h);
-
-      //b = oinv (a);
-      t.a = gf[tr[i]];
-
-
-      u = oterml (ww, t);
-      e = o2v (u);
-
-      // #pragma omp parallel for
-      for (j = 0; j < K; j++)
-      mat[i][j]= e.x[j];
-
-    
-      
-  for(j=0;j<N;j++){
-    flg=0;
-    for(i=0;i<K;i++){
-      //printf("%d,",mat[i][j]);
-      if(mat[j][i]>0)
-	flg=1;
-      //      printf("\n");
-    }
-    if(flg==0){
-      printf("0 is %d\n",j);
-      exit(1);
-    }
-  }
+  //#pragma omp critical
+   memcpy(mat[i],e[id].x,sizeof(mat[i]));
 
   
 }
+
+
 
 
 
@@ -1789,7 +1728,7 @@ int detb(unsigned short g[]){
   */
 #pragma omp parallel num_threads(8)
   {
-#pragma omp sections
+    #pragma omp sections
     {
       //if(omp_get_thread_num() == 0){
 #pragma omp section
@@ -1851,15 +1790,16 @@ int deta (unsigned short g[]){
   int i, j, a, b ,k,t1,l=0,flg=0,id;
 
 
+  //
+  //
 #pragma omp parallel num_threads(8)
-  {
-    //    id=omp_get_thread_num();
+    {
 #pragma omp for schedule(static)
     for (i = 0; i < N; i++)
       {
 	det2(i,g);
       }
-  }
+    }
   for(j=0;j<N;j++){
     flg=0;
     for(i=0;i<K;i++){
@@ -1930,6 +1870,7 @@ void det (unsigned short g[]){
     
   //
   f= setpol (cc, K + 1);
+
   for (i = 0; i < N; i++)
     {
 
@@ -2736,19 +2677,22 @@ label:
   memset(mat,0,sizeof(mat));
 
 
-  //keygen(g);
+  keygen(g);
   //鍵をファイルに書き込むためにはkey2を有効にしてください。
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
   //det(g);
-  //exit(1);
+  exit(1);
 
   //gccの場合、並列化すると鍵生成が不完全になる。その場合、デバッグデータを出力して終了。
   //再現性がないので余り役に立たない。
+  /*
   i=0;
   do{
-  i=deta(g);
- }while(i==-1);
-
+    // memset(mat,0,sizeof(mat));
+    i=deta(g);
+  }while(i==-1);
+  */
+    
   lab:
   //exit(1);
   //key2 (g);
