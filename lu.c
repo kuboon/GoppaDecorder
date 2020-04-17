@@ -44,10 +44,11 @@ void g2(){
       bb[j][i]=xor128()%2;
     }
   }
+
+  //
 #pragma omp parallel for private(j,k)
   for(i=0;i<F;i++){
     for(j=0;j<F;j++){
-      //
       for(k=0;k<F;k++){
 	cc[i][j]^=bb[i][k]&a[k][j];
       }
@@ -55,7 +56,6 @@ void g2(){
   }
 
 }
-
 
 
 void makeS(){
@@ -96,15 +96,16 @@ void makeS(){
 
   
 //単位行列を作る
-#pragma omp parallel for 
-for(i=0;i<F;i++){
 #pragma omp parallel for
+for(i=0;i<F;i++){
+  #pragma omp parallel for
  for(j=0;j<F;j++){
  inv_a[i][j]=(i==j)?1.0:0.0;
  }
  }
+
+
 //掃き出し法
-// #pragma omp parallel for private(j,k,l)
 for(i=0;i<F;i++){
   if(cc[i][i]==0){
   j=0;
@@ -139,7 +140,7 @@ for(i=0;i<F;i++){
  }
 
 //  exit(1);
-// #pragma omp parallel for private(j,k)
+//#pragma omp parallel for private(j,k)
  for(i=1;i<F;i++){
    for(k=0;k<i;k++){
      if(cc[k][i]==1){
@@ -166,17 +167,20 @@ for(i=0;i<F;i++){
  
 // exit(1);
 //検算
-//l=0;
+
+#pragma omp parallel for private(j,k)
  for(i=0;i<F;i++){
    for(j=0;j<F;j++){
      l=0;
-#pragma omp parallel for reduction(^:l)
+     //#pragma omp parallel for reduction(^:l)
      for(k=0;k<F;k++){
-       l^=(cl[i][k]&inv_a[k][j]);
+       //l
+	 b[i][j]^=(cl[i][k]&inv_a[k][j]);
      }
-     b[i][j]=l;
+     // b[i][j]=l;
    }
  }
+ 
 
  for(i=0;i<F;i++){
    //   printf("%d",b[i][i]);
@@ -188,6 +192,7 @@ for(i=0;i<F;i++){
   } 
  }
  count=0;
+
  for(i=0;i<F;i++){
    for(j=0;j<F;j++){
      if(b[i][j]==0 && i!=j)
@@ -242,6 +247,7 @@ for(i=0;i<F;i++){
   }
   fclose(fq);
 
+  free(b);
   
 }
 
