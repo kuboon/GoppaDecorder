@@ -45,13 +45,14 @@ void g2(){
     }
   }
 
-  //
-#pragma omp parallel for private(j,k)
+  int l;
+  #pragma omp parallel for private(j,k)
   for(i=0;i<F;i++){
     for(j=0;j<F;j++){
       for(k=0;k<F;k++){
 	cc[i][j]^=bb[i][k]&a[k][j];
       }
+      //cc[i][j]=l;
     }
   }
 
@@ -80,11 +81,12 @@ void makeS(){
 
     g2();
     printf("end of g2\n");
-
+    //exit(1);
+    
     flg=0;
-#pragma omp parallel for  
+#pragma omp parallel for private(j)
   for(i=0;i<F;i++){
-    #pragma omp parallel for  
+
     for(j=0;j<F;j++){
       //  printf("%d,",a[i][j]);
       cl[i][j]=cc[i][j];
@@ -96,9 +98,8 @@ void makeS(){
 
   
 //単位行列を作る
-#pragma omp parallel for
+#pragma omp parallel for private(j)
 for(i=0;i<F;i++){
-  #pragma omp parallel for
  for(j=0;j<F;j++){
  inv_a[i][j]=(i==j)?1.0:0.0;
  }
@@ -172,6 +173,7 @@ for(i=0;i<F;i++){
  for(i=0;i<F;i++){
    for(j=0;j<F;j++){
      l=0;
+     //clangの場合、併用できない
      //#pragma omp parallel for reduction(^:l)
      for(k=0;k<F;k++){
        //l
