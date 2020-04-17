@@ -1415,11 +1415,11 @@ vec chen (OP f){
 
   n = deg (o2v (f));
 //exit(1);
-
+//#pragma omp parallel for private(i)
   for (x = 0; x < N; x++)
     {
       z = 0;
-    #pragma omp parallel for reduction (^:z)
+#pragma omp parallel for reduction (^:z)
       for (i = 0; i < n + 1; i++)
 	{
 	  if (f.t[i].a > 0)
@@ -1621,13 +1621,13 @@ void det2(int i,unsigned short g[]){
   u[id] = oterml (ww[id], t[id]);
   e[id] = o2v (u[id]);
 
-  //#pragma omp parallel for default(shared)
+  //#pragma omp critical
   //for (j = 0; j < K; j++){
-  // mat[i][j]= e[id].x[j];
+  //mat[i][j]= e[id].x[j];
   //}
   
-  //#pragma omp critical
-   memcpy(mat[i],e[id].x,sizeof(mat[i]));
+  //#pragma omp critical(mat)
+  memcpy(mat[i],e[id].x,sizeof(mat[i]));
 
   
 }
@@ -1792,7 +1792,7 @@ int deta (unsigned short g[]){
 
   //
   //
-#pragma omp parallel num_threads(8)
+  #pragma omp parallel num_threads(8)
     {
 #pragma omp for schedule(static)
     for (i = 0; i < N; i++)
@@ -1967,38 +1967,39 @@ void pubkeygen (){
 
 
   fp = fopen ("pub.key", "wb");
-  //#pragma omp parallel for
+#pragma omp parallel for private(j,k)
   for (i = 0; i < E * K; i++)
     {
 #pragma omp parallel num_threads(8)
       {
 	//    id=omp_get_thread_num();
-#pragma omp for schedule(static)
+
       for (j = 0; j < N; j++)
 	{
-	  l=0;
-#pragma omp parallel for reduction (^:l)
+	  tmp[i][j]=0;
+	  //#pragma omp parallel for reduction (^:l)
 	  for (k = 0; k < E * K; k++)
 	    {      
-		l^= cl[i][k] & BH[k][j];
+		tmp[i][j]^= cl[i][k] & BH[k][j];
 	    }
-	  tmp[i][j]=l;
+	  //tmp[i][j]=l;
 	}
       }
     }
   P2Mat (P);
-
+  
+#pragma omp parallel for private(k)
   for (i = 0; i < E * K; i++)
     {
       //  for(j=0;j<N;j++){
-      #pragma omp parallel for
       for (k = 0; k < N; k++)
 	pub[i][k] = tmp[i][P[k]];	//&A[k][j];
       //    }
     }
+
+#pragma omp parallel for private(j)
   for (i = 0; i < N; i++)
     {
-      #pragma omp parallel for
       for (j = 0; j < E * K; j++)
 	{
 	  dd[j] = pub[j][i];
@@ -2508,16 +2509,14 @@ OP synd(unsigned short zz[]){
 
   printf("in synd\n");
 
-
+#pragma omp parallel for private(j)
   for(i=0;i<K;i++){
     syn[i]=0;
     s=0;
-#pragma omp parallel for reduction(^:s)
     for(j=0;j<N;j++){
-
-      s^=gf[mlt(fg[zz[j]],fg[mat[j][i]])];
+      syn[i]^=gf[mlt(fg[zz[j]],fg[mat[j][i]])];
     }
-    sy[i]=syn[i]=s;
+    sy[i]=syn[i];//=s;
        printf("syn%d,",syn[i]);
   }
   printf("\n");
@@ -2643,6 +2642,9 @@ int main (void){
 
 label:
 
+  //makeS();
+  //exit(1);
+  
   for (i = 0; i < K + 1; i++)
    g[i] = 0;
   ginit ();
@@ -2677,24 +2679,24 @@ label:
   memset(mat,0,sizeof(mat));
 
 
-  keygen(g);
+  //keygen(g);
   //鍵をファイルに書き込むためにはkey2を有効にしてください。
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
   //det(g);
-  exit(1);
+  //exit(1);
 
   //gccの場合、並列化すると鍵生成が不完全になる。その場合、デバッグデータを出力して終了。
-  //再現性がないので余り役に立たない。
-  
+  //再現性がないので余り役に立たない。その場合detを使うこと。
+
   i=0;
   do{
     memset(mat,0,sizeof(mat));
     i=deta(g);
   }while(i==-1);
-  
+
     
   lab:
-  exit(1);
+  //exit(1);
   //key2 (g);
   
 
@@ -2711,7 +2713,7 @@ label:
   fclose (fq);
   */
   
-
+#pragma omp parallel for private(i)
   for (j = 0; j < N; j++)
     {
       flg = 0;
@@ -2837,7 +2839,7 @@ label:
   }
   printf("err=%dっ！！\n",o1);
 
-  goto label;
+  //goto label;
    
   
   
