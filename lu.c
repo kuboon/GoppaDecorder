@@ -46,16 +46,20 @@ void g2(){
   }
 
   int l;
-  #pragma omp parallel for private(j,k)
+#pragma omp parallel for num_threads(8) private(j,k)
   for(i=0;i<F;i++){
+    //    #pragma omp parallel num_threads(8)
+    {
     for(j=0;j<F;j++){
+      l=0;
       for(k=0;k<F;k++){
 	cc[i][j]^=bb[i][k]&a[k][j];
+	//l^=bb[i][k]&a[k][j];
       }
       //cc[i][j]=l;
     }
+    }
   }
-
 }
 
 
@@ -172,14 +176,14 @@ for(i=0;i<F;i++){
 
 #pragma omp parallel for private(j,k)
  for(i=0;i<F;i++){
-   //#pragma omp parallel num_threads(8)
-      {
-   for(j=0;j<F;j++){
-     for(k=0;k<F;k++){
-       b[i][j]^=(cl[i][k]&inv_a[k][j]);
+#pragma omp parallel num_threads(8)
+   {
+     for(j=0;j<F;j++){
+       for(k=0;k<F;k++){
+	 b[i][j]^=(cl[i][k]&inv_a[k][j]);
+       }
      }
-    }
-      }
+   }
  }
  
 
