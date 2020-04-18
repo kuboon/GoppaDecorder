@@ -1415,7 +1415,7 @@ vec chen (OP f){
 
   n = deg (o2v (f));
 //exit(1);
-//#pragma omp parallel for private(i)
+//#pragma omp parallel for 
   for (x = 0; x < N; x++)
     {
       z = 0;
@@ -1970,9 +1970,6 @@ void pubkeygen (){
 #pragma omp parallel for private(j,k)
   for (i = 0; i < E * K; i++)
     {
-      #pragma omp parallel num_threads(8)
-      {
-	//    id=omp_get_thread_num();
       for (j = 0; j < N; j++)
 	{
 	  //tmp[i][j]=0;
@@ -1985,7 +1982,7 @@ void pubkeygen (){
 	    }
 	  //tmp[i][j]=l;
 	}
-      }
+      //}
     }
   P2Mat (P);
   
@@ -2511,10 +2508,11 @@ OP synd(unsigned short zz[]){
 
   printf("in synd\n");
 
-#pragma omp parallel for 
+#pragma omp parallel for //num_threads(8)
   for(i=0;i<K;i++){
     syn[i]=0;
     s=0;
+    //#pragma omp parallel num_threads(8)
     for(j=0;j<N;j++){
       syn[i]^=gf[mlt(fg[zz[j]],fg[mat[j][i]])];
     }
@@ -2685,7 +2683,7 @@ label:
   //鍵をファイルに書き込むためにはkey2を有効にしてください。
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
   //det(g);
-  exit(1);
+  //exit(1);
 
   //gccの場合、並列化すると鍵生成が不完全になる。その場合、デバッグデータを出力して終了。
   //再現性がないので余り役に立たない。その場合detを使うこと。
