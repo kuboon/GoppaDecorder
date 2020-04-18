@@ -1419,7 +1419,7 @@ vec chen (OP f){
   for (x = 0; x < N; x++)
     {
       z = 0;
-#pragma omp parallel for reduction (^:z)
+      #pragma omp parallel for reduction (^:z)
       for (i = 0; i < n + 1; i++)
 	{
 	  if (f.t[i].a > 0)
@@ -1970,10 +1970,9 @@ void pubkeygen (){
 #pragma omp parallel for private(j,k)
   for (i = 0; i < E * K; i++)
     {
-      //#pragma omp parallel num_threads(8)
+      #pragma omp parallel num_threads(8)
       {
 	//    id=omp_get_thread_num();
-
       for (j = 0; j < N; j++)
 	{
 	  //tmp[i][j]=0;
@@ -1981,7 +1980,8 @@ void pubkeygen (){
 	  //#pragma omp parallel for reduction (^:l)
 	  for (k = 0; k < E * K; k++)
 	    {      
-	    tmp[i][j]^= cl[i][k] & BH[k][j];
+	      tmp[i][j]^= cl[i][k] & BH[k][j];
+	      //l^= cl[i][k] & BH[k][j];
 	    }
 	  //tmp[i][j]=l;
 	}
@@ -2511,7 +2511,7 @@ OP synd(unsigned short zz[]){
 
   printf("in synd\n");
 
-#pragma omp parallel for private(j)
+#pragma omp parallel for 
   for(i=0;i<K;i++){
     syn[i]=0;
     s=0;
@@ -2689,13 +2689,13 @@ label:
 
   //gccの場合、並列化すると鍵生成が不完全になる。その場合、デバッグデータを出力して終了。
   //再現性がないので余り役に立たない。その場合detを使うこと。
-/*
+  /*
   i=0;
   do{
     memset(mat,0,sizeof(mat));
     i=deta(g);
   }while(i==-1);
-*/
+  */
     
   lab:
   //exit(1);
@@ -2715,7 +2715,7 @@ label:
   fclose (fq);
   */
   
-#pragma omp parallel for private(i)
+  //#pragma omp parallel for 
   for (j = 0; j < N; j++)
     {
       flg = 0;
@@ -2738,7 +2738,7 @@ label:
 
 
 //decode bigin
-
+//#pragma omp parallel for
   for(j=0;j<N;j++){
     flg=0;
     for(i=0;i<K;i++){
@@ -2835,8 +2835,9 @@ label:
        exit(1);
     }
   }
+  //  #pragma omp parallel for
     for(i=0;i<N;i++){
-      if(zz[i]>0 || (zz[1]>0 && zz[0]==0))
+      if(zz[i]>0 || (zz[0]>0))
       o1++;
   }
   printf("err=%dっ！！\n",o1);
