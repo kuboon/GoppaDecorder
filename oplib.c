@@ -1970,17 +1970,18 @@ void pubkeygen (){
 #pragma omp parallel for private(j,k)
   for (i = 0; i < E * K; i++)
     {
-#pragma omp parallel num_threads(8)
+      //#pragma omp parallel num_threads(8)
       {
 	//    id=omp_get_thread_num();
 
       for (j = 0; j < N; j++)
 	{
-	  tmp[i][j]=0;
+	  //tmp[i][j]=0;
+	  l=0;
 	  //#pragma omp parallel for reduction (^:l)
 	  for (k = 0; k < E * K; k++)
 	    {      
-		tmp[i][j]^= cl[i][k] & BH[k][j];
+	    tmp[i][j]^= cl[i][k] & BH[k][j];
 	    }
 	  //tmp[i][j]=l;
 	}
@@ -1988,10 +1989,11 @@ void pubkeygen (){
     }
   P2Mat (P);
   
-#pragma omp parallel for private(k)
+#pragma omp parallel for
   for (i = 0; i < E * K; i++)
     {
       //  for(j=0;j<N;j++){
+      #pragma omp parallel for
       for (k = 0; k < N; k++)
 	pub[i][k] = tmp[i][P[k]];	//&A[k][j];
       //    }
@@ -2679,21 +2681,21 @@ label:
   memset(mat,0,sizeof(mat));
 
 
-  //keygen(g);
+  keygen(g);
   //鍵をファイルに書き込むためにはkey2を有効にしてください。
   //どうしても早くしたい人はdeta()にすること。defaultはdet()
   //det(g);
-  //exit(1);
+  exit(1);
 
   //gccの場合、並列化すると鍵生成が不完全になる。その場合、デバッグデータを出力して終了。
   //再現性がないので余り役に立たない。その場合detを使うこと。
-
+/*
   i=0;
   do{
     memset(mat,0,sizeof(mat));
     i=deta(g);
   }while(i==-1);
-
+*/
     
   lab:
   //exit(1);
