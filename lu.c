@@ -176,14 +176,18 @@ for(i=0;i<F;i++){
 
 #pragma omp parallel for private(j,k)
  for(i=0;i<F;i++){
-#pragma omp parallel num_threads(8)
-   {
+   //#pragma omp parallel num_threads(8)
+   //  {
      for(j=0;j<F;j++){
+       l=0;
+       //#pragma omp parallel for reduction(^:l)
        for(k=0;k<F;k++){
 	 b[i][j]^=(cl[i][k]&inv_a[k][j]);
+	 //l^=(cl[i][k]&inv_a[k][j]);
        }
+       //b[i][j]=l;
      }
-   }
+     //}
  }
  
 
