@@ -107,6 +107,7 @@ for(i=0;i<F;i++){
 
 
 //掃き出し法
+
 for(i=0;i<F;i++){
   if(cc[i][i]==0){
   j=0;
@@ -171,16 +172,14 @@ for(i=0;i<F;i++){
 
 #pragma omp parallel for private(j,k)
  for(i=0;i<F;i++){
+   //#pragma omp parallel num_threads(8)
+      {
    for(j=0;j<F;j++){
-     l=0;
-     //clangの場合、併用できない
-     //#pragma omp parallel for reduction(^:l)
      for(k=0;k<F;k++){
-       //l
-	 b[i][j]^=(cl[i][k]&inv_a[k][j]);
+       b[i][j]^=(cl[i][k]&inv_a[k][j]);
      }
-     // b[i][j]=l;
-   }
+    }
+      }
  }
  
 
