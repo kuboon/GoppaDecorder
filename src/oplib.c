@@ -28,13 +28,13 @@
 
 #include <omp.h>
 
-#include "8192.h"
 #include "global.h"
 #include "struct.h"
 
 #include "chash.c"
 #include "lu.c"
 #include "sha3.c"
+#include "ecole.c"
 
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
@@ -1345,9 +1345,6 @@ OP decode(OP f, OP s)
 
   //  printf("\n");
 
-  printf("あっ、でる！\n");
-  //  exit(1);
-
   if (deg(o2v(r)) < T)
   {
     printpol(o2v(r));
@@ -1649,7 +1646,7 @@ void det(unsigned short g[])
 {
   OP f, h = {0}, w, u;
   unsigned short cc[K + 1] = {0}, d[2] = {0}, pp[20][K] = {0};
-  int i, j, a, b, k, t1, l = 0, flg = 0, count = 0;
+  int i, j, a, b, k, flg = 0;
   oterm t = {0};
   vec e;
 
@@ -1663,7 +1660,6 @@ void det(unsigned short g[])
   h.t[1].a = 1;
   h.t[1].n = 1;
   t.n = 0;
-  t1 = 2 * T;
   f = setpol(cc, K + 1);
 
   for (i = 0; i < N; i++)
@@ -1878,8 +1874,7 @@ int isqrt(unsigned short u)
 OP osqrt(OP f, OP w)
 {
   int i, j, k, jj, n;
-  OP even = {0}, odd = {0}, h = {0}, r = {0}, ww = {0}, s = {0}, tmp = {0}, t = {0};
-  oterm o = {0};
+  OP even = {0}, odd = {0}, h = {0}, r = {0}, ww = {0}, s = {0}, tmp = {0};
   vec v = {0};
 
   j = 0;
@@ -1958,24 +1953,9 @@ OP osqrt(OP f, OP w)
     printf("h=========0\n");
     exit(1);
   }
-  /*
   if(LT(ww).n==0 && LT(ww).a==0){
-    printpol(o2v(s));
-    printf(" s===========\n");
-    printpol(o2v(w));
-    printf(" w==============\n");
-    printpol(o2v(r));
-    printf(" r===========\n");
-    printpol(o2v(h));
-    printf(" h============\n");
-    printpol (o2v (ww));
-    printf (" ww==============\n");
-    printf(" wwが０になりました。error\n");
-    wait();
-    return ww;;
-    // exit(1);
+    exit(1);
   }
-  */
   tmp = omod(omul(ww, ww), w);
   if (LT(tmp).n == 1)
   {
@@ -1984,33 +1964,13 @@ OP osqrt(OP f, OP w)
   }
   else
   {
-    printpol(o2v(tmp));
-    printf(" mod w^2==========\n");
-    printpol(o2v(ww));
-    printf(" ww^2 failed!========\n");
-    printpol(o2v(s));
-    printf(" g1^-1==============\n");
-    printpol(o2v(w));
-    printf(" w==============\n");
-    printpol(o2v(h));
-    printf(" g0===========\n");
-    printpol(o2v(r));
-    printf(" r===========\n");
     printf("この鍵では逆元が計算できません。error");
-    wait();
-    return ww;
-    // exit(1);
+    exit(1);
   }
 
-  //    exit(1);
-  //  printpol(o2v(s));
   printf(" g1^-1=========\n");
-  // printpol(o2v(h));
   printf(" g0=========\n");
-  //exit(1);
-  // printpol(o2v(ww));
   printf(" ww==========\n");
-  //  exit(1);
   h = ww;
   if (odeg(omod(omul(h, ww), w)) == 1)
   {
@@ -2070,7 +2030,6 @@ vec pattarson(OP w, OP f)
     printpol(o2v(g1));
     printf(" g1============\n");
     printf(" g1は平方ではありません。error");
-    wait();
     exit(1);
   }
   printf(" g1!=========\n");
@@ -2084,7 +2043,6 @@ vec pattarson(OP w, OP f)
     exit(1);
   }
   hh = xgcd(w, g1);
-aa:
   ff = omod(omul(hh.v, g1), w);
   printpol(o2v(ff));
   printf(" beta!=========\n");
@@ -2118,7 +2076,6 @@ aa:
     printf(" locater degree is 0\n");
     exit(1);
   }
-  printf("あっ、でる・・・！\n");
   count = 0;
   printpol(o2v(ll));
   printf(" ll=================\n");
@@ -2138,7 +2095,7 @@ aa:
   return v;
 }
 
-//512bitの秘密鍵を暗号化
+//* 512bitの秘密鍵を暗号化
 void encrypt(char buf[], unsigned char sk[64])
 {
   const uint8_t *hash = {0};
@@ -2244,7 +2201,7 @@ void decrypt(OP w)
 
 OP synd(unsigned short zz[])
 {
-  unsigned short syn[K] = {0}, s = 0;
+  unsigned short syn[K] = {0};
   int i, j, t1;
   OP f = {0};
 
@@ -2254,7 +2211,6 @@ OP synd(unsigned short zz[])
   for (i = 0; i < K; i++)
   {
     syn[i] = 0;
-    s = 0;
     //#pragma omp parallel num_threads(8)
     for (j = 0; j < N; j++)
     {
@@ -2333,7 +2289,7 @@ int main(void)
   //Goppa多項式
   unsigned short g[K + 1] = {0};
 label:
-  puts("ginit...");
+  memset(g, 0, sizeof(g));
   ginit(g);
 
   OP w = setpol(g, K + 1);
